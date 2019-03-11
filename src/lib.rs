@@ -9,7 +9,7 @@ pub use context::Context;
 pub use isolate::Isolate;
 pub use platform::Platform;
 
-pub mod V8 {
+pub mod v8 {
     pub use crate::ffi::root::v8 as ffi;
 
     pub use crate::Context;
