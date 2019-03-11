@@ -1,0 +1,13 @@
+[package]
+name = "v8-ffi"
+version = "0.1.0"
+authors = ["uuhan <xuminhui189@gmail.com>"]
+edition = "2018"
+
+[build-dependencies]
+pkg-config = "0.3.14"
+bindgen = "0.48.1"
+cc = "1.0.30"
+
+[dependencies]
+libc = "0.2.50"
