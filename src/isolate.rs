@@ -8,7 +8,7 @@ extern "C" {
 
 }
 #[repr(C)]
-pub struct Isolate(*mut raw::Isolate);
+pub struct Isolate(pub *mut raw::Isolate);
 
 impl Isolate {
     pub fn new() -> Self {
@@ -23,6 +23,12 @@ impl Isolate {
         }
         raw::Isolate_Scope {
             isolate_: self.0,
+        }
+    }
+
+    pub fn dispose(&self) {
+        unsafe {
+            V8_Isolate_Dispose(self.0)
         }
     }
 }

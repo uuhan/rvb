@@ -44,10 +44,10 @@ V8_Isolate_Exit(Isolate* isolate)
     isolate->Exit();
 }
 
-void
-V8_Context_New(Isolate* isolate, Local<Context> output)
+Local<Context>
+V8_Context_New(Isolate* isolate)
 {
-    output = Context::New(isolate);
+    Context::New(isolate);
 }
 
 void
