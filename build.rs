@@ -3,11 +3,26 @@ use std::env;
 use std::path::PathBuf;
 
 pub fn main() {
-    let Library { include_paths, .. } = pkg_config::Config::new().probe("v8").unwrap();
-    let cflags: Vec<String> = include_paths
+    let Library {
+        include_paths,
+        link_paths,
+        libs,
+        ..
+    } = pkg_config::Config::new().probe("v8").unwrap();
+    let ref cflags: Vec<String> = include_paths
         .clone()
         .into_iter()
         .map(|pathbuf| format!("-I{}", pathbuf.to_str().unwrap()))
+        .collect();
+    let ref link_flags: Vec<String> = link_paths
+        .clone()
+        .into_iter()
+        .map(|pathbuf| format!("-L{}", pathbuf.to_str().unwrap()))
+        .collect();
+    let ref link_libs: Vec<String> = libs
+        .clone()
+        .into_iter()
+        .map(|lib| format!("-l{}", lib))
         .collect();
 
     let bindings = bindgen::Builder::default()
@@ -34,4 +49,14 @@ pub fn main() {
     bindings
         .write_to_file(out_path.join("v8.rs"))
         .expect("Could not write bindings!");
+
+    cc::Build::new()
+        .cpp(true)
+        .flag("-w")
+        .flag("-std=c++14")
+        .flag(cflags.join(" ").as_str())
+        .flag(link_flags.join(" ").as_str())
+        .flag(link_libs.join(" ").as_str())
+        .file("v8wrapper.cc")
+        .compile("wrapper");
 }
