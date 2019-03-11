@@ -1,13 +1,9 @@
-use std::mem::uninitialized;
-use v8_ffi::v8;
+use std::mem;
+use std::ptr;
+use v8_ffi::V8;
 
 pub fn main() {
-    unsafe {
-        v8::V8_Initialize_Platform();
-        v8::V8_Initialize();
-
-        v8::V8_Dispose();
-        v8::V8_Free_Platform();
-    }
+    let platform = V8::Platform::new();
+    let isolate = V8::Isolate::new();
     println!("{}", "v8");
 }
