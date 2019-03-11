@@ -6,6 +6,4 @@ extern "C" {
     pub fn V8_Context_Exit(input: *mut raw::Context);
 }
 #[repr(C)]
-pub struct Context {
-    handler: *mut raw::Context,
-}
+pub struct Context(*mut raw::Context);

@@ -8,14 +8,29 @@ extern "C" {
 
 }
 #[repr(C)]
-pub struct Isolate {
-    handler: *mut raw::Isolate,
-}
+pub struct Isolate(*mut raw::Isolate);
 
 impl Isolate {
     pub fn new() -> Self {
         let isolate = unsafe { V8_Isolate_New() };
         assert!(!isolate.is_null());
-        Self { handler: isolate }
+        Self(isolate)
+    }
+
+    pub fn scope(&mut self) -> raw::Isolate_Scope {
+        unsafe {
+            V8_Isolate_Enter(self.0);
+        }
+        raw::Isolate_Scope {
+            isolate_: self.0,
+        }
+    }
+}
+
+impl Drop for raw::Isolate_Scope {
+    fn drop(&mut self) {
+        unsafe {
+            V8_Isolate_Exit(self.isolate_)
+        }
     }
 }

@@ -5,9 +5,7 @@ extern "C" {
 }
 
 #[repr(C)]
-pub struct Platform {
-    handler: *mut std::ffi::c_void,
-}
+pub struct Platform(*mut std::ffi::c_void);
 
 impl Platform {
     pub fn new() -> Self {
