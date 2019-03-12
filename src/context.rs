@@ -1,6 +1,8 @@
 use crate::raw;
 use crate::Isolate;
 use crate::Local;
+use std::ops::Deref;
+use std::ops::DerefMut;
 
 extern "C" {
     pub fn V8_Context_New(isolate: *mut raw::Isolate) -> Local<raw::Context>;
@@ -31,5 +33,23 @@ impl Context {
             V8_Context_Exit(self.0.val_);
         }
         self
+    }
+}
+
+impl Deref for Context {
+    type Target = raw::Context;
+
+    fn deref(&self) -> &Self::Target {
+        unsafe {
+            &*self.0.val_
+        }
+    }
+}
+
+impl DerefMut for Context {
+    fn deref_mut(&mut self) -> &mut raw::Context {
+        unsafe {
+            &mut *self.0.val_
+        }
     }
 }
