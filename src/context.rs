@@ -5,16 +5,13 @@ use std::ops::Deref;
 use std::ops::DerefMut;
 
 extern "C" {
-    pub fn V8_Context_New(isolate: *mut raw::Isolate) -> Local<raw::Context>;
+    pub fn V8_Context_New(isolate: *mut raw::Isolate) -> raw::Local<raw::Context>;
     pub fn V8_Context_Enter(context: *mut raw::Context);
     pub fn V8_Context_Exit(context: *mut raw::Context);
 }
 
-pub type LocalContext = Local<raw::Context>;
-pub type PersistentContext = Persistent<raw::Context>;
-
 #[repr(C)]
-pub struct Context(pub Local<raw::Context>);
+pub struct Context(pub raw::Local<raw::Context>);
 
 impl Context {
     pub fn new(isolate: &mut Isolate) -> Self {
