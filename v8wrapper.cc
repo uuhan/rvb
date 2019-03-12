@@ -57,6 +57,6 @@ V8_Context_Enter(Context* context)
 void
 V8_Context_Exit(Context* context)
 {
-    context->Enter();
+    context->Exit();
 }
 }
