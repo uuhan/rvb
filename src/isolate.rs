@@ -1,12 +1,8 @@
 use crate::raw;
 use std::mem;
+use std::ops::DerefMut;
+use std::ops::Deref;
 
-extern "C" {
-    pub fn V8_Isolate_Dispose(isolate: *mut raw::Isolate);
-    pub fn V8_Isolate_Enter(isolate: *mut raw::Isolate);
-    pub fn V8_Isolate_Exit(isolate: *mut raw::Isolate);
-
-}
 #[repr(C)]
 pub struct Isolate(pub *mut raw::Isolate);
 
@@ -21,18 +17,31 @@ impl Isolate {
         Self(isolate)
     }
 
+    pub fn enter(&mut self) -> &mut Self {
+        unsafe {
+            self.Enter();
+        }
+        self
+    }
+
+    pub fn exit(&mut self) {
+        unsafe {
+            self.Exit()
+        }
+    }
+
     pub fn scope(&mut self) -> raw::Isolate_Scope {
         unsafe {
-            V8_Isolate_Enter(self.0);
+            self.Enter();
         }
         raw::Isolate_Scope {
             isolate_: self.0,
         }
     }
 
-    pub fn dispose(&self) {
+    pub fn dispose(&mut self) {
         unsafe {
-            V8_Isolate_Dispose(self.0)
+            self.Dispose()
         }
     }
 }
@@ -40,7 +49,22 @@ impl Isolate {
 impl Drop for raw::Isolate_Scope {
     fn drop(&mut self) {
         unsafe {
-            V8_Isolate_Exit(self.isolate_)
+            (*self.isolate_).Exit()
+        }
+    }
+}
+
+impl Deref for Isolate {
+    type Target = raw::Isolate;
+    fn deref(&self) -> &Self::Target {
+        unsafe { &*self.0 }
+    }
+}
+
+impl DerefMut for Isolate {
+    fn deref_mut(&mut self) -> &mut raw::Isolate {
+        unsafe {
+            &mut *self.0
         }
     }
 }
