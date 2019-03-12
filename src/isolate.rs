@@ -1,7 +1,7 @@
 use crate::raw;
+use std::mem;
 
 extern "C" {
-    pub fn V8_Isolate_New() -> *mut raw::Isolate;
     pub fn V8_Isolate_Dispose(isolate: *mut raw::Isolate);
     pub fn V8_Isolate_Enter(isolate: *mut raw::Isolate);
     pub fn V8_Isolate_Exit(isolate: *mut raw::Isolate);
@@ -12,8 +12,12 @@ pub struct Isolate(pub *mut raw::Isolate);
 
 impl Isolate {
     pub fn new() -> Self {
-        let isolate = unsafe { V8_Isolate_New() };
-        assert!(!isolate.is_null());
+        let isolate = unsafe {
+            let mut create_params: raw::Isolate_CreateParams = mem::zeroed();
+            create_params.array_buffer_allocator = raw::ArrayBuffer_Allocator::NewDefaultAllocator();
+            raw::Isolate::New(&create_params)
+        };
+        assert_eq!(false, isolate.is_null());
         Self(isolate)
     }
 
