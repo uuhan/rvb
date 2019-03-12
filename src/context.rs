@@ -9,6 +9,10 @@ extern "C" {
     pub fn V8_Context_Enter(context: *mut raw::Context);
     pub fn V8_Context_Exit(context: *mut raw::Context);
 }
+
+pub type LocalContext = Local<raw::Context>;
+pub type PersistentContext = Persistent<raw::Context>;
+
 #[repr(C)]
 pub struct Context(pub Local<raw::Context>);
 
