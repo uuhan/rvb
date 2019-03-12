@@ -1,7 +1,5 @@
 // v8 c wrapper
-#include <libplatform/libplatform.h>
-#include <v8.h>
-
+#include "v8wrapper.h"
 #include <memory>
 
 using namespace v8;
