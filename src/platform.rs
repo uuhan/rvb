@@ -1,4 +1,4 @@
-use crate::raw;
+use crate::v8::raw;
 
 extern "C" {
     pub fn V8_Initialize_Platform() -> Platform;

@@ -1,15 +1,4 @@
-use crate::raw;
-use crate::Isolated;
+pub use crate::v8::raw::HandleScope;
+use crate::v8::Isolated;
 
-pub struct HandleScope(raw::HandleScope);
-
-impl Isolated for HandleScope {
-    fn new() -> Self {
-        let isolate = Self::isolate();
-        unsafe {
-            HandleScope(
-                raw::HandleScope::new(isolate.0)
-            )
-        }
-    }
-}
+impl Isolated for HandleScope {}

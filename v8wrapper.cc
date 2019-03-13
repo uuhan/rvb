@@ -43,7 +43,7 @@ V8_Context_Exit(Local<Context> context)
 }
 
 Local<Value>
-V8_ToLocalChecked(v8::MaybeLocal<v8::Value> t) {
-    return t.ToLocalChecked();
+V8_To_Local_Checked(v8::MaybeLocal<v8::Value> value) {
+    return value.ToLocalChecked();
 }
 }

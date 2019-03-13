@@ -1,5 +1,5 @@
-use crate::raw;
-use crate::Root;
+use crate::v8::raw;
+use crate::v8::Rooted;
 use std::mem;
 use std::ops::DerefMut;
 use std::ops::Deref;
@@ -50,7 +50,7 @@ impl Drop for raw::Isolate_Scope {
 
 deref!(Isolate);
 
-impl Root for Isolate {
+impl Rooted for Isolate {
     unsafe fn allocate() -> Self {
         Isolate::new()
     }
