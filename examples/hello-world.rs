@@ -10,11 +10,11 @@ use v8_rs::v8::{
 
 pub fn main() {
     unsafe {
-        let platform = v8::Platform::new();
+        let _platform = v8::Platform::new();
         let mut isolate = v8::Isolate::new();
-        isolate.enter();
 
-        let handle_scope = v8::HandleScope::New();
+        isolate.enter();
+        let _handle_scope = v8::HandleScope::New();
 
         let mut context = Local::<Context>::New();
         context.enter();
