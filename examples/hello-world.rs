@@ -10,8 +10,8 @@ use v8_rs::v8::{
 
 pub fn main() {
     unsafe {
-        let _platform = v8::Platform::new();
-        let mut isolate = v8::Isolate::new();
+        let _platform = v8::Platform::New();
+        let mut isolate = v8::Isolate::New();
 
         isolate.enter();
         let _handle_scope = v8::HandleScope::New();

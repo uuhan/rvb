@@ -8,7 +8,7 @@ use std::ops::Deref;
 pub struct Isolate(pub *mut raw::Isolate);
 
 impl Isolate {
-    pub fn new() -> Self {
+    pub fn New() -> Self {
         let isolate = unsafe {
             let mut create_params: raw::Isolate_CreateParams = mem::zeroed();
             create_params.array_buffer_allocator = raw::ArrayBuffer_Allocator::NewDefaultAllocator();
@@ -18,7 +18,7 @@ impl Isolate {
         Self(isolate)
     }
 
-    pub fn current() -> Self {
+    pub fn Current() -> Self {
         unsafe {
             mem::transmute(raw::Isolate_GetCurrent())
         }
@@ -52,7 +52,7 @@ deref!(Isolate);
 
 impl Rooted for Isolate {
     unsafe fn allocate() -> Self {
-        Isolate::new()
+        Isolate::New()
     }
 
     unsafe fn enter(&mut self) {

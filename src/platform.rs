@@ -8,7 +8,7 @@ extern "C" {
 pub struct Platform(*mut std::ffi::c_void);
 
 impl Platform {
-    pub fn new() -> Self {
+    pub fn New() -> Self {
         unsafe { V8_Initialize_Platform() }
     }
 }
