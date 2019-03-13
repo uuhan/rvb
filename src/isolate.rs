@@ -1,4 +1,5 @@
 use crate::raw;
+use crate::Root;
 use std::mem;
 use std::ops::DerefMut;
 use std::ops::Deref;
@@ -15,19 +16,6 @@ impl Isolate {
         };
         assert_eq!(false, isolate.is_null());
         Self(isolate)
-    }
-
-    pub fn enter(&mut self) -> &mut Self {
-        unsafe {
-            self.Enter();
-        }
-        self
-    }
-
-    pub fn exit(&mut self) {
-        unsafe {
-            self.Exit()
-        }
     }
 
     pub fn scope(&mut self) -> raw::Isolate_Scope {
@@ -66,5 +54,19 @@ impl DerefMut for Isolate {
         unsafe {
             &mut *self.0
         }
+    }
+}
+
+impl Root for Isolate {
+    unsafe fn allocate() -> Self {
+        Isolate::new()
+    }
+
+    unsafe fn enter(&mut self) {
+        self.Enter()
+    }
+
+    unsafe fn exit(&mut self) {
+        self.Exit()
     }
 }

@@ -24,24 +24,6 @@ V8_Isolate_New()
     return Isolate::New(create_params);
 }
 
-void
-V8_Isolate_Dispose(Isolate* isolate)
-{
-    isolate->Dispose();
-}
-
-void
-V8_Isolate_Enter(Isolate* isolate)
-{
-    isolate->Enter();
-}
-
-void
-V8_Isolate_Exit(Isolate* isolate)
-{
-    isolate->Exit();
-}
-
 Local<Context>
 V8_Context_New(Isolate* isolate)
 {

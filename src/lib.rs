@@ -19,8 +19,19 @@ pub mod v8 {
     pub use crate::Local;
     pub use crate::MaybeLocal;
     pub use crate::Persistent;
+    pub use crate::Root;
 }
 
 pub trait Local<T> {}
-pub trait MaybeLocal<T> {}
+
+pub trait MaybeLocal<T> {
+    fn to_local_checked() -> dyn Local<T>;
+}
+
 pub trait Persistent<T> {}
+
+pub trait Root {
+    unsafe fn allocate() -> Self;
+    unsafe fn enter(&mut self);
+    unsafe fn exit(&mut self);
+}
