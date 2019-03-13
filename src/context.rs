@@ -1,6 +1,5 @@
 use crate::raw;
 use crate::Isolate;
-use crate::Local;
 use std::ops::Deref;
 use std::ops::DerefMut;
 

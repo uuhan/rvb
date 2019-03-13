@@ -2,6 +2,7 @@ mod context;
 mod ffi;
 mod isolate;
 mod platform;
+mod runtime;
 
 pub use ffi::root::v8 as raw;
 
@@ -34,4 +35,9 @@ pub trait Root {
     unsafe fn allocate() -> Self;
     unsafe fn enter(&mut self);
     unsafe fn exit(&mut self);
+}
+
+/// Object Should Live In an Isolate instance
+pub trait Isolated {
+    fn isolate(&mut self) -> &mut Isolate;
 }

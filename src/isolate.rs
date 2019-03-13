@@ -18,6 +18,12 @@ impl Isolate {
         Self(isolate)
     }
 
+    pub fn current() -> Self {
+        unsafe {
+            mem::transmute(raw::Isolate_GetCurrent())
+        }
+    }
+
     pub fn scope(&mut self) -> raw::Isolate_Scope {
         unsafe {
             self.Enter();
