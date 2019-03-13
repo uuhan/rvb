@@ -14,12 +14,17 @@ pub fn main() {
         let mut isolate = v8::Isolate::new();
         isolate.enter();
 
-        let handle_scope = v8::HandleScope::new(isolate.0);
+        let handle_scope = v8::HandleScope::New();
 
         let mut context = Local::<Context>::New();
         context.enter();
 
-        let source = Local::<V8String>::New("'Hello' + ', World!'");
+        let source = Local::<V8String>::New(r#"
+            function loop() {
+                loop()
+            }
+            1 + 1
+        "#);
         let mut script = Local::<Script>::New(context, source);
         let result: String = script.Run(context).to_local_checked().into();
         println!("{}", result);

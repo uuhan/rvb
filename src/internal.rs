@@ -25,6 +25,12 @@ pub trait Rooted {
 
 /// Object Should Live In an Isolate instance
 pub trait Isolated {
+    fn New() -> Box<Self> {
+        unsafe {
+            // TODO: seems not good
+            mem::uninitialized()
+        }
+    }
     fn GetIsolate() -> Isolate {
         unsafe {
             let isolate = raw::Isolate::GetCurrent();
