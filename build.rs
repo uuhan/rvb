@@ -59,4 +59,7 @@ pub fn main() {
         .flag(link_libs.join(" ").as_str())
         .file("v8wrapper.cc")
         .compile("wrapper");
+
+    println!("cargo:rerun-if-changed=v8wrapper.h");
+    println!("cargo:rerun-if-changed=v8wrapper.cc");
 }
