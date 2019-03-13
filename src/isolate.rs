@@ -48,20 +48,7 @@ impl Drop for raw::Isolate_Scope {
     }
 }
 
-impl Deref for Isolate {
-    type Target = raw::Isolate;
-    fn deref(&self) -> &Self::Target {
-        unsafe { &*self.0 }
-    }
-}
-
-impl DerefMut for Isolate {
-    fn deref_mut(&mut self) -> &mut raw::Isolate {
-        unsafe {
-            &mut *self.0
-        }
-    }
-}
+deref!(Isolate);
 
 impl Root for Isolate {
     unsafe fn allocate() -> Self {

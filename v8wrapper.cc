@@ -27,18 +27,23 @@ V8_Isolate_New()
 Local<Context>
 V8_Context_New(Isolate* isolate)
 {
-    Context::New(isolate);
+    return Context::New(isolate);
 }
 
 void
-V8_Context_Enter(Context* context)
+V8_Context_Enter(Local<Context> context)
 {
     context->Enter();
 }
 
 void
-V8_Context_Exit(Context* context)
+V8_Context_Exit(Local<Context> context)
 {
     context->Exit();
+}
+
+Local<Value>
+V8_ToLocalChecked(v8::MaybeLocal<v8::Value> t) {
+    return t.ToLocalChecked();
 }
 }

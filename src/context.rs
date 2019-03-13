@@ -5,8 +5,8 @@ use std::ops::DerefMut;
 
 extern "C" {
     pub fn V8_Context_New(isolate: *mut raw::Isolate) -> raw::Local<raw::Context>;
-    pub fn V8_Context_Enter(context: *mut raw::Context);
-    pub fn V8_Context_Exit(context: *mut raw::Context);
+    pub fn V8_Context_Enter(context: raw::Local<raw::Context>);
+    pub fn V8_Context_Exit(context: raw::Local<raw::Context>);
 }
 
 #[repr(C)]
@@ -23,14 +23,14 @@ impl Context {
 
     pub fn enter(&self) -> &Self {
         unsafe {
-            V8_Context_Enter(self.0.val_)
+            V8_Context_Enter(self.0)
         }
         self
     }
 
     pub fn exit(&self) -> &Self {
         unsafe {
-            V8_Context_Exit(self.0.val_);
+            V8_Context_Exit(self.0);
         }
         self
     }
