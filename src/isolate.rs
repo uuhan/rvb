@@ -37,7 +37,9 @@ impl Isolate {
                 let _handle_scole = HandleScope::New();
                 let mut context = Local::<Context>::New();
                 context.enter();
+
                 let result = run(context);
+
                 context.exit();
                 self.exit();
 
@@ -48,14 +50,6 @@ impl Isolate {
     pub fn dispose(&mut self) {
         unsafe {
             self.Dispose()
-        }
-    }
-}
-
-impl Drop for raw::Isolate_Scope {
-    fn drop(&mut self) {
-        unsafe {
-            (*self.isolate_).Exit()
         }
     }
 }

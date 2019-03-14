@@ -4,8 +4,10 @@ extern "C" {
     pub fn V8_Initialize_Platform() -> Platform;
 }
 
+type RawPlatform = *mut std::ffi::c_void;
+
 #[repr(C)]
-pub struct Platform(*mut std::ffi::c_void);
+pub struct Platform(RawPlatform);
 
 impl Platform {
     pub fn New() -> Self {
