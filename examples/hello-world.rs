@@ -1,5 +1,9 @@
+#![allow(unused)]
 use v8_rs::v8::{
     self,
+    Platform,
+    Isolate,
+    HandleScope,
     Rooted,
     Isolated,
     Local,
@@ -10,25 +14,22 @@ use v8_rs::v8::{
 
 pub fn main() {
     unsafe {
-        let _platform = v8::Platform::New();
-        let mut isolate = v8::Isolate::New();
+        let _platform = Platform::New();
+        let mut isolate = Isolate::New();
 
-        isolate.enter();
-        let _handle_scope = v8::HandleScope::New();
+        isolate.with(move |context| {
+            let source = Local::<V8String>::New(r#"
+                function loop() {
+                    loop()
+                }
+                1 + 1
+            "#);
+            let mut script = Local::<Script>::New(context, source);
+            let result: String = script.Run(context).to_local_checked().into();
+            println!("{}", result);
+        });
 
-        let mut context = Local::<Context>::New();
-        context.enter();
+        isolate.dispose();
 
-        let source = Local::<V8String>::New(r#"
-            function loop() {
-                loop()
-            }
-            1 + 1
-        "#);
-        let mut script = Local::<Script>::New(context, source);
-        let result: String = script.Run(context).to_local_checked().into();
-        println!("{}", result);
-
-        isolate.exit();
     }
 }

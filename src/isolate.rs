@@ -1,8 +1,13 @@
-use crate::v8::raw;
-use crate::v8::Rooted;
 use std::mem;
 use std::ops::DerefMut;
 use std::ops::Deref;
+
+use crate::v8::raw;
+use crate::v8::Rooted;
+use crate::v8::Isolated;
+use crate::v8::Context;
+use crate::v8::Local;
+use crate::v8::HandleScope;
 
 #[repr(C)]
 pub struct Isolate(pub *mut raw::Isolate);
@@ -24,14 +29,21 @@ impl Isolate {
         }
     }
 
-    pub fn scope(&mut self) -> raw::Isolate_Scope {
-        unsafe {
-            self.Enter();
+    pub fn with<U, F>(&mut self, run: F) -> U
+        where F: FnOnce(Local<Context>) -> U
+        {
+            unsafe {
+                self.enter();
+                let _handle_scole = HandleScope::New();
+                let mut context = Local::<Context>::New();
+                context.enter();
+                let result = run(context);
+                context.exit();
+                self.exit();
+
+                result
+            }
         }
-        raw::Isolate_Scope {
-            isolate_: self.0,
-        }
-    }
 
     pub fn dispose(&mut self) {
         unsafe {
