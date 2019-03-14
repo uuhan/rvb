@@ -1,5 +1,5 @@
 use std::ptr;
-use crate::v8::{Local, Context, raw::Value, String, raw};
+use crate::v8::{MaybeLocal, Local, Context, raw::Value, String, raw};
 
 pub use raw::Script;
 
@@ -10,9 +10,9 @@ impl Local<Script> {
         }
     }
 
-    pub fn run (&self, context: Local<Context>) -> Local<Value> {
+    pub fn run (&mut self, context: Local<Context>) -> MaybeLocal<Value> {
         unsafe {
-            (*self.val_).Run(context).to_local_checked()
+            self.Run(context)
         }
     }
 }
