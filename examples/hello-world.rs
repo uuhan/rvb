@@ -27,6 +27,4 @@ pub fn main() {
         let result: String = script.run(context).to_local_checked().into();
         println!("{}", result);
     });
-
-    isolate.dispose();
 }
