@@ -9,6 +9,7 @@ use v8_rs::v8::{
     Isolated,
     Local,
     Context,
+    ContextScope,
     String as V8String,
     Script,
 };
@@ -18,11 +19,22 @@ pub fn main() {
     let mut isolate = Isolate::New();
 
     isolate.with(move |context| {
+        let scope = ContextScope::New(context);
         let source = Local::<V8String>::New(r#"
                 function concat(a, b) {
-                  a + b
+                  return a + b
                 }
-                "1" + 1
+                concat("1", 1)
+            "#);
+        let mut script = Local::<Script>::New(context, source);
+        let result: String = script.run(context).to_local_checked().into();
+        println!("{}", result);
+    });
+
+    isolate.with(move |context| {
+        let scope = ContextScope::New(context);
+        let source = Local::<V8String>::New(r#"
+                "Hello, " + "World!"
             "#);
         let mut script = Local::<Script>::New(context, source);
         let result: String = script.run(context).to_local_checked().into();
