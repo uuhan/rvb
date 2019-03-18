@@ -18,6 +18,7 @@ extern "C" {
 
 pub trait PersistentValue<T> {}
 
+/// an object can be enter in or exit out
 pub trait Rooted {
     fn allocate() -> Self;
     fn enter(&mut self);
@@ -41,6 +42,7 @@ pub trait Isolated {
     }
 }
 
+/// isomorphism to v8::Local<T>
 impl<T> Local<T> {
     pub fn is_empty(self) -> bool {
         unsafe {
@@ -49,6 +51,7 @@ impl<T> Local<T> {
     }
 }
 
+/// local value auto deref
 impl<T> Deref for Local<T> {
     type Target = T;
     fn deref(&self) -> &T {
@@ -58,6 +61,7 @@ impl<T> Deref for Local<T> {
     }
 }
 
+/// local value auto deref
 impl<T> DerefMut for Local<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         unsafe {
@@ -66,8 +70,11 @@ impl<T> DerefMut for Local<T> {
     }
 }
 
+/// local value lives in an isolate instance
 impl<T> Isolated for Local<T> {}
 
+/// cast local value into string
+/// use v8::String::Utf8Value
 impl Into<String> for Local<Value> {
     fn into(self) -> String {
         let isolate = Local::<Value>::GetIsolate();
@@ -78,6 +85,7 @@ impl Into<String> for Local<Value> {
     }
 }
 
+/// maybe local to local value
 impl<T> MaybeLocal<T> {
     pub fn to_local_checked(self) -> Local<T> {
         unsafe {
