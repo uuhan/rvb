@@ -46,4 +46,9 @@ Local<Value>
 V8_To_Local_Checked(v8::MaybeLocal<v8::Value> value) {
     return value.ToLocalChecked();
 }
+
+bool
+V8_Local_Is_Empty(v8::Local<v8::Value> value) {
+    return value.IsEmpty();
+}
 }

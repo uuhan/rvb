@@ -16,6 +16,11 @@ use v8_rs::v8::{
 pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
+    unsafe {
+        isolate.with(|context| {
+            assert!(!context.is_empty())
+        })
+    }
     ()
 }
 

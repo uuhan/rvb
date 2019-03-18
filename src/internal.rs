@@ -13,6 +13,7 @@ use crate::v8::Isolate;
 
 extern "C" {
     pub fn V8_To_Local_Checked(value: raw::MaybeLocal<*mut c_void>) -> raw::Local<*mut c_void>;
+    pub fn V8_Local_Is_Empty(value: raw::Local<*mut c_void>) -> bool;
 }
 
 pub trait PersistentValue<T> {}
@@ -40,7 +41,13 @@ pub trait Isolated {
     }
 }
 
-impl<T> Local<T> {}
+impl<T> Local<T> {
+    pub fn is_empty(self) -> bool {
+        unsafe {
+            V8_Local_Is_Empty(mem::transmute(self))
+        }
+    }
+}
 
 impl<T> Deref for Local<T> {
     type Target = T;

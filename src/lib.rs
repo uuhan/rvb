@@ -20,6 +20,7 @@ pub mod v8 {
     pub use crate::isolate::Isolate;
     pub use crate::platform::Platform;
     pub use crate::scope::HandleScope;
+    pub use crate::scope::ContextScope;
     pub use crate::script::Script;
     pub use crate::value::*;
 
