@@ -32,19 +32,17 @@ impl Isolate {
     pub fn with<U, F>(&mut self, run: F) -> U
         where F: FnOnce(Local<Context>) -> U
         {
-            unsafe {
-                self.enter();
-                let _handle_scole = HandleScope::New();
-                let mut context = Local::<Context>::New();
-                context.enter();
+            self.enter();
+            let _handle_scole = HandleScope::New();
+            let mut context = Local::<Context>::New();
+            context.enter();
 
-                let result = run(context);
+            let result = run(context);
 
-                context.exit();
-                self.exit();
+            context.exit();
+            self.exit();
 
-                result
-            }
+            result
         }
 
     pub fn dispose(&mut self) {
@@ -57,15 +55,19 @@ impl Isolate {
 deref!(Isolate);
 
 impl Rooted for Isolate {
-    unsafe fn allocate() -> Self {
+    fn allocate() -> Self {
         Isolate::New()
     }
 
-    unsafe fn enter(&mut self) {
-        self.Enter()
+    fn enter(&mut self) {
+        unsafe {
+            self.Enter()
+        }
     }
 
-    unsafe fn exit(&mut self) {
-        self.Exit()
+    fn exit(&mut self) {
+        unsafe {
+            self.Exit()
+        }
     }
 }

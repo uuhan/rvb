@@ -1,4 +1,5 @@
 #![allow(unused)]
+extern crate v8_rs;
 use v8_rs::v8::{
     self,
     Platform,

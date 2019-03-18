@@ -18,9 +18,9 @@ extern "C" {
 pub trait PersistentValue<T> {}
 
 pub trait Rooted {
-    unsafe fn allocate() -> Self;
-    unsafe fn enter(&mut self);
-    unsafe fn exit(&mut self);
+    fn allocate() -> Self;
+    fn enter(&mut self);
+    fn exit(&mut self);
 }
 
 /// Object Should Live In an Isolate instance

@@ -19,15 +19,19 @@ impl Local<Context> {
 }
 
 impl Rooted for Local<Context> {
-    unsafe fn allocate() -> Self {
+    fn allocate() -> Self {
         Local::<Context>::New()
     }
 
-    unsafe fn enter(&mut self) {
-        (*self.val_).Enter()
+    fn enter(&mut self) {
+        unsafe {
+            (*self.val_).Enter()
+        }
     }
 
-    unsafe fn exit(&mut self) {
-        (*self.val_).Exit()
+    fn exit(&mut self) {
+        unsafe {
+            (*self.val_).Exit()
+        }
     }
 }
