@@ -9,6 +9,7 @@ use crate::v8::Context;
 use crate::v8::Local;
 use crate::v8::HandleScope;
 
+pub use raw::Locker;
 #[repr(C)]
 pub struct Isolate(pub *mut raw::Isolate);
 
