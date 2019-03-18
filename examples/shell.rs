@@ -9,6 +9,7 @@ use v8_rs::v8::{
     Isolated,
     Local,
     Context,
+    ContextScope,
     String as V8String,
     Script,
 };
@@ -18,7 +19,9 @@ pub fn main() {
     let mut isolate = Isolate::New();
     unsafe {
         isolate.with(|context| {
-            assert!(!context.is_empty())
+            assert!(!context.is_empty());
+
+            let scope = ContextScope::New(context);
         })
     }
     ()
