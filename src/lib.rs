@@ -11,6 +11,8 @@ mod scope;
 mod script;
 mod internal;
 mod value;
+mod object;
+mod function;
 
 pub mod v8 {
     pub use crate::ffi::root::v8 as raw;
@@ -22,6 +24,8 @@ pub mod v8 {
     pub use crate::scope::HandleScope;
     pub use crate::scope::ContextScope;
     pub use crate::script::Script;
+    pub use crate::object::*;
+    pub use crate::function::*;
     pub use crate::value::*;
 
     pub use crate::internal::*;
