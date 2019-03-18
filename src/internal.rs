@@ -16,6 +16,7 @@ extern "C" {
     pub fn V8_Local_Is_Empty(value: raw::Local<*mut c_void>) -> bool;
 }
 
+pub struct Address(*mut raw::internal::Address);
 pub trait PersistentValue<T> {}
 
 /// an object can be enter in or exit out
