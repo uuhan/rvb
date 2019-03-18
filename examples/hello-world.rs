@@ -18,10 +18,10 @@ pub fn main() {
 
     isolate.with(move |context| {
         let source = Local::<V8String>::New(r#"
-                function loop() {
-                    loop()
+                function concat(a, b) {
+                  a + b
                 }
-                1 + 1
+                "1" + 1
             "#);
         let mut script = Local::<Script>::New(context, source);
         let result: String = script.run(context).to_local_checked().into();
