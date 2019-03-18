@@ -26,7 +26,7 @@ pub fn main() {
         .collect();
 
     let bindings = bindgen::Builder::default()
-        .clang_args(&["-x", "c++", "-std=c++14"])
+        .clang_args(&["-x", "c++", "-std=c++11"])
         .rust_target(bindgen::RustTarget::Nightly)
         .opaque_type("std::.*")
         .blacklist_type("std::basic_string.*")
@@ -53,7 +53,7 @@ pub fn main() {
     cc::Build::new()
         .cpp(true)
         .flag("-w")
-        .flag("-std=c++14")
+        .flag("-std=c++11")
         .flag(cflags.join(" ").as_str())
         .flag(link_flags.join(" ").as_str())
         .flag(link_libs.join(" ").as_str())
