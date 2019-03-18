@@ -12,6 +12,7 @@ mod script;
 mod internal;
 mod value;
 mod object;
+mod array;
 mod function;
 
 pub mod v8 {
@@ -25,6 +26,7 @@ pub mod v8 {
     pub use crate::scope::ContextScope;
     pub use crate::script::Script;
     pub use crate::object::*;
+    pub use crate::array::*;
     pub use crate::function::*;
     pub use crate::value::*;
 
