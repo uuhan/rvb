@@ -13,6 +13,7 @@ pub use crate::v8::raw::SideEffectType_kHasSideEffectToReceiver;
 
 use crate::v8::{
     Isolated,
+    V8Template,
     Local,
     Value,
 };
@@ -31,6 +32,7 @@ impl FunctionCallbackInfo {
 }
 
 impl Isolated for FunctionTemplate {}
+impl V8Template for FunctionTemplate {}
 
 impl Local<FunctionTemplate> {
     pub fn New() -> Self {

@@ -19,4 +19,15 @@ Local<Value>
 V8_To_Local_Checked(v8::MaybeLocal<v8::Value> value) {
     return value.ToLocalChecked();
 }
+
+void
+V8_Template_Set(Local<ObjectTemplate> obj, Local<Name> name, Local<Data> value) {
+    obj->Set(name, value);
+
+  // obj->Set(
+  //         String::NewFromUtf8(Isolate::GetCurrent(), "foo", NewStringType::kNormal)
+  //                 .ToLocalChecked(),
+  //         String::NewFromUtf8(Isolate::GetCurrent(), "bar", NewStringType::kNormal)
+  //                 .ToLocalChecked());
+}
 }

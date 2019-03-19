@@ -25,8 +25,9 @@ pub struct ContextParams {
 impl Default for ContextParams {
     /// default context params
     fn default() -> Self {
+        let isolate = unsafe { raw::Isolate::GetCurrent() };
         ContextParams {
-            isolate: ptr::null_mut(),
+            isolate: isolate,
             extensions: ptr::null_mut(),
             global_template: MaybeLocal::<ObjectTemplate>::Empty(),
             global_object: MaybeLocal::<Value>::Empty(),

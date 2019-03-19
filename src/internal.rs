@@ -8,20 +8,46 @@ use std::ffi::CStr;
 use std::mem;
 use std::convert::Into;
 
-pub use crate::v8::raw::Local;
-pub use crate::v8::raw::MaybeLocal;
-pub use crate::v8::raw::DeserializeInternalFieldsCallback;
-pub use crate::v8::raw::TryCatch;
 use crate::v8::raw;
+pub use crate::v8::raw::{
+    Local,
+    MaybeLocal,
+    DeserializeInternalFieldsCallback,
+    TryCatch,
+    Name,
+    Data,
+    Template,
+
+    PropertyAttribute,
+    PropertyAttribute_None,
+    PropertyAttribute_ReadOnly,
+    PropertyAttribute_DontEnum,
+    PropertyAttribute_DontDelete,
+};
+
 use crate::v8::Value;
 use crate::v8::Isolate;
 
 extern "C" {
-    pub fn V8_To_Local_Checked(value: raw::MaybeLocal<*mut c_void>) -> raw::Local<*mut c_void>;
+    pub fn V8_To_Local_Checked(value: MaybeLocal<*mut c_void>) -> Local<*mut c_void>;
 }
 
 pub struct Address(*mut raw::internal::Address);
 pub trait PersistentValue<T> {}
+
+/// isomorphism to v8::Template base class
+pub trait V8Template {
+    fn set(&mut self, name: Local<Name>, value: Local<Data>) {
+        unsafe {
+            let self_ =
+                mem::transmute::<Box<&mut Self>, &mut Template>(Box::new(self));
+            self_.Set(
+                name,
+                value,
+                PropertyAttribute_None)
+        }
+    }
+}
 
 /// an object can be enter in or exit out
 pub trait Rooted {
@@ -52,7 +78,7 @@ impl<T> Local<T> {
     /// empty Local<T>
     /// v8::Local<T>()
     pub fn Empty() -> Self {
-        raw::Local {
+        Local {
             val_: ptr::null_mut(),
             _phantom_0: PhantomData,
         }
@@ -115,7 +141,7 @@ impl<T> MaybeLocal<T> {
     /// empty MaybeLocal<T>
     /// v8::MaybeLocal<T>()
     pub fn Empty() -> Self {
-        raw::MaybeLocal {
+        MaybeLocal {
             val_: ptr::null_mut(),
             _phantom_0: PhantomData,
         }
