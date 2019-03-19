@@ -18,7 +18,7 @@ pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
     unsafe {
-        isolate.with(|context| {
+        isolate.exec(|context| {
             assert!(!context.is_empty());
 
             let scope = ContextScope::New(context);

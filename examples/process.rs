@@ -23,7 +23,7 @@ pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
 
-    isolate.with(move |context| {
+    isolate.exec(move |context| {
         let mut global = Local::<ObjectTemplate>::New();
         let name = Local::<V8String>::New("foo").into();
         let value = Local::<V8String>::New("bar").into();

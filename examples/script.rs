@@ -8,7 +8,7 @@ pub fn main() {
     let script = fs::read_to_string("./script.js").expect("file script.js not found");
     let mut isolate = Isolate::New();
 
-    isolate.with(move |context| {
+    isolate.exec(move |context| {
         let scope = ContextScope::New(context);
         let source = Local::<V8String>::New(script);
         let mut script = Local::<Script>::New(context, source);

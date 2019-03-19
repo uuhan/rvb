@@ -17,7 +17,7 @@ pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
 
-    isolate.with(move |context| {
+    isolate.exec(move |context| {
         let scope = ContextScope::New(context);
         let source = Local::<V8String>::New(r#"
                 function concat(a, b) {
@@ -30,7 +30,7 @@ pub fn main() {
         println!("{}", result);
     });
 
-    isolate.with(move |context| {
+    isolate.exec(move |context| {
         let scope = ContextScope::New(context);
         let source = Local::<V8String>::New(r#"
                 "Hello, " + "World!"

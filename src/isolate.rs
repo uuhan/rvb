@@ -31,7 +31,7 @@ impl Isolate {
         }
     }
 
-    pub fn with<U, F>(&mut self, run: F) -> U
+    pub fn exec<U, F>(&mut self, run: F) -> U
         where F: FnOnce(Local<Context>) -> U
         {
             self.enter();
