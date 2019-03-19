@@ -136,6 +136,20 @@ impl<T> MaybeLocal<T> {
     }
 }
 
+/// convert Local<T> to MaybeLocal<T>
+impl<T> Into<MaybeLocal<T>> for Local<T> {
+    fn into(self) -> MaybeLocal<T> {
+        let Local {
+            val_, _phantom_0,
+        } = self;
+
+        MaybeLocal {
+            val_,
+            _phantom_0,
+        }
+    }
+}
+
 /// Default DeserializeInternalFieldsCallback
 impl Default for DeserializeInternalFieldsCallback {
     fn default() -> Self {

@@ -20,9 +20,10 @@ pub fn main() {
 
     isolate.with(move |context| {
         let mut global = Local::<ObjectTemplate>::New();
-        global.set(Local::<V8String>::New("foo"), Local::<V8String>::New("bar"));
+        // TODO: set
+        // global.set(Local::<V8String>::New("foo"), Local::<V8String>::New("bar"));
         let mut params = ContextParams::default();
-        params.global_template = global;
+        params.global_template = global.into();
         let ctx = Local::<Context>::New(params);
     });
 }
