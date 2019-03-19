@@ -1,5 +1,7 @@
 use std::ops::Deref;
 use std::ops::DerefMut;
+use std::marker::PhantomData;
+use std::ptr;
 use std::ffi::c_void;
 use std::ffi::CStr;
 use std::mem;
@@ -88,6 +90,21 @@ impl Into<String> for Local<Value> {
 
 /// maybe local to local value
 impl<T> MaybeLocal<T> {
+    /// empty maybelocal
+    /// v8::MaybeLocal<T>()
+    pub fn Empty() -> Self {
+        raw::MaybeLocal {
+            val_: ptr::null_mut(),
+            _phantom_0: PhantomData,
+        }
+    }
+
+    /// if this maybelocal value is nothing
+    pub fn is_empty(&self) -> bool {
+        self.val_.is_null()
+    }
+
+    /// unwrap maybelocal to local
     pub fn to_local_checked(self) -> Local<T> {
         unsafe {
             mem::transmute(
