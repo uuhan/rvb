@@ -11,6 +11,7 @@ use std::convert::Into;
 pub use crate::v8::raw::Local;
 pub use crate::v8::raw::MaybeLocal;
 pub use crate::v8::raw::DeserializeInternalFieldsCallback;
+pub use crate::v8::raw::TryCatch;
 use crate::v8::raw;
 use crate::v8::Value;
 use crate::v8::Isolate;
@@ -49,9 +50,7 @@ pub trait Isolated {
 /// isomorphism to v8::Local<T>
 impl<T> Local<T> {
     pub fn is_empty(self) -> bool {
-        unsafe {
-            self.val_.is_null()
-        }
+        self.val_.is_null()
     }
 }
 
@@ -76,6 +75,18 @@ impl<T> DerefMut for Local<T> {
 
 /// local value lives in an isolate instance
 impl<T> Isolated for Local<T> {}
+
+/// TryCatch Isolated
+impl Isolated for TryCatch {
+    fn New() -> Box<Self> {
+        let isolate = Self::GetIsolate();
+        Box::new(
+            unsafe {
+                TryCatch::new(isolate.0)
+            }
+        )
+    }
+}
 
 /// cast local value into string
 /// use v8::String::Utf8Value
