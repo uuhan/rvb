@@ -49,6 +49,16 @@ pub trait Isolated {
 
 /// isomorphism to v8::Local<T>
 impl<T> Local<T> {
+    /// empty Local<T>
+    /// v8::Local<T>()
+    pub fn Empty() -> Self {
+        raw::Local {
+            val_: ptr::null_mut(),
+            _phantom_0: PhantomData,
+        }
+    }
+
+    /// if Local<T> is empty
     pub fn is_empty(self) -> bool {
         self.val_.is_null()
     }
@@ -102,7 +112,7 @@ impl Into<String> for Local<Value> {
 
 /// maybe local to local value
 impl<T> MaybeLocal<T> {
-    /// empty maybelocal
+    /// empty MaybeLocal<T>
     /// v8::MaybeLocal<T>()
     pub fn Empty() -> Self {
         raw::MaybeLocal {
