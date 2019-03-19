@@ -29,4 +29,8 @@ pub mod v8 {
     pub use crate::value::*;
 
     pub use crate::internal::*;
+
+    pub mod prelude {
+        pub use crate::internal::*;
+    }
 }
