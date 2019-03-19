@@ -19,6 +19,7 @@ pub mod v8 {
     pub use raw::Value;
 
     pub use crate::context::Context;
+    pub use crate::context::ContextParams;
     pub use crate::isolate::Isolate;
     pub use crate::platform::Platform;
     pub use crate::scope::HandleScope;

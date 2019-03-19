@@ -14,12 +14,12 @@ pub use raw::Context;
 
 /// params to use to create a context
 pub struct ContextParams {
-    isolate: *mut raw::Isolate,
-    extensions: *mut raw::ExtensionConfiguration,
-    global_template: MaybeLocal<ObjectTemplate>,
-    global_object: MaybeLocal<Value>,
-    internal_fields_deserializer: DeserializeInternalFieldsCallback,
-    microtask_queue: *mut raw::MicrotaskQueue,
+    pub isolate: *mut raw::Isolate,
+    pub extensions: *mut raw::ExtensionConfiguration,
+    pub global_template: MaybeLocal<ObjectTemplate>,
+    pub global_object: MaybeLocal<Value>,
+    pub internal_fields_deserializer: DeserializeInternalFieldsCallback,
+    pub microtask_queue: *mut raw::MicrotaskQueue,
 }
 
 impl Default for ContextParams {
