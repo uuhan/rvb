@@ -2,6 +2,7 @@ use std::ops::Deref;
 use std::ops::DerefMut;
 use std::marker::PhantomData;
 use std::ptr;
+use std::default::Default;
 use std::ffi::c_void;
 use std::ffi::CStr;
 use std::mem;
@@ -9,6 +10,7 @@ use std::convert::Into;
 
 pub use crate::v8::raw::Local;
 pub use crate::v8::raw::MaybeLocal;
+pub use crate::v8::raw::DeserializeInternalFieldsCallback;
 use crate::v8::raw;
 use crate::v8::Value;
 use crate::v8::Isolate;
@@ -110,6 +112,16 @@ impl<T> MaybeLocal<T> {
             mem::transmute(
                 V8_To_Local_Checked(mem::transmute(self))
             )
+        }
+    }
+}
+
+/// Default DeserializeInternalFieldsCallback
+impl Default for DeserializeInternalFieldsCallback {
+    fn default() -> Self {
+        DeserializeInternalFieldsCallback {
+            callback: None,
+            data: ptr::null_mut(),
         }
     }
 }

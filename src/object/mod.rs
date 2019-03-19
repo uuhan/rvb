@@ -8,3 +8,7 @@ pub use set::*;
 
 pub use crate::v8::raw::Object;
 pub use crate::v8::raw::ObjectTemplate;
+
+use crate::v8::Isolated;
+
+impl Isolated for ObjectTemplate {}

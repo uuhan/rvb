@@ -4,6 +4,8 @@ pub use crate::v8::raw::FunctionTemplate;
 pub use crate::v8::raw::FunctionCallback;
 pub use crate::v8::raw::FunctionCallbackInfo;
 
+use crate::v8::Isolated;
+
 // static kHolderIndex: i8 = 0;
 // static kIsolateIndex: i8 = 1;
 // static kReturnValueDefaultValueIndex: i8 = 2;
@@ -16,3 +18,5 @@ impl FunctionCallbackInfo {
         unimplemented!()
     }
 }
+
+impl Isolated for FunctionTemplate {}
