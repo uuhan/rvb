@@ -24,24 +24,6 @@ V8_Isolate_New()
     return Isolate::New(create_params);
 }
 
-Local<Context>
-V8_Context_New(Isolate* isolate)
-{
-    return Context::New(isolate);
-}
-
-void
-V8_Context_Enter(Local<Context> context)
-{
-    context->Enter();
-}
-
-void
-V8_Context_Exit(Local<Context> context)
-{
-    context->Exit();
-}
-
 Local<Value>
 V8_To_Local_Checked(v8::MaybeLocal<v8::Value> value) {
     return value.ToLocalChecked();

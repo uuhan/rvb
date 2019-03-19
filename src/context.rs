@@ -1,37 +1,93 @@
+use std::ptr;
+
 use crate::v8::raw;
 use crate::v8::Local;
 use crate::v8::Isolated;
 use crate::v8::Rooted;
-
-extern "C" {
-    pub fn V8_Context_New(isolate: *mut raw::Isolate) -> Local<Context>;
-}
+use crate::v8::Object;
+use crate::v8::ObjectTemplate;
+use crate::v8::MaybeLocal;
+use crate::v8::Value;
+use crate::v8::DeserializeInternalFieldsCallback;
 
 pub use raw::Context;
 
+pub struct ContextParams {
+    isolate: *mut raw::Isolate,
+    extensions: *mut raw::ExtensionConfiguration,
+    global_template: MaybeLocal<ObjectTemplate>,
+    global_object: MaybeLocal<Value>,
+    internal_fields_deserializer: DeserializeInternalFieldsCallback,
+    microtask_queue: *mut raw::MicrotaskQueue,
+}
+
+impl Default for ContextParams {
+    fn default() -> Self {
+        ContextParams {
+            isolate: ptr::null_mut(),
+            extensions: ptr::null_mut(),
+            global_template: MaybeLocal::<ObjectTemplate>::Empty(),
+            global_object: MaybeLocal::<Value>::Empty(),
+            internal_fields_deserializer: DeserializeInternalFieldsCallback::default(),
+            microtask_queue: ptr::null_mut(),
+        }
+    }
+}
+
 impl Local<Context> {
-    pub fn New() -> Self {
-        let isolate = Self::GetIsolate();
+    pub fn New(params: ContextParams) -> Self {
+        let ContextParams { isolate, extensions, global_template, global_object, internal_fields_deserializer, microtask_queue } = params;
         unsafe {
-            V8_Context_New(isolate.0)
+            Context::New( isolate, extensions, global_template, global_object, internal_fields_deserializer, microtask_queue )
+        }
+    }
+
+    pub fn Default() -> Self {
+        let isolate = Self::GetIsolate();
+        let mut params = ContextParams::default();
+        params.isolate = isolate.0;
+        Local::<Context>::New(params)
+    }
+
+    /// Returns the global proxy object.
+    ///
+    /// Global proxy object is a thin wrapper those prototype points to actual
+    /// context\'s glbal object with the properties like Object, etc. This is down
+    /// that way for security reasons (for more details see
+    /// https://wiki.mozilla.org/Gecko:SplitWindow).
+    ///
+    /// Please note that changes to global proxy object prototype most probably
+    /// would break VM---v8 expects only global object as a prototype of global
+    /// proxy object.
+    pub fn global(&mut self) -> Local<Object> {
+        unsafe {
+            self.Global()
+        }
+    }
+
+    /// Detaches the global object from its context before
+    /// the global object can be reused to create a new context.
+    pub fn detach(&mut self) {
+        unsafe {
+            self.DetachGlobal()
         }
     }
 }
 
 impl Rooted for Local<Context> {
     fn allocate() -> Self {
-        Local::<Context>::New()
+        Local::<Context>::Default()
     }
 
     fn enter(&mut self) {
         unsafe {
-            (*self.val_).Enter()
+            self.Enter()
         }
     }
 
     fn exit(&mut self) {
         unsafe {
-            (*self.val_).Exit()
+            self.Exit()
         }
     }
 }

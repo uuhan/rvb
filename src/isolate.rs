@@ -36,7 +36,7 @@ impl Isolate {
         {
             self.enter();
             let _handle_scole = HandleScope::New();
-            let mut context = Local::<Context>::New();
+            let mut context = Local::<Context>::Default();
             context.enter();
 
             let result = run(context);
