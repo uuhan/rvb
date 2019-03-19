@@ -12,6 +12,7 @@ use crate::v8::DeserializeInternalFieldsCallback;
 
 pub use raw::Context;
 
+/// params to use to create a context
 pub struct ContextParams {
     isolate: *mut raw::Isolate,
     extensions: *mut raw::ExtensionConfiguration,
@@ -22,6 +23,7 @@ pub struct ContextParams {
 }
 
 impl Default for ContextParams {
+    /// default context params
     fn default() -> Self {
         ContextParams {
             isolate: ptr::null_mut(),
@@ -36,9 +38,22 @@ impl Default for ContextParams {
 
 impl Local<Context> {
     pub fn New(params: ContextParams) -> Self {
-        let ContextParams { isolate, extensions, global_template, global_object, internal_fields_deserializer, microtask_queue } = params;
+        let ContextParams {
+            isolate,
+            extensions,
+            global_template,
+            global_object,
+            internal_fields_deserializer,
+            microtask_queue,
+        } = params;
         unsafe {
-            Context::New( isolate, extensions, global_template, global_object, internal_fields_deserializer, microtask_queue )
+            Context::New(
+                isolate,
+                extensions,
+                global_template,
+                global_object,
+                internal_fields_deserializer,
+                microtask_queue)
         }
     }
 
