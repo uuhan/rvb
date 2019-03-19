@@ -15,22 +15,8 @@ V8_Initialize_Platform()
     return platform;
 }
 
-Isolate*
-V8_Isolate_New()
-{
-    Isolate::CreateParams create_params;
-    create_params.array_buffer_allocator =
-        ArrayBuffer::Allocator::NewDefaultAllocator();
-    return Isolate::New(create_params);
-}
-
 Local<Value>
 V8_To_Local_Checked(v8::MaybeLocal<v8::Value> value) {
     return value.ToLocalChecked();
-}
-
-bool
-V8_Local_Is_Empty(v8::Local<v8::Value> value) {
-    return value.IsEmpty();
 }
 }
