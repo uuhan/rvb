@@ -4,7 +4,10 @@ pub use crate::v8::raw::FunctionTemplate;
 pub use crate::v8::raw::FunctionCallback;
 pub use crate::v8::raw::FunctionCallbackInfo;
 
-use crate::v8::Isolated;
+use crate::v8::{
+    Isolated,
+    Local,
+};
 
 // static kHolderIndex: i8 = 0;
 // static kIsolateIndex: i8 = 1;
@@ -20,3 +23,9 @@ impl FunctionCallbackInfo {
 }
 
 impl Isolated for FunctionTemplate {}
+
+impl Local<Function> {
+    pub fn New() -> Self {
+        unimplemented!()
+    }
+}
