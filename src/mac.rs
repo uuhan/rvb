@@ -16,3 +16,15 @@ macro_rules! deref {
         }
     };
 }
+
+/// visit base class's methods
+macro_rules! base {
+    ($d: ident, $r:ty, $t:ty, $f:ident) => {
+        fn $d(&mut self) -> $r {
+            unsafe {
+                let base = std::mem::transmute_copy::<&mut Self, &mut $t>(&self);
+                base.$f()
+            }
+        }
+    }
+}

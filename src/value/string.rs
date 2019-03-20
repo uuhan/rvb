@@ -8,6 +8,7 @@ use crate::v8::{
     Isolated,
     Name,
     Data,
+    V8Value,
 };
 
 pub use raw::String;
@@ -42,3 +43,5 @@ impl Into<Local<Data>> for Local<String> {
         }
     }
 }
+
+impl V8Value for String {}

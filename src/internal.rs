@@ -41,13 +41,69 @@ pub trait V8Template {
     /// should only impl this trait for ObjectTemplate & FunctionTemplate...
     fn set(&mut self, name: Local<Name>, value: Local<Data>) {
         unsafe {
-            let self_ = mem::transmute_copy::<&mut Self, &mut Template>(&self);
-            self_.Set(
+            let base = mem::transmute_copy::<&mut Self, &mut Template>(&self);
+            base.Set(
                 name,
                 value,
                 PropertyAttribute_None)
         }
     }
+}
+
+/// isomorphism to v8::Value base class
+pub trait V8Value {
+    #[inline]
+    base!(is_true, bool, Value, IsTrue);
+    base!(is_false, bool, Value, IsFalse);
+    base!(is_name, bool, Value, IsName);
+    base!(is_symbol, bool, Value, IsSymbol);
+    base!(is_function, bool, Value, IsFunction);
+    base!(is_array, bool, Value, IsArray);
+    base!(is_object, bool, Value, IsObject);
+    base!(is_bigint, bool, Value, IsBigInt);
+    base!(is_boolean, bool, Value, IsBoolean);
+    base!(is_number, bool, Value, IsNumber);
+    base!(is_external, bool, Value, IsExternal);
+    base!(is_int32, bool, Value, IsInt32);
+    base!(is_uint32, bool, Value, IsUint32);
+    base!(is_date, bool, Value, IsDate);
+    base!(is_argumets_object, bool, Value, IsArgumentsObject);
+    base!(is_bigint_object, bool, Value, IsBigIntObject);
+    base!(is_boolean_object, bool, Value, IsBooleanObject);
+    base!(is_number_object, bool, Value, IsNumberObject);
+    base!(is_string_object, bool, Value, IsStringObject);
+    base!(is_symbol_object, bool, Value, IsSymbolObject);
+    base!(is_native_error, bool, Value, IsNativeError);
+    base!(is_regexp, bool, Value, IsRegExp);
+    base!(is_async_function, bool, Value, IsAsyncFunction);
+    base!(is_generator_function, bool, Value, IsGeneratorFunction);
+    base!(is_promise, bool, Value, IsPromise);
+    base!(is_map, bool, Value, IsMap);
+    base!(is_set, bool, Value, IsSet);
+    base!(is_map_iterator, bool, Value, IsMapIterator);
+    base!(is_set_iterator, bool, Value, IsSetIterator);
+    base!(is_weak_map, bool, Value, IsWeakMap);
+    base!(is_weak_set, bool, Value, IsWeakSet);
+    base!(is_array_buffer, bool, Value, IsArrayBuffer);
+    base!(is_array_bufferview, bool, Value, IsArrayBufferView);
+    base!(is_typed_array, bool, Value, IsTypedArray);
+    base!(is_uint8_array, bool, Value, IsUint8Array);
+    base!(is_uint8_clamped_array, bool, Value, IsUint8ClampedArray);
+    base!(is_int8_array, bool, Value, IsInt8Array);
+    base!(is_uint16_array, bool, Value, IsUint16Array);
+    base!(is_int16_array, bool, Value, IsInt16Array);
+    base!(is_uint32_array, bool, Value, IsUint32Array);
+    base!(is_int32_array, bool, Value, IsInt32Array);
+    base!(is_float32_array, bool, Value, IsFloat32Array);
+    base!(is_float64_array, bool, Value, IsFloat64Array);
+    base!(is_bigint64_array, bool, Value, IsBigInt64Array);
+    base!(is_biguint64_array, bool, Value, IsBigUint64Array);
+    base!(is_dataview, bool, Value, IsDataView);
+    base!(is_shared_array_buffer, bool, Value, IsSharedArrayBuffer);
+    base!(is_proxy, bool, Value, IsProxy);
+    base!(is_webassembly_compiled_module, bool, Value, IsWebAssemblyCompiledModule);
+    base!(is_module_namespace_object, bool, Value, IsModuleNamespaceObject);
+    // TODO: convert function
 }
 
 /// an object can be enter in or exit out
