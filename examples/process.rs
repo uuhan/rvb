@@ -33,7 +33,7 @@ pub fn main() {
                 function concat(a, b) {
                   return a + b
                 }
-                concat("1", foo)
+                concat("foo: ", foo)
             "#);
         let mut script = Local::<Script>::New(ctx, source);
         let result: String = script.run(ctx).to_local_checked().into();
