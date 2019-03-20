@@ -79,3 +79,4 @@ impl Local<Function> {
 }
 
 inherit_local!(FunctionTemplate, Data);
+inherit_local!(Function, Data);

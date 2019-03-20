@@ -13,7 +13,12 @@ use v8::v8::{
     Local,
     ObjectTemplate,
     FunctionTemplate,
+    FunctionCallbackInfo,
 };
+
+extern fn print_fn (info: *const FunctionCallbackInfo) {
+    println!("Hello from Rust!");
+}
 
 pub fn main() {
     let _platform = Platform::New();
@@ -23,17 +28,18 @@ pub fn main() {
     isolate.exec(move |context| {
         let _scope = ContextScope::New(context);
         let mut global = Local::<ObjectTemplate>::New();
-        let mut window = Local::<ObjectTemplate>::New();
+        let mut print = Local::<FunctionTemplate>::New();
+        print.set_handler(Some(print_fn));
 
 
-        let mut params = ContextParams::default();
-
-        global.set(Local::<V8String>::New("window").into(), Local::<ObjectTemplate>::New().into());
         global.set(Local::<V8String>::New("global").into(), Local::<ObjectTemplate>::New().into());
         global.set(Local::<V8String>::New("setTimeout").into(), Local::<FunctionTemplate>::New().into());
+        global.set(Local::<V8String>::New("print").into(), print.into());
 
+        let mut params = ContextParams::default();
         params.global_template = global.into();
         let mut ctx = Local::<Context>::New(params);
+
         let _scope_2 = ContextScope::New(ctx);
 
 
