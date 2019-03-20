@@ -50,6 +50,13 @@ impl Local<FunctionTemplate> {
                 )
         }
     }
+
+    pub fn set_handler(&mut self, handler: FunctionCallback) -> &mut Self {
+        unsafe {
+            self.SetCallHandler(handler, Local::<Value>::Empty(), SideEffectType_kHasSideEffect)
+        }
+        self
+    }
 }
 
 impl Local<Function> {
