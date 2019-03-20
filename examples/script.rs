@@ -12,6 +12,7 @@ use v8::v8::{
     Script,
     Local,
     ObjectTemplate,
+    FunctionTemplate,
 };
 
 pub fn main() {
@@ -26,14 +27,18 @@ pub fn main() {
 
 
         let mut params = ContextParams::default();
-        params.global_template = global.into();
 
-        let ctx = Local::<Context>::New(params);
-        let window_object = window.constructor(ctx).to_local_checked();
-        global.set(Local::<V8String>::New("window").into(), window_object.into());
+        global.set(Local::<V8String>::New("window").into(), Local::<ObjectTemplate>::New().into());
+        global.set(Local::<V8String>::New("global").into(), Local::<ObjectTemplate>::New().into());
+        global.set(Local::<V8String>::New("setTimeout").into(), Local::<FunctionTemplate>::New().into());
+
+        params.global_template = global.into();
+        let mut ctx = Local::<Context>::New(params);
+        let _scope_2 = ContextScope::New(ctx);
+
+
         let source = Local::<V8String>::New(script);
         let mut script = Local::<Script>::New(ctx, source);
-
         let result = script.run(ctx);
 
         if result.is_empty() {

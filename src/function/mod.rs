@@ -15,6 +15,7 @@ use crate::v8::{
     Isolated,
     V8Template,
     Local,
+    Data,
     Value,
 };
 
@@ -56,3 +57,5 @@ impl Local<Function> {
         unimplemented!()
     }
 }
+
+inherit_local!(FunctionTemplate, Data);
