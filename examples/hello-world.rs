@@ -14,7 +14,7 @@ use v8_rs::v8::{
 };
 
 pub fn main() {
-    let _platform = Platform::New();
+    let platform = Platform::New();
     let mut isolate = Isolate::New();
 
     isolate.exec(move |context| {

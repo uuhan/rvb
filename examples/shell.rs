@@ -1,5 +1,6 @@
 #![allow(unused)]
 extern crate v8_rs;
+use std::process;
 use v8_rs::v8::{
     self,
     Platform,
@@ -15,16 +16,14 @@ use v8_rs::v8::{
 };
 
 pub fn main() {
-    let _platform = Platform::New();
+    let mut platform = Platform::New();
     let mut isolate = Isolate::New();
-    unsafe {
-        isolate.exec(|context| {
-            assert!(!context.is_empty());
-
-            let scope = ContextScope::New(context);
-        })
-    }
-    ()
+    isolate.exec(|context| {
+        if context.is_empty() {
+            eprintln!("Error create context!");
+            process::exit(1);
+        }
+    })
 }
 
 fn create_shell_context(isolate: Isolate) {}

@@ -1,6 +1,4 @@
 use std::mem;
-use std::ops::DerefMut;
-use std::ops::Deref;
 
 use crate::v8::raw;
 use crate::v8::Rooted;
