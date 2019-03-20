@@ -15,6 +15,8 @@ use crate::v8::{
     Isolated,
     V8Template,
     Local,
+    MaybeLocal,
+    Context,
     Data,
     Value,
 };
@@ -36,6 +38,7 @@ impl Isolated for FunctionTemplate {}
 impl V8Template for FunctionTemplate {}
 
 impl Local<FunctionTemplate> {
+    /// Create a function template.
     pub fn New() -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
@@ -51,11 +54,21 @@ impl Local<FunctionTemplate> {
         }
     }
 
+    /// Set the call-handler callback for a FunctionTemplate.
+    /// This callback is called whenever the function created from this
+    /// FunctionTemplate is called.
     pub fn set_handler(&mut self, handler: FunctionCallback) -> &mut Self {
         unsafe {
             self.SetCallHandler(handler, Local::<Value>::Empty(), SideEffectType_kHasSideEffect)
         }
         self
+    }
+
+    /// Returns the unique function instance in the current execution context.
+    pub fn get_function(&mut self, context: Local<Context>) -> MaybeLocal<Function> {
+        unsafe {
+            self.GetFunction(context)
+        }
     }
 }
 
