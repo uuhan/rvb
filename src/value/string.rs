@@ -1,6 +1,4 @@
 use std::ffi::CString;
-use std::mem;
-use std::convert::Into;
 
 use crate::v8::{
     raw,

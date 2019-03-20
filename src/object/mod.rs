@@ -1,6 +1,3 @@
-use std::mem;
-use std::convert::Into;
-
 mod array;
 mod map;
 mod set;
@@ -18,8 +15,6 @@ use crate::v8::{
     V8Template,
     FunctionTemplate,
     Isolated,
-
-    PropertyAttribute_None,
 };
 
 pub use crate::v8::raw::{
