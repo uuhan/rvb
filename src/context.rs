@@ -88,6 +88,16 @@ impl Local<Context> {
             self.DetachGlobal()
         }
     }
+
+    /// exec function inside this context
+    pub fn exec<U, F>(&mut self, run: F) -> U
+        where F: FnOnce(&mut Self) -> U
+        {
+            self.enter();
+            let result = run(self);
+            self.exit();
+            result
+        }
 }
 
 impl Rooted for Local<Context> {
