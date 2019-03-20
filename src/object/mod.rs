@@ -1,4 +1,5 @@
 use std::mem;
+use std::convert::Into;
 
 mod array;
 mod map;
@@ -10,10 +11,10 @@ pub use set::*;
 
 use crate::v8::{
     Local,
+    MaybeLocal,
     Value,
-    Name,
     Data,
-    Template,
+    Context,
     V8Template,
     FunctionTemplate,
     Isolated,
@@ -32,6 +33,12 @@ impl Local<ObjectTemplate> {
         let isolate = Self::GetIsolate();
         unsafe {
             ObjectTemplate::New(isolate.0, Local::<FunctionTemplate>::Empty())
+        }
+    }
+
+    pub fn constructor(&mut self, ctx: Local<Context>) -> MaybeLocal<Object> {
+        unsafe {
+            self.NewInstance(ctx)
         }
     }
 }
@@ -56,5 +63,11 @@ impl Local<Object> {
         }
     }
 }
+
+inherit!(ObjectTemplate, Data);
+inherit!(Object, Data);
+
+inherit_local!(ObjectTemplate, Data);
+inherit_local!(Object, Data);
 
 impl V8Template for ObjectTemplate {}

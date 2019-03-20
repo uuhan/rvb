@@ -28,3 +28,30 @@ macro_rules! base {
         }
     }
 }
+
+/// down cast to base class
+/// NB: c++ class inherit only
+macro_rules! inherit {
+    ($source:ty, $base:ty) => {
+        impl ::std::convert::Into<$base> for $source {
+            fn into(self) -> $base {
+                unsafe {
+                    ::std::mem::transmute::<Self, $base>(self)
+                }
+            }
+        }
+    }
+}
+
+/// down cast to base class(inside Local<T>)
+macro_rules! inherit_local {
+    ($source:ty, $base:ty) => {
+        impl ::std::convert::Into<crate::v8::Local<$base>> for crate::v8::Local<$source> {
+            fn into(self) -> crate::v8::Local<$base> {
+                unsafe {
+                    ::std::mem::transmute::<Self, crate::v8::Local<$base>>(self)
+                }
+            }
+        }
+    }
+}

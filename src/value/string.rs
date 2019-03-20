@@ -28,20 +28,10 @@ impl Local<String> {
     }
 }
 
-impl Into<Local<Name>> for Local<String> {
-    fn into(self) -> Local<Name> {
-        unsafe {
-            mem::transmute::<Local<String>, Local<Name>>(self)
-        }
-    }
-}
+inherit!(String, Name);
+inherit!(String, Data);
 
-impl Into<Local<Data>> for Local<String> {
-    fn into(self) -> Local<Data> {
-        unsafe {
-            mem::transmute::<Local<String>, Local<Data>>(self)
-        }
-    }
-}
+inherit_local!(String, Name);
+inherit_local!(String, Data);
 
 impl V8Value for String {}
