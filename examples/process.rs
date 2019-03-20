@@ -1,9 +1,6 @@
 extern crate v8_rs;
 use v8_rs::v8;
 use v8::prelude::*;
-extern {
-    fn V8_Template_Set(obj: Local<ObjectTemplate>, name: Local<Name>, value: Local<Data>);
-}
 use v8::{
     Rooted,
     Local,
@@ -27,12 +24,7 @@ pub fn main() {
         let mut global = Local::<ObjectTemplate>::New();
         let name = Local::<V8String>::New("foo").into();
         let value = Local::<V8String>::New("bar").into();
-        unsafe {
-            V8_Template_Set(global, name, value);
-        }
-        // TODO: set
-        // global.set(Local::<V8String>::New("foo").into(), Local::<V8String>::New("bar").into());
-        //
+        global.set(name, value);
         let mut params = ContextParams::default();
         params.global_template = global.into();
         let ctx = Local::<Context>::New(params);

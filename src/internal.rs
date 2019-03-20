@@ -37,10 +37,11 @@ pub trait PersistentValue<T> {}
 
 /// isomorphism to v8::Template base class
 pub trait V8Template {
+    /// NB: use std::mem::transmute_copy to reinterpert_cast class to it's base class
+    /// should only impl this trait for ObjectTemplate & FunctionTemplate...
     fn set(&mut self, name: Local<Name>, value: Local<Data>) {
         unsafe {
-            let self_ =
-                mem::transmute::<Box<&mut Self>, &mut Template>(Box::new(self));
+            let self_ = mem::transmute_copy::<&mut Self, &mut Template>(&self);
             self_.Set(
                 name,
                 value,

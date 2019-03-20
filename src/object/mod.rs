@@ -14,6 +14,7 @@ use crate::v8::{
     Name,
     Data,
     Template,
+    V8Template,
     FunctionTemplate,
     Isolated,
 
@@ -26,28 +27,11 @@ pub use crate::v8::raw::{
     ObjectTemplate,
 };
 
-extern {
-    fn V8_Template_Set(obj: Local<ObjectTemplate>, name: Local<Name>, value: Local<Data>);
-}
-
 impl Local<ObjectTemplate> {
     pub fn New() -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
             ObjectTemplate::New(isolate.0, Local::<FunctionTemplate>::Empty())
-        }
-    }
-
-
-    pub fn set(self, name: Local<Name>, value: Local<Data>) {
-        unsafe {
-            V8_Template_Set(self, name, value);
-            // let mut self_ =
-            //     mem::transmute::<ObjectTemplate, Template>(*self.val_);
-            // self_.Set(
-            //     name,
-            //     value,
-            //     PropertyAttribute_None)
         }
     }
 }
@@ -73,4 +57,4 @@ impl Local<Object> {
     }
 }
 
-// impl V8Template for ObjectTemplate {}
+impl V8Template for ObjectTemplate {}
