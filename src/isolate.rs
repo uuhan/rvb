@@ -9,8 +9,14 @@ use crate::v8::HandleScope;
 
 pub use raw::Locker;
 pub use raw::Unlocker;
+pub type IsolateData = *mut std::ffi::c_void;
 #[repr(C)]
 pub struct Isolate(pub *mut raw::Isolate);
+
+extern "C" {
+    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: IsolateData);
+    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> IsolateData;
+}
 
 impl Isolate {
     pub fn New() -> Self {
@@ -26,6 +32,18 @@ impl Isolate {
     pub fn Current() -> Self {
         unsafe {
             mem::transmute(raw::Isolate_GetCurrent())
+        }
+    }
+
+    pub fn get(&mut self, slot: u32, data: IsolateData) {
+        unsafe {
+            V8_Isolate_SetData(self.0, slot, data);
+        }
+    }
+
+    pub fn set(&mut self, slot: u32) -> IsolateData {
+        unsafe {
+            V8_Isolate_GetData(self.0, slot)
         }
     }
 
