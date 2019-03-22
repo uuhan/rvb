@@ -39,4 +39,15 @@ pub fn main() {
         let result: String = script.run(context).to_local_checked().into();
         println!("{}", result);
     });
+
+    let mut isolate = Isolate::New();
+    isolate.exec(move |context| {
+        let scope = ContextScope::New(context);
+        let source = Local::<V8String>::New(r#"
+                "Hello, " + "World!"
+            "#);
+        let mut script = Local::<Script>::New(context, source);
+        let result: String = script.run(context).to_local_checked().into();
+        println!("{}", result);
+    });
 }
