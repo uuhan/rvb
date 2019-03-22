@@ -61,7 +61,7 @@ impl Local<Context> {
     pub fn Default() -> Self {
         let isolate = Self::GetIsolate();
         let mut params = ContextParams::default();
-        params.isolate = isolate.0;
+        params.isolate = isolate;
         Local::<Context>::New(params)
     }
 

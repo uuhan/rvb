@@ -27,9 +27,12 @@ pub use crate::v8::raw::{
 
 use crate::v8::Value;
 use crate::v8::Isolate;
+use crate::v8::ISOLATE_DATA_SLOT;
 
 extern "C" {
-    pub fn V8_To_Local_Checked(value: MaybeLocal<*mut c_void>) -> Local<*mut c_void>;
+    fn V8_To_Local_Checked(value: MaybeLocal<*mut c_void>) -> Local<*mut c_void>;
+    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: *mut std::ffi::c_void);
+    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut std::ffi::c_void;
 }
 
 pub struct Address(*mut raw::internal::Address);
@@ -163,18 +166,18 @@ pub trait Rooted {
 }
 
 /// Object Should Live In an Isolate instance
-pub trait Isolated {
+pub trait Isolated<'a> {
     fn New() -> Box<Self> {
         unsafe {
             // TODO: seems not good
             mem::uninitialized()
         }
     }
-    fn GetIsolate() -> Isolate {
+
+    fn GetIsolate() -> &'a mut raw::Isolate {
         unsafe {
             let isolate = raw::Isolate::GetCurrent();
-            assert!(!isolate.is_null());
-            Isolate(isolate)
+            &mut *isolate
         }
     }
 }
@@ -216,15 +219,15 @@ impl<T> DerefMut for Local<T> {
 }
 
 /// local value lives in an isolate instance
-impl<T> Isolated for Local<T> {}
+impl<'a, T> Isolated<'a> for Local<T> {}
 
 /// TryCatch Isolated
-impl Isolated for TryCatch {
+impl<'a> Isolated<'a> for TryCatch {
     fn New() -> Box<Self> {
         let isolate = Self::GetIsolate();
         Box::new(
             unsafe {
-                TryCatch::new(isolate.0)
+                TryCatch::new(isolate)
             }
         )
     }
@@ -236,7 +239,7 @@ impl Into<String> for Local<Value> {
     fn into(self) -> String {
         let isolate = Local::<Value>::GetIsolate();
         unsafe {
-            let ps = raw::String_Utf8Value::new(isolate.0, self).str_;
+            let ps = raw::String_Utf8Value::new(isolate, self).str_;
             CStr::from_ptr(ps).to_owned().into_string().unwrap_or(format!("{:?}", self))
         }
     }

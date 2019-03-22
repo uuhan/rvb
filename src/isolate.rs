@@ -9,13 +9,15 @@ use crate::v8::HandleScope;
 
 pub use raw::Locker;
 pub use raw::Unlocker;
-pub type IsolateData = *mut std::ffi::c_void;
+
+pub const ISOLATE_DATA_SLOT: u32 = 0;
+
 #[repr(C)]
 pub struct Isolate(pub *mut raw::Isolate);
 
 extern "C" {
-    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: IsolateData);
-    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> IsolateData;
+    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: *mut std::ffi::c_void);
+    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut std::ffi::c_void;
 }
 
 impl Isolate {
@@ -25,7 +27,7 @@ impl Isolate {
             create_params.array_buffer_allocator = raw::ArrayBuffer_Allocator::NewDefaultAllocator();
             raw::Isolate::New(&create_params)
         };
-        assert_eq!(false, isolate.is_null());
+        assert!(!isolate.is_null());
         Self(isolate)
     }
 
@@ -35,15 +37,28 @@ impl Isolate {
         }
     }
 
-    pub fn get(&mut self, slot: u32, data: IsolateData) {
+    pub fn get_data_ptr<T>(&self, slot: u32) -> *mut T{
         unsafe {
-            V8_Isolate_SetData(self.0, slot, data);
+            V8_Isolate_GetData(self.0, slot) as *mut T
         }
     }
 
-    pub fn set(&mut self, slot: u32) -> IsolateData {
+    pub fn get_data<T>(&self, slot: u32) -> &mut T {
         unsafe {
-            V8_Isolate_GetData(self.0, slot)
+            (self.get_data_ptr(slot) as *mut T).as_mut().unwrap()
+        }
+    }
+
+    pub fn set_data<T>(&mut self, slot: u32, data: T) {
+        unsafe {
+            let data_ptr: *mut T = Box::into_raw(Box::new(data));
+            V8_Isolate_SetData(self.0, slot, data_ptr as *mut std::ffi::c_void);
+        }
+    }
+
+    pub fn drop_data<T>(&mut self, slot: u32) {
+        unsafe {
+            drop(Box::from_raw(self.get_data_ptr::<T>(slot)))
         }
     }
 
@@ -87,5 +102,19 @@ impl Rooted for Isolate {
         unsafe {
             self.Exit()
         }
+    }
+}
+
+// impl Clone for Isolate {
+//     fn clone(&self) -> Isolate {
+//         println!("clone");
+//         self.get_data::<IsolateData>(ISOLATE_DATA_SLOT).count += 1;
+//         Isolate(self.0)
+//     }
+// }
+
+impl Drop for Isolate {
+    fn drop(&mut self) {
+        println!("drop isolate: {:p}", self);
     }
 }

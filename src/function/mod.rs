@@ -34,7 +34,7 @@ impl FunctionCallbackInfo {
     }
 }
 
-impl Isolated for FunctionTemplate {}
+impl<'a> Isolated<'a> for FunctionTemplate {}
 impl V8Template for FunctionTemplate {}
 
 impl Local<FunctionTemplate> {
@@ -43,7 +43,7 @@ impl Local<FunctionTemplate> {
         let isolate = Self::GetIsolate();
         unsafe {
             FunctionTemplate::New(
-                isolate.0,
+                isolate,
                 None,
                 Local::<Value>::Empty(),
                 Local::<Signature>::Empty(),

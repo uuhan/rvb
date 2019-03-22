@@ -4,12 +4,12 @@ use crate::v8::Isolated;
 use crate::v8::Context;
 use crate::v8::Local;
 
-impl Isolated for HandleScope {
+impl<'a> Isolated<'a> for HandleScope {
     fn New() -> Box<Self> {
         let isolate = Self::GetIsolate();
         Box::new(
             unsafe {
-                HandleScope::new(isolate.0)
+                HandleScope::new(isolate)
             }
         )
     }
@@ -28,7 +28,7 @@ impl ContextScope {
 
 /// Enter a Context
 /// v8::Context::Scope context_scope(context)
-impl Isolated for ContextScope {}
+impl<'a> Isolated<'a> for ContextScope {}
 
 /// Exit a Context
 impl Drop for ContextScope {

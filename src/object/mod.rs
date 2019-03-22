@@ -27,7 +27,7 @@ impl Local<ObjectTemplate> {
     pub fn New() -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
-            ObjectTemplate::New(isolate.0, Local::<FunctionTemplate>::Empty())
+            ObjectTemplate::New(isolate, Local::<FunctionTemplate>::Empty())
         }
     }
 
@@ -42,7 +42,7 @@ impl Local<Object> {
     pub fn New() -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
-            Object::New(isolate.0)
+            Object::New(isolate)
         }
     }
 

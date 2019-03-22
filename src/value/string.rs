@@ -17,7 +17,7 @@ impl Local<String> {
         let isolate = Self::GetIsolate();
         unsafe {
             raw::String::NewFromUtf8(
-                isolate.0,
+                isolate,
                 cstr.unwrap().as_ptr(),
                 raw::String_NewStringType_kNormalString,
                 -1
