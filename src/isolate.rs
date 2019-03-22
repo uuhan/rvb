@@ -115,6 +115,6 @@ impl Rooted for Isolate {
 
 impl Drop for Isolate {
     fn drop(&mut self) {
-        println!("drop isolate: {:p}", self);
+        self.dispose()
     }
 }
