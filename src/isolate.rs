@@ -37,7 +37,7 @@ impl Isolate {
         }
     }
 
-    pub fn get_data_ptr<T>(&self, slot: u32) -> *mut T{
+    pub fn get_data_ptr<T>(&self, slot: u32) -> *mut T {
         unsafe {
             V8_Isolate_GetData(self.0, slot) as *mut T
         }
@@ -45,13 +45,17 @@ impl Isolate {
 
     pub fn get_data<T>(&self, slot: u32) -> &mut T {
         unsafe {
-            (self.get_data_ptr(slot) as *mut T).as_mut().unwrap()
+            let ptr = self.get_data_ptr(slot) as *mut T;
+            match ptr.as_mut() {
+                Some(ptr) => ptr,
+                None => panic!(format!("Isolate::GetData with slot: {} got nothing.", slot)),
+            }
         }
     }
 
     pub fn set_data<T>(&mut self, slot: u32, data: T) {
         unsafe {
-            let data_ptr: *mut T = Box::into_raw(Box::new(data));
+            let data_ptr = Box::into_raw(Box::new(data));
             V8_Isolate_SetData(self.0, slot, data_ptr as *mut std::ffi::c_void);
         }
     }

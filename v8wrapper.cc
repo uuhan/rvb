@@ -40,6 +40,6 @@ V8_Isolate_SetData(Isolate* isolate, uint32_t slot, void* data) {
  */
 void*
 V8_Isolate_GetData(Isolate* isolate, uint32_t slot) {
-    isolate->GetData(slot);
+    return isolate->GetData(slot);
 }
 }
