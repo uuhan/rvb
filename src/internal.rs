@@ -26,13 +26,9 @@ pub use crate::v8::raw::{
 };
 
 use crate::v8::Value;
-use crate::v8::Isolate;
-use crate::v8::ISOLATE_DATA_SLOT;
 
 extern "C" {
     fn V8_To_Local_Checked(value: MaybeLocal<*mut c_void>) -> Local<*mut c_void>;
-    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: *mut std::ffi::c_void);
-    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut std::ffi::c_void;
 }
 
 pub struct Address(*mut raw::internal::Address);
