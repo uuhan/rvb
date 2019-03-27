@@ -31,12 +31,15 @@ impl Isolate {
             create_params.array_buffer_allocator = raw::ArrayBuffer_Allocator::NewDefaultAllocator();
             raw::Isolate::New(&create_params)
         };
-        assert!(!isolate.is_null());
-        unsafe {
-            let init_data_ptr = Box::into_raw(Box::new(IsolateData { count: 1 }));
-            V8_Isolate_SetData(isolate, ISOLATE_DATA_SLOT, init_data_ptr as *mut std::ffi::c_void);
+        if isolate.is_null() {
+            panic!("create isolate failed");
+        } else {
+            unsafe {
+                let init_data_ptr = Box::into_raw(Box::new(IsolateData { count: 1 }));
+                V8_Isolate_SetData(isolate, ISOLATE_DATA_SLOT, init_data_ptr as *mut std::ffi::c_void);
+            }
+            Self(isolate)
         }
-        Self(isolate)
     }
 
     pub fn Current() -> Self {
