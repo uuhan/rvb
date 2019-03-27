@@ -11,3 +11,6 @@ cc = "1.0.30"
 
 [dependencies]
 libc = "0.2.50"
+
+[dev-dependencies]
+criterion = "0.2.10"
