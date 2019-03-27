@@ -48,6 +48,12 @@ impl Isolate {
         }
     }
 
+    pub fn get_current_context(&mut self) -> Local<Context> {
+        unsafe {
+            self.GetCurrentContext()
+        }
+    }
+
     pub fn get_data_ptr<T>(&self, slot: u32) -> *mut T {
         unsafe {
             V8_Isolate_GetData(self.0, slot) as *mut T
