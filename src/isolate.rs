@@ -12,6 +12,10 @@ pub use raw::Unlocker;
 
 pub const ISOLATE_DATA_SLOT: u32 = 0;
 
+pub struct IsolateData {
+    pub count: usize,
+}
+
 #[repr(C)]
 pub struct Isolate(pub *mut raw::Isolate);
 
@@ -28,6 +32,10 @@ impl Isolate {
             raw::Isolate::New(&create_params)
         };
         assert!(!isolate.is_null());
+        unsafe {
+            let init_data_ptr = Box::into_raw(Box::new(IsolateData { count: 1 }));
+            V8_Isolate_SetData(isolate, ISOLATE_DATA_SLOT, init_data_ptr as *mut std::ffi::c_void);
+        }
         Self(isolate)
     }
 
@@ -109,16 +117,20 @@ impl Rooted for Isolate {
     }
 }
 
-// impl Clone for Isolate {
-//     fn clone(&self) -> Isolate {
-//         println!("clone");
-//         self.get_data::<IsolateData>(ISOLATE_DATA_SLOT).count += 1;
-//         Isolate(self.0)
-//     }
-// }
+impl Clone for Isolate {
+    fn clone(&self) -> Isolate {
+        self.get_data::<IsolateData>(ISOLATE_DATA_SLOT).count += 1;
+        Isolate(self.0)
+    }
+}
 
 impl Drop for Isolate {
     fn drop(&mut self) {
-        self.dispose()
+        let ref mut data = self.get_data::<IsolateData>(ISOLATE_DATA_SLOT);
+        data.count -= 1;
+
+        if data.count == 0 {
+            self.dispose();
+        }
     }
 }
