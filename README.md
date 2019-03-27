@@ -5,12 +5,12 @@ NB: This crate assume you have a pre-compiled v8 installed in your os, and with 
 For example (/usr/local/share/pkgconfig/v8.pc):
 
 ```sh
-prefix=/usr/local/Cellar/v8/7.2.502.25
+prefix=/home/v8/source/v8
 
 Name: v8
 Description: v8
-Version: 7.2.502.25
+Version: 7.4.79
 Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib -lv8 -lv8_libbase -lv8_libplatform
+Libs: -L${prefix}/lib -lv8_monolith
 ```
 
