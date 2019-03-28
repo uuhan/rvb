@@ -149,6 +149,20 @@ impl Isolate {
     }
 
     #[inline]
+    pub fn is_dead(&mut self) -> bool {
+        unsafe {
+            self.IsDead()
+        }
+    }
+
+    #[inline]
+    pub fn is_in_use(&mut self) -> bool {
+        unsafe {
+            self.IsInUse()
+        }
+    }
+
+    #[inline]
     pub fn get_array_buffer_allocator(&mut self) -> *mut raw::ArrayBuffer_Allocator {
         unsafe {
             self.GetArrayBufferAllocator()
