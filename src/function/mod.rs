@@ -14,6 +14,7 @@ pub use crate::v8::raw::SideEffectType_kHasSideEffectToReceiver;
 use crate::v8::{
     Isolated,
     V8Template,
+    ObjectTemplate,
     Local,
     MaybeLocal,
     Context,
@@ -39,6 +40,7 @@ impl V8Template for FunctionTemplate {}
 
 impl Local<FunctionTemplate> {
     /// Create a function template.
+    #[inline]
     pub fn New() -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
@@ -57,14 +59,51 @@ impl Local<FunctionTemplate> {
     /// Set the call-handler callback for a FunctionTemplate.
     /// This callback is called whenever the function created from this
     /// FunctionTemplate is called.
-    pub fn set_handler(&mut self, handler: FunctionCallback) -> &mut Self {
+    #[inline]
+    pub fn set_call_handler(&mut self, handler: FunctionCallback) -> &mut Self {
         unsafe {
             self.SetCallHandler(handler, Local::<Value>::Empty(), SideEffectType_kHasSideEffect)
         }
         self
     }
 
+    /// Set the predefined length property for the FunctionTemplate.
+    #[inline]
+    pub fn set_length(&mut self, length: i32) {
+        unsafe {
+            self.SetLength(length.into())
+        }
+    }
+
+    /// Causes the function template to inherit from a parent function template.
+    /// This means the function's prototype.__proto__ is set to the parent
+    /// function's prototype.
+    #[inline]
+    pub fn inherit(&mut self, parent: Self) {
+        unsafe {
+            self.Inherit(parent)
+        }
+    }
+
+    /// Get the InstanceTemplate.
+    #[inline]
+    pub fn instance_template(&mut self) -> Local<ObjectTemplate> {
+        unsafe {
+            self.InstanceTemplate()
+        }
+    }
+
+    /// A PrototypeTemplate is the template used to create the prototype object
+    /// of the function created by this template.
+    #[inline]
+    pub fn prototype_template(&mut self) -> Local<ObjectTemplate> {
+        unsafe {
+            self.PrototypeTemplate()
+        }
+    }
+
     /// Returns the unique function instance in the current execution context.
+    #[inline]
     pub fn get_function(&mut self, context: Local<Context>) -> MaybeLocal<Function> {
         unsafe {
             self.GetFunction(context)
