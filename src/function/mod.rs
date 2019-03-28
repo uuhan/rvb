@@ -14,6 +14,7 @@ pub use crate::v8::raw::SideEffectType_kHasSideEffectToReceiver;
 use crate::v8::{
     Isolated,
     V8Template,
+    V8String,
     ObjectTemplate,
     Local,
     MaybeLocal,
@@ -72,6 +73,16 @@ impl Local<FunctionTemplate> {
     pub fn set_length(&mut self, length: i32) {
         unsafe {
             self.SetLength(length.into())
+        }
+    }
+
+    /// Set the class name of the FunctionTemplate. This is used for
+    /// printing objects created with the function created from the
+    /// FunctionTemplate as its constructor.
+    #[inline]
+    pub fn set_class_name(&mut self, name: Local<V8String>) {
+        unsafe {
+            self.SetClassName(name)
         }
     }
 

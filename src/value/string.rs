@@ -10,6 +10,7 @@ use crate::v8::{
 };
 
 pub use raw::String;
+pub type V8String = raw::String;
 
 impl Local<String> {
     pub fn New<T: ToString>(string: T) -> Self {
