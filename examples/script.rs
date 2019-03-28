@@ -29,7 +29,7 @@ pub fn main() {
         let _scope = ContextScope::New(context);
         let mut global = Local::<ObjectTemplate>::New();
         let mut print = Local::<FunctionTemplate>::New();
-        print.set_handler(Some(print_fn));
+        print.set_call_handler(Some(print_fn), None);
 
 
         global.set(Local::<V8String>::New("global").into(), Local::<ObjectTemplate>::New().into());
