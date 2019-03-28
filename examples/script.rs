@@ -41,7 +41,7 @@ pub fn main() {
 
         let mut params = ContextParams::default();
         params.global_template = global.into();
-        let mut ctx = Local::<Context>::New(params);
+        let ctx = Local::<Context>::New(params);
 
         let _scope_2 = ContextScope::New(ctx);
 
