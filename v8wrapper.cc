@@ -42,4 +42,14 @@ void*
 V8_Isolate_GetData(Isolate* isolate, uint32_t slot) {
     return isolate->GetData(slot);
 }
+
+Isolate*
+V8_FunctionCallbackInfo_GetIsolate(FunctionCallbackInfo<Value>& args) {
+    return args.GetIsolate();
+}
+
+Local<Object>
+V8_FunctionCallbackInfo_This(FunctionCallbackInfo<Value>& args, Local<Object>* out) {
+    return args.This();
+}
 }

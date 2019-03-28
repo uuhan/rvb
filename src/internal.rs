@@ -178,7 +178,7 @@ pub trait Isolated<'a> {
     fn GetIsolate() -> &'a mut raw::Isolate {
         unsafe {
             let isolate = raw::Isolate::GetCurrent();
-            &mut *isolate
+            isolate.as_mut().unwrap()
         }
     }
 }

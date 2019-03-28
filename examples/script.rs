@@ -17,7 +17,10 @@ use v8::v8::{
 };
 
 extern fn print_fn (info: *const FunctionCallbackInfo) {
-    println!("Hello from Rust!");
+    unsafe {
+        let ref this = (*info).this();
+        println!("Hello from Rust! {:p}", this);
+    }
 }
 
 pub fn main() {

@@ -12,9 +12,12 @@ pub use crate::v8::raw::SideEffectType_kHasNoSideEffect;
 pub use crate::v8::raw::SideEffectType_kHasSideEffectToReceiver;
 
 use crate::v8::{
+    raw,
+    raw::internal::Address,
     Isolated,
     V8Template,
     V8String,
+    Object,
     ObjectTemplate,
     Local,
     MaybeLocal,
@@ -22,6 +25,25 @@ use crate::v8::{
     Data,
     Value,
 };
+
+extern "C" {
+    fn V8_FunctionCallbackInfo_GetIsolate(args: *const FunctionCallbackInfo) -> *mut raw::Isolate;
+    fn V8_FunctionCallbackInfo_This(args: *const FunctionCallbackInfo) -> Local<Object>;
+}
+
+pub struct ReturnValue {
+    value_: *mut Address,
+}
+
+impl ReturnValue {
+    pub fn get(&self) -> Local<Value> {
+        unimplemented!()
+    }
+
+    pub fn set<T>(&self, value: T) {
+        unimplemented!()
+    }
+}
 
 // static kHolderIndex: i8 = 0;
 // static kIsolateIndex: i8 = 1;
@@ -31,8 +53,25 @@ use crate::v8::{
 // static kNewTargetIndex: i8 = 5;
 
 impl FunctionCallbackInfo {
-    pub fn isolate(&self) {
-        unimplemented!()
+    #[inline]
+    pub fn get_isolate(&self) -> &mut raw::Isolate {
+        let isolate = unsafe {
+            V8_FunctionCallbackInfo_GetIsolate(self)
+        };
+        if isolate.is_null() {
+            panic!("can not get isolate from FunctionCallbackInfo");
+        } else {
+            unsafe {
+                isolate.as_mut().unwrap()
+            }
+        }
+    }
+
+    #[inline]
+    pub fn this(&self) -> Local<Object> {
+        unsafe {
+            V8_FunctionCallbackInfo_This(self)
+        }
     }
 }
 
