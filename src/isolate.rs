@@ -5,6 +5,7 @@ use crate::v8::Rooted;
 use crate::v8::Isolated;
 use crate::v8::Context;
 use crate::v8::Local;
+use crate::v8::Value;
 use crate::v8::HandleScope;
 
 pub use raw::Locker;
@@ -42,24 +43,63 @@ impl Isolate {
         }
     }
 
+    #[inline]
     pub fn Current() -> Self {
         unsafe {
             mem::transmute(raw::Isolate_GetCurrent())
         }
     }
 
+    #[inline]
+    pub fn in_context(&mut self) -> bool {
+        unsafe {
+            self.InContext()
+        }
+    }
+
+    #[inline]
     pub fn get_current_context(&mut self) -> Local<Context> {
         unsafe {
             self.GetCurrentContext()
         }
     }
 
+    #[inline]
+    pub fn get_entered_context(&mut self) -> Local<Context> {
+        unsafe {
+            self.GetEnteredContext()
+        }
+    }
+
+    #[inline]
+    pub fn get_entered_or_microtask_context(&mut self) -> Local<Context> {
+        unsafe {
+            self.GetEnteredOrMicrotaskContext()
+        }
+    }
+
+    #[inline]
+    pub fn get_incumbent_context(&mut self) -> Local<Context> {
+        unsafe {
+            self.GetIncumbentContext()
+        }
+    }
+
+    #[inline]
+    pub fn throw_exception(&mut self, exception: Local<Value>) -> Local<Value> {
+        unsafe {
+            self.ThrowException(exception)
+        }
+    }
+
+    #[inline]
     pub fn get_data_ptr<T>(&self, slot: u32) -> *mut T {
         unsafe {
             V8_Isolate_GetData(self.0, slot) as *mut T
         }
     }
 
+    #[inline]
     pub fn get_data<T>(&self, slot: u32) -> &mut T {
         unsafe {
             let ptr = self.get_data_ptr(slot) as *mut T;
@@ -70,6 +110,7 @@ impl Isolate {
         }
     }
 
+    #[inline]
     pub fn set_data<T>(&mut self, slot: u32, data: T) {
         unsafe {
             let data_ptr = Box::into_raw(Box::new(data));
@@ -77,6 +118,7 @@ impl Isolate {
         }
     }
 
+    #[inline]
     pub fn drop_data<T>(&mut self, slot: u32) {
         unsafe {
             drop(Box::from_raw(self.get_data_ptr::<T>(slot)))
@@ -99,6 +141,21 @@ impl Isolate {
             result
         }
 
+    #[inline]
+    pub fn set_idle(&mut self, is_idle: bool) {
+        unsafe {
+            self.SetIdle(is_idle)
+        }
+    }
+
+    #[inline]
+    pub fn get_array_buffer_allocator(&mut self) -> *mut raw::ArrayBuffer_Allocator {
+        unsafe {
+            self.GetArrayBufferAllocator()
+        }
+    }
+
+    #[inline]
     pub fn dispose(&mut self) {
         unsafe {
             self.Dispose()
