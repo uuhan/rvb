@@ -61,9 +61,12 @@ impl Local<FunctionTemplate> {
     /// This callback is called whenever the function created from this
     /// FunctionTemplate is called.
     #[inline]
-    pub fn set_call_handler(&mut self, handler: FunctionCallback) -> &mut Self {
+    pub fn set_call_handler(&mut self, handler: FunctionCallback, data: Option<Local<Value>>) -> &mut Self {
         unsafe {
-            self.SetCallHandler(handler, Local::<Value>::Empty(), SideEffectType_kHasSideEffect)
+            match data {
+                Some(data) => self.SetCallHandler(handler, data, SideEffectType_kHasSideEffect),
+                None => self.SetCallHandler(handler, Local::<Value>::Empty(), SideEffectType_kHasSideEffect),
+            }
         }
         self
     }
