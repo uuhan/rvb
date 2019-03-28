@@ -156,13 +156,17 @@ pub trait V8Value {
 
 /// an object can be enter in or exit out
 pub trait Rooted {
+    #[inline]
     fn allocate() -> Self;
+    #[inline]
     fn enter(&mut self);
+    #[inline]
     fn exit(&mut self);
 }
 
 /// Object Should Live In an Isolate instance
 pub trait Isolated<'a> {
+    #[inline]
     fn New() -> Box<Self> {
         unsafe {
             // TODO: seems not good
@@ -170,6 +174,7 @@ pub trait Isolated<'a> {
         }
     }
 
+    #[inline]
     fn GetIsolate() -> &'a mut raw::Isolate {
         unsafe {
             let isolate = raw::Isolate::GetCurrent();
