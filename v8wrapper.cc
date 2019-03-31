@@ -49,7 +49,37 @@ V8_FunctionCallbackInfo_GetIsolate(FunctionCallbackInfo<Value>& args) {
 }
 
 Local<Object>
-V8_FunctionCallbackInfo_This(FunctionCallbackInfo<Value>& args, Local<Object>* out) {
+V8_FunctionCallbackInfo_This(FunctionCallbackInfo<Value>& args) {
     return args.This();
+}
+
+int
+V8_FunctionCallbackInfo_Length(FunctionCallbackInfo<Value>& args) {
+    return args.Length();
+}
+
+Local<Object>
+V8_FunctionCallbackInfo_Holder(FunctionCallbackInfo<Value>& args) {
+    return args.Holder();
+}
+
+Local<Value>
+V8_FunctionCallbackInfo_NewTarget(FunctionCallbackInfo<Value>& args) {
+    return args.NewTarget();
+}
+
+bool
+V8_FunctionCallbackInfo_IsConstructorCall(FunctionCallbackInfo<Value>& args) {
+    return args.IsConstructCall();
+}
+
+Local<Value>
+V8_FunctionCallbackInfo_Data(FunctionCallbackInfo<Value>& args) {
+    return args.Data();
+}
+
+void
+V8_FunctionCallbackInfo_GetReturnValue(FunctionCallbackInfo<Value>& args, ReturnValue<Value>* out) {
+    *out = args.GetReturnValue();
 }
 }

@@ -29,8 +29,15 @@ use crate::v8::{
 extern "C" {
     fn V8_FunctionCallbackInfo_GetIsolate(args: *const FunctionCallbackInfo) -> *mut raw::Isolate;
     fn V8_FunctionCallbackInfo_This(args: *const FunctionCallbackInfo) -> Local<Object>;
+    fn V8_FunctionCallbackInfo_Length(args: *const FunctionCallbackInfo) -> usize;
+    fn V8_FunctionCallbackInfo_Holder(args: *const FunctionCallbackInfo) -> Local<Object>;
+    fn V8_FunctionCallbackInfo_NewTarget(args: *const FunctionCallbackInfo) -> Local<Value>;
+    fn V8_FunctionCallbackInfo_IsConstructorCall(args: *const FunctionCallbackInfo) -> bool;
+    fn V8_FunctionCallbackInfo_Data(args: *const FunctionCallbackInfo) -> Local<Value>;
+    fn V8_FunctionCallbackInfo_GetReturnValue(args: *const FunctionCallbackInfo, out: &mut ReturnValue);
 }
 
+#[repr(C)]
 pub struct ReturnValue {
     value_: *mut Address,
 }
@@ -68,9 +75,53 @@ impl FunctionCallbackInfo {
     }
 
     #[inline]
+    pub fn get_return_value(&self) -> ReturnValue {
+        unsafe {
+            let mut value = std::mem::uninitialized();
+            V8_FunctionCallbackInfo_GetReturnValue(self, &mut value);
+            value
+        }
+    }
+
+    #[inline]
     pub fn this(&self) -> Local<Object> {
         unsafe {
             V8_FunctionCallbackInfo_This(self)
+        }
+    }
+
+    #[inline]
+    pub fn data(&self) -> Local<Value> {
+        unsafe {
+            V8_FunctionCallbackInfo_Data(self)
+        }
+    }
+
+    #[inline]
+    pub fn length(&self) -> usize {
+        unsafe {
+            V8_FunctionCallbackInfo_Length(self)
+        }
+    }
+
+    #[inline]
+    pub fn holder(&self) -> Local<Object> {
+        unsafe {
+            V8_FunctionCallbackInfo_Holder(self)
+        }
+    }
+
+    #[inline]
+    pub fn new_target(&self) -> Local<Value> {
+        unsafe {
+            V8_FunctionCallbackInfo_NewTarget(self)
+        }
+    }
+
+    #[inline]
+    pub fn is_constructor_call(&self) -> bool {
+        unsafe {
+            V8_FunctionCallbackInfo_IsConstructorCall(self)
         }
     }
 }

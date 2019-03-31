@@ -19,7 +19,9 @@ use v8::v8::{
 extern fn print_fn (info: *const FunctionCallbackInfo) {
     unsafe {
         let ref this = (*info).this();
+        let value: String = (*info).data().into();
         println!("Hello from Rust! {:p}", this);
+        println!("args.Data(): {}", value);
     }
 }
 
@@ -32,7 +34,7 @@ pub fn main() {
         let _scope = ContextScope::New(context);
         let mut global = Local::<ObjectTemplate>::New();
         let mut print = Local::<FunctionTemplate>::New();
-        print.set_call_handler(Some(print_fn), None);
+        print.set_call_handler(Some(print_fn), Some(Local::<V8String>::New("test data").into()));
 
 
         global.set(Local::<V8String>::New("global").into(), Local::<ObjectTemplate>::New().into());
