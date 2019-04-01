@@ -212,3 +212,6 @@ impl Local<Function> {
 
 inherit_local!(FunctionTemplate, Data);
 inherit_local!(Function, Data);
+
+inherit!(Function, Object);
+inherit_local!(Function, Object);
