@@ -84,6 +84,11 @@ V8_FunctionCallbackInfo_GetReturnValue(FunctionCallbackInfo<Value>& args, Return
 }
 
 void
+V8_ReturnValue_SetLocalValue(ReturnValue<Value>& in, Local<Value> value) {
+    in.Set(value);
+}
+
+void
 V8_ReturnValue_SetNull(ReturnValue<Value>& in) {
     in.SetNull();
 }

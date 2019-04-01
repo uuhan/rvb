@@ -11,6 +11,7 @@ use v8::v8::{
     String as V8String,
     Script,
     Local,
+    Value,
     ObjectTemplate,
     FunctionTemplate,
     FunctionCallbackInfo,
@@ -18,10 +19,13 @@ use v8::v8::{
 
 extern fn print_fn (info: *const FunctionCallbackInfo) {
     unsafe {
-        let ref this = (*info).this();
+        let this = (*info).this();
         let value: String = (*info).data().into();
-        println!("Hello from Rust! {:p}", this);
+        let mut rc = (*info).get_return_value();
+        println!("Hello from Rust!");
         println!("args.Data(): {}", value);
+
+        rc.set::<Local<Value>>(this.into());
     }
 }
 

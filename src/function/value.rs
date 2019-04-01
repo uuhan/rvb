@@ -97,7 +97,18 @@ impl ReturnedValue for i32 {
     }
 }
 
-// impl ReturnedValue for Local<Value> {}
+impl ReturnedValue for Local<Value> {
+    type Item = Local<Value>;
+    fn set(value: Self::Item, rv: &ReturnValue) {
+        extern "C" {
+            fn V8_ReturnValue_SetLocalValue(rv: &ReturnValue, value: Local<Value>);
+        }
+
+        unsafe {
+            V8_ReturnValue_SetLocalValue(rv, value)
+        }
+    }
+}
 
 // TODO
 // impl ReturnedValue for Persistent<Value> {}

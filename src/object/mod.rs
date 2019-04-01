@@ -61,8 +61,12 @@ impl Local<Object> {
 
 inherit!(ObjectTemplate, Data);
 inherit!(Object, Data);
+inherit!(ObjectTemplate, Value);
+inherit!(Object, Value);
 
 inherit_local!(ObjectTemplate, Data);
 inherit_local!(Object, Data);
+inherit_local!(ObjectTemplate, Value);
+inherit_local!(Object, Value);
 
 impl V8Template for ObjectTemplate {}
