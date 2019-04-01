@@ -26,6 +26,9 @@ use crate::v8::{
     Value,
 };
 
+mod value;
+use value::ReturnValue;
+
 extern "C" {
     fn V8_FunctionCallbackInfo_GetIsolate(args: *const FunctionCallbackInfo) -> *mut raw::Isolate;
     fn V8_FunctionCallbackInfo_This(args: *const FunctionCallbackInfo) -> Local<Object>;
@@ -36,38 +39,6 @@ extern "C" {
     fn V8_FunctionCallbackInfo_Data(args: *const FunctionCallbackInfo) -> Local<Value>;
     fn V8_FunctionCallbackInfo_GetReturnValue(args: *const FunctionCallbackInfo, out: &mut ReturnValue);
 
-    fn V8_ReturnValue_SetNull(value: &ReturnValue);
-    fn V8_ReturnValue_SetUndefined(value: &ReturnValue);
-}
-
-#[repr(C)]
-pub struct ReturnValue {
-    value_: *mut Address,
-}
-
-impl ReturnValue {
-    pub fn get(&self) -> Local<Value> {
-        unimplemented!()
-    }
-
-    pub fn set<T>(&self, value: Local<T>)
-    {
-        unimplemented!()
-    }
-
-    #[inline]
-    pub fn set_null(&self) {
-        unsafe {
-            V8_ReturnValue_SetNull(self)
-        }
-    }
-
-    #[inline]
-    pub fn set_undefined(&self) {
-        unsafe {
-            V8_ReturnValue_SetUndefined(self)
-        }
-    }
 }
 
 // static kHolderIndex: i8 = 0;

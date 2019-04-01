@@ -177,7 +177,7 @@ impl Isolate {
     }
 }
 
-deref!(Isolate);
+deref_mut!(Isolate);
 
 impl Rooted for Isolate {
     fn allocate() -> Self {

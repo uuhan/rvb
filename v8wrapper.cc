@@ -92,4 +92,24 @@ void
 V8_ReturnValue_SetUndefined(ReturnValue<Value>& in) {
     in.SetUndefined();
 }
+
+void
+V8_ReturnValue_SetBool(ReturnValue<Value>& in, bool value) {
+    in.Set(value);
+}
+
+void
+V8_ReturnValue_SetDouble(ReturnValue<Value>& in, double value) {
+    in.Set(value);
+}
+
+void
+V8_ReturnValue_SetInt32(ReturnValue<Value>& in, int32_t value) {
+    in.Set(value);
+}
+
+void
+V8_ReturnValue_SetUint32(ReturnValue<Value>& in, uint32_t value) {
+    in.Set(value);
+}
 }

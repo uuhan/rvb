@@ -1,4 +1,4 @@
-macro_rules! deref {
+macro_rules! deref_mut {
     ($s:ident) => {
         impl ::std::ops::Deref for $s {
             type Target = crate::v8::raw::$s;
@@ -16,6 +16,18 @@ macro_rules! deref {
         }
     };
 }
+
+macro_rules! deref {
+    ($s:ident) => {
+        impl ::std::ops::Deref for $s {
+            type Target = crate::v8::raw::$s;
+            fn deref(&self) -> &Self::Target {
+                unsafe { &*self.0 }
+            }
+        }
+    };
+}
+
 
 /// visit base class's methods
 macro_rules! base {
