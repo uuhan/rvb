@@ -15,25 +15,25 @@ pub struct ReturnValue {
 }
 
 impl ReturnValue {
-    pub fn get(&self) -> Local<Value> {
+    pub fn get(&mut self) -> Local<Value> {
         unimplemented!()
     }
 
-    pub fn set<T>(&self, value: <T as ReturnedValue>::Item)
+    pub fn set<T>(&mut self, value: <T as ReturnedValue>::Item)
         where T: ReturnedValue
         {
             T::set(value, self)
         }
 
     #[inline]
-    pub fn set_null(&self) {
+    pub fn set_null(&mut self) {
         unsafe {
             V8_ReturnValue_SetNull(self)
         }
     }
 
     #[inline]
-    pub fn set_undefined(&self) {
+    pub fn set_undefined(&mut self) {
         unsafe {
             V8_ReturnValue_SetUndefined(self)
         }
@@ -59,9 +59,43 @@ impl ReturnedValue for bool {
     }
 }
 
-// impl ReturnedValue for f64 {}
-// impl ReturnedValue for u32 {}
-// impl ReturnedValue for i32 {}
+impl ReturnedValue for f64 {
+    type Item = f64;
+    fn set(value: Self::Item, rv: &ReturnValue) {
+        extern "C" {
+            fn V8_ReturnValue_SetDouble(rv: &ReturnValue, value: f64);
+        }
+
+        unsafe {
+            V8_ReturnValue_SetDouble(rv, value)
+        }
+    }
+}
+
+impl ReturnedValue for u32 {
+    type Item = u32;
+    fn set(value: Self::Item, rv: &ReturnValue) {
+        extern "C" {
+            fn V8_ReturnValue_SetUint32(rv: &ReturnValue, value: u32);
+        }
+
+        unsafe {
+            V8_ReturnValue_SetUint32(rv, value)
+        }
+    }
+}
+impl ReturnedValue for i32 {
+    type Item = i32;
+    fn set(value: Self::Item, rv: &ReturnValue) {
+        extern "C" {
+            fn V8_ReturnValue_SetInt32(rv: &ReturnValue, value: i32);
+        }
+
+        unsafe {
+            V8_ReturnValue_SetInt32(rv, value)
+        }
+    }
+}
 
 // impl ReturnedValue for Local<Value> {}
 
