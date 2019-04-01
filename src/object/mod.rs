@@ -3,12 +3,16 @@ mod map;
 mod set;
 mod promise;
 mod proxy;
+mod date;
+mod regexp;
 
 pub use array::*;
 pub use map::*;
 pub use set::*;
 pub use promise::*;
 pub use proxy::*;
+pub use date::*;
+pub use regexp::*;
 
 use crate::v8::{
     Local,
