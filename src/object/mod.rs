@@ -1,10 +1,12 @@
 mod array;
 mod map;
 mod set;
+mod promise;
 
 pub use array::*;
 pub use map::*;
 pub use set::*;
+pub use promise::*;
 
 use crate::v8::{
     Local,
