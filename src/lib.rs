@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
+
 #[macro_use]
 pub(crate) mod mac;
-
 mod context;
 mod ffi;
 mod isolate;
@@ -13,8 +13,10 @@ mod internal;
 mod value;
 mod object;
 mod function;
+pub mod utils;
 
 pub mod v8 {
+    pub use crate::utils;
     pub use crate::ffi::root::v8 as raw;
     pub use raw::Value;
 

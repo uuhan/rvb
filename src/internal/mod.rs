@@ -1,3 +1,6 @@
+#![allow(unused_imports)]
+mod utils;
+
 use std::ops::Deref;
 use std::ops::DerefMut;
 use std::marker::PhantomData;
@@ -8,6 +11,7 @@ use std::ffi::CStr;
 use std::mem;
 use std::convert::Into;
 
+pub(crate) use utils::*;
 use crate::v8::raw;
 pub use crate::v8::raw::{
     Local,
