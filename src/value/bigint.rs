@@ -1,8 +1,8 @@
 pub use crate::v8::raw::BigInt;
 
 use crate::v8::{
-    Value,
+    Primitive,
 };
 
-inherit!(BigInt, Value);
-inherit_local!(BigInt, Value);
+inherit!(BigInt, Primitive);
+inherit_local!(BigInt, Primitive);
