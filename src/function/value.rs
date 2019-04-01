@@ -10,11 +10,11 @@ extern "C" {
 }
 
 #[repr(C)]
-pub struct ReturnValue {
-    value_: *mut Address,
+pub struct ReturnValue<'a> {
+    value_: &'a mut Address,
 }
 
-impl ReturnValue {
+impl<'a> ReturnValue<'a> {
     pub fn get(&mut self) -> Local<Value> {
         unimplemented!()
     }
