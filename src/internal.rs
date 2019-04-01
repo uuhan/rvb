@@ -200,6 +200,15 @@ impl<T> Local<T> {
     }
 }
 
+pub trait LocalValue {
+    type Item;
+}
+
+/// Local Value Trait
+impl<T> LocalValue for Local<T> {
+    type Item = T;
+}
+
 /// local value auto deref
 impl<T> Deref for Local<T> {
     type Target = T;

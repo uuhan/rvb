@@ -35,6 +35,9 @@ extern "C" {
     fn V8_FunctionCallbackInfo_IsConstructorCall(args: *const FunctionCallbackInfo) -> bool;
     fn V8_FunctionCallbackInfo_Data(args: *const FunctionCallbackInfo) -> Local<Value>;
     fn V8_FunctionCallbackInfo_GetReturnValue(args: *const FunctionCallbackInfo, out: &mut ReturnValue);
+
+    fn V8_ReturnValue_SetNull(value: &ReturnValue);
+    fn V8_ReturnValue_SetUndefined(value: &ReturnValue);
 }
 
 #[repr(C)]
@@ -47,8 +50,23 @@ impl ReturnValue {
         unimplemented!()
     }
 
-    pub fn set<T>(&self, value: T) {
+    pub fn set<T>(&self, value: Local<T>)
+    {
         unimplemented!()
+    }
+
+    #[inline]
+    pub fn set_null(&self) {
+        unsafe {
+            V8_ReturnValue_SetNull(self)
+        }
+    }
+
+    #[inline]
+    pub fn set_undefined(&self) {
+        unsafe {
+            V8_ReturnValue_SetUndefined(self)
+        }
     }
 }
 

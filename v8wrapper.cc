@@ -82,4 +82,14 @@ void
 V8_FunctionCallbackInfo_GetReturnValue(FunctionCallbackInfo<Value>& args, ReturnValue<Value>* out) {
     *out = args.GetReturnValue();
 }
+
+void
+V8_ReturnValue_SetNull(ReturnValue<Value>& in) {
+    in.SetNull();
+}
+
+void
+V8_ReturnValue_SetUndefined(ReturnValue<Value>& in) {
+    in.SetUndefined();
+}
 }
