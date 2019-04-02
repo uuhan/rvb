@@ -7,14 +7,14 @@ use v8::{
     Isolate,
     ISOLATE_DATA_SLOT,
     IsolateData,
-    String as V8String,
+    V8String,
 };
 
 pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
 
-    isolate.set_data::<u32>(1, 100);
+    isolate.set_data::<String>(1, "Come on, Isolate!".into());
 
     isolate.exec(move |_context| {
         let mut str1 = Local::<V8String>::New("foo");
@@ -22,7 +22,8 @@ pub fn main() {
         println!("str1 is name: {}", str1.is_name());
     });
 
-    let v = isolate.get_data::<u32>(1);
+    let v = isolate.get_data::<String>(1);
     let data = isolate.get_data::<IsolateData>(ISOLATE_DATA_SLOT);
-    println!("{} {}", data.count, v);
+    println!("Isolate Ref Count: {}", data.count);
+    println!("{}", v);
 }
