@@ -56,14 +56,11 @@ macro_rules! inherit {
                 }
             }
 
-            impl ::std::convert::TryFrom<$base> for $source {
-                type Error = crate::v8::V8Error;
-                fn try_from(v: $base) -> Result<Self, Self::Error> {
+            impl ::std::convert::From<$base> for $source {
+                fn from(v: $base) -> Self {
                     unsafe {
-                        // TODO: static_cast check
-                        Ok(
-                            ::std::mem::transmute::<$base, Self>(v)
-                        )
+                        // TODO: use TryFrom
+                        ::std::mem::transmute::<$base, Self>(v)
                     }
                 }
             }
