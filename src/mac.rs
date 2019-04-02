@@ -1,3 +1,5 @@
+// some macros
+
 macro_rules! deref_mut {
     ($s:ident) => {
         impl ::std::ops::Deref for $s {
@@ -50,6 +52,18 @@ macro_rules! inherit {
                 fn into(self) -> $base {
                     unsafe {
                         ::std::mem::transmute::<Self, $base>(self)
+                    }
+                }
+            }
+
+            impl ::std::convert::TryFrom<$base> for $source {
+                type Error = crate::v8::V8Error;
+                fn try_from(v: $base) -> Result<Self, Self::Error> {
+                    unsafe {
+                        // TODO: static_cast check
+                        Ok(
+                            ::std::mem::transmute::<$base, Self>(v)
+                        )
                     }
                 }
             }
