@@ -1,8 +1,10 @@
 use crate::v8::{
     raw::Promise,
     Object,
+    Value,
+    Data,
 };
 
 
-inherit!(Object, Promise);
-inherit_local!(Object, Promise);
+inherit!(Promise, Object, Value, Data);
+inherit_local!(Promise, Object, Value, Data);
