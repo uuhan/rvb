@@ -5,7 +5,9 @@ use crate::v8::{
     Local,
     Isolated,
     Name,
+    Primitive,
     Value,
+    Data,
     V8Value,
 };
 
@@ -27,10 +29,8 @@ impl Local<String> {
     }
 }
 
-inherit!(String, Name);
-inherit_local!(String, Name);
-inherit!(String, Value);
-inherit_local!(String, Value);
+inherit!(String, Name, Primitive, Value, Data);
+inherit_local!(String, Name, Primitive, Value, Data);
 
 
 impl V8Value for String {}

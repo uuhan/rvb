@@ -15,15 +15,16 @@ use crate::v8::{
     raw,
     raw::internal::Address,
     Isolated,
+    Template,
     V8Template,
     V8String,
-    Object,
     ObjectTemplate,
     Local,
     MaybeLocal,
     Context,
-    Data,
+    Object,
     Value,
+    Data,
 };
 
 mod value;
@@ -210,8 +211,8 @@ impl Local<Function> {
     }
 }
 
-inherit_local!(FunctionTemplate, Data);
-inherit_local!(Function, Data);
+inherit!(FunctionTemplate, Template, Data);
+inherit_local!(FunctionTemplate, Template, Data);
 
-inherit!(Function, Object);
-inherit_local!(Function, Object);
+inherit!(Function, Object, Value, Data);
+inherit_local!(Function, Object, Value, Data);

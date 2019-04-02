@@ -23,11 +23,11 @@ pub use name::*;
 inherit!(Value, Data);
 inherit_local!(Value, Data);
 
-inherit!(Primitive, Value);
-inherit_local!(Primitive, Value);
+inherit!(Primitive, Value, Data);
+inherit_local!(Primitive, Value, Data);
 
-inherit!(Number, Primitive);
-inherit_local!(Number, Primitive);
+inherit!(Number, Primitive, Value, Data);
+inherit_local!(Number, Primitive, Value, Data);
 
-inherit!(Integer, Number);
-inherit_local!(Integer, Number);
+inherit!(Integer, Number, Primitive, Value, Data);
+inherit_local!(Integer, Number, Primitive, Value, Data);

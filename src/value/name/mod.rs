@@ -1,6 +1,8 @@
 use crate::v8::{
     raw,
     Primitive,
+    Value,
+    Data,
 };
 
 pub use raw::Name;
@@ -11,4 +13,4 @@ mod symbol;
 pub use string::*;
 pub use symbol::*;
 
-inherit!(Name, Primitive);
+inherit!(Name, Primitive, Value, Data);
