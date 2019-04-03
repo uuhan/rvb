@@ -197,6 +197,7 @@ impl Rooted for Isolate {
     }
 }
 
+/// Clone an Isolate
 impl Clone for Isolate {
     fn clone(&self) -> Isolate {
         self.get_data::<IsolateData>(ISOLATE_DATA_SLOT).count += 1;
@@ -204,6 +205,7 @@ impl Clone for Isolate {
     }
 }
 
+/// Drop an Isolate
 impl Drop for Isolate {
     fn drop(&mut self) {
         let ref mut data = self.get_data::<IsolateData>(ISOLATE_DATA_SLOT);
