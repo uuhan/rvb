@@ -122,12 +122,12 @@ impl V8Template for FunctionTemplate {}
 impl Local<FunctionTemplate> {
     /// Create a function template.
     #[inline]
-    pub fn New() -> Self {
+    pub fn New(handler: FunctionCallback) -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
             FunctionTemplate::New(
                 isolate,
-                None,
+                handler,
                 Local::<Value>::Empty(),
                 Local::<Signature>::Empty(),
                 0,

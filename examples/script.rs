@@ -37,12 +37,10 @@ pub fn main() {
     isolate.exec(move |context| {
         let _scope = ContextScope::New(context);
         let mut global = Local::<ObjectTemplate>::New();
-        let mut print = Local::<FunctionTemplate>::New();
-        print.set_call_handler(Some(print_fn), Some(Local::<V8String>::New("test data").into()));
-
+        let mut print = Local::<FunctionTemplate>::New(Some(print_fn));
 
         global.set(Local::<V8String>::New("global").into(), Local::<ObjectTemplate>::New().into());
-        global.set(Local::<V8String>::New("setTimeout").into(), Local::<FunctionTemplate>::New().into());
+        global.set(Local::<V8String>::New("setTimeout").into(), Local::<FunctionTemplate>::New(None).into());
         global.set(Local::<V8String>::New("print").into(), print.into());
 
         let mut params = ContextParams::default();
