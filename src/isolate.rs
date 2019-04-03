@@ -43,6 +43,8 @@ impl Isolate {
         }
     }
 
+    /// Returns the entered isolate for the current thread or NULL in
+    /// case there is no current isolate.
     #[inline]
     pub fn Current() -> Self {
         unsafe {
@@ -50,6 +52,7 @@ impl Isolate {
         }
     }
 
+    /// Returns true if this isolate has a current context.
     #[inline]
     pub fn in_context(&mut self) -> bool {
         unsafe {
@@ -57,6 +60,8 @@ impl Isolate {
         }
     }
 
+    /// Returns the context of the currently running JavaScript, or the context
+    /// on the top of the stack if no JavaScript is running.
     #[inline]
     pub fn get_current_context(&mut self) -> Local<Context> {
         unsafe {
@@ -64,6 +69,7 @@ impl Isolate {
         }
     }
 
+    /// Returned the entered context.
     #[inline]
     pub fn get_entered_context(&mut self) -> Local<Context> {
         unsafe {
@@ -71,6 +77,10 @@ impl Isolate {
         }
     }
 
+    /// Returns either the last context entered through V8's C++ API, or the
+    /// context of the currently running microtask while processing microtasks.
+    /// If a context is entered while executing a microtask, that context is
+    /// returned.
     #[inline]
     pub fn get_entered_or_microtask_context(&mut self) -> Local<Context> {
         unsafe {
@@ -78,6 +88,8 @@ impl Isolate {
         }
     }
 
+    /// Returns the Context that corresponds to the Incumbent realm in HTML spec.
+    /// https://html.spec.whatwg.org/multipgage/webappapis.html#incumbent
     #[inline]
     pub fn get_incumbent_context(&mut self) -> Local<Context> {
         unsafe {
@@ -85,6 +97,10 @@ impl Isolate {
         }
     }
 
+    /// Schedules an exception to be thrown when returning to JavaScript. When an
+    /// exception has been scheduled it is illegal to invoke any JavaScript
+    /// operation; the caller must return immediately and only after the exception
+    /// has been handled does it become legal to invoke JavaScript operation.
     #[inline]
     pub fn throw_exception(&mut self, exception: Local<Value>) -> Local<Value> {
         unsafe {
@@ -92,6 +108,7 @@ impl Isolate {
         }
     }
 
+    /// Get data ptr in slot.
     #[inline]
     pub fn get_data_ptr<T>(&self, slot: u32) -> *mut T {
         unsafe {
@@ -99,6 +116,7 @@ impl Isolate {
         }
     }
 
+    /// Get data in slot.
     #[inline]
     pub fn get_data<T>(&self, slot: u32) -> &mut T {
         unsafe {
@@ -110,6 +128,7 @@ impl Isolate {
         }
     }
 
+    /// Set data to slot.
     #[inline]
     pub fn set_data<T>(&mut self, slot: u32, data: T) {
         unsafe {
@@ -118,6 +137,7 @@ impl Isolate {
         }
     }
 
+    /// Drop data in slot.
     #[inline]
     pub fn drop_data<T>(&mut self, slot: u32) {
         unsafe {
@@ -125,6 +145,7 @@ impl Isolate {
         }
     }
 
+    /// Helper function to execute.
     pub fn exec<U, F>(&mut self, run: F) -> U
         where F: FnOnce(Local<Context>) -> U
         {
@@ -141,6 +162,7 @@ impl Isolate {
             result
         }
 
+    /// Tells the VM whether the embedder is idle or not.
     #[inline]
     pub fn set_idle(&mut self, is_idle: bool) {
         unsafe {
@@ -148,6 +170,8 @@ impl Isolate {
         }
     }
 
+    /// Check if V8 is dead and thereforce unusable. This is the case after
+    /// fatal errors such as out-of-meomory situations.
     #[inline]
     pub fn is_dead(&mut self) -> bool {
         unsafe {
@@ -155,6 +179,8 @@ impl Isolate {
         }
     }
 
+    /// Check if this isolate is in use.
+    /// True if at least one thread Enter'ed this isolate.
     #[inline]
     pub fn is_in_use(&mut self) -> bool {
         unsafe {
@@ -162,6 +188,7 @@ impl Isolate {
         }
     }
 
+    /// Returns the ArrayBuffer::Allocator used in this isolate.
     #[inline]
     pub fn get_array_buffer_allocator(&mut self) -> *mut raw::ArrayBuffer_Allocator {
         unsafe {
@@ -169,6 +196,8 @@ impl Isolate {
         }
     }
 
+    /// Disposes the isolate. The isolate must not be entered by any
+    /// thread to be disposable.
     #[inline]
     pub fn dispose(&mut self) {
         unsafe {
