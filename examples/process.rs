@@ -21,7 +21,7 @@ pub fn main() {
     let mut isolate = Isolate::New();
 
     isolate.exec(move |context| {
-        let mut global = Local::<ObjectTemplate>::New();
+        let mut global = Local::<ObjectTemplate>::New(None);
         let name = Local::<V8String>::New("foo").into();
         let value = Local::<V8String>::New("bar").into();
         global.set(name, value);
