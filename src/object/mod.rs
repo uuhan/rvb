@@ -35,6 +35,7 @@ pub use crate::v8::raw::{
     AccessControl,
     PropertyAttribute,
     AccessorSignature,
+    FunctionCallback,
     SideEffectType,
     NamedPropertyHandlerConfiguration,
 };
@@ -72,33 +73,33 @@ impl Local<ObjectTemplate> {
     }
 
 
-    /// Sets an accessor on the object template."]
-    ///"]
-    /// Whenever the property with the given name is accessed on objects"]
-    /// created from this ObjectTemplate the getter and setter callbacks"]
-    /// are called instead of getting and setting the property directly"]
-    /// on the JavaScript object."]
-    ///"]
-    /// \\param name The name of the property for which an accessor is added."]
-    /// \\param getter The callback to invoke when getting the property."]
-    /// \\param setter The callback to invoke when setting the property."]
-    /// \\param data A piece of data that will be passed to the getter and setter"]
-    ///   callbacks whenever they are invoked."]
-    /// \\param settings Access control settings for the accessor. This is a bit"]
-    ///   field consisting of one of more of"]
-    ///   DEFAULT = 0, ALL_CAN_READ = 1, or ALL_CAN_WRITE = 2."]
-    ///   The default is to not allow cross-context access."]
-    ///   ALL_CAN_READ means that all cross-context reads are allowed."]
-    ///   ALL_CAN_WRITE means that all cross-context writes are allowed."]
-    ///   The combination ALL_CAN_READ | ALL_CAN_WRITE can be used to allow all"]
-    ///   cross-context access."]
-    /// \\param attribute The attributes of the property for which an accessor"]
-    ///   is added."]
-    /// \\param signature The signature describes valid receivers for the accessor"]
-    ///   and is used to perform implicit instance checks against them. If the"]
-    ///   receiver is incompatible (i.e. is not an instance of the constructor as"]
-    ///   defined by FunctionTemplate::HasInstance()), an implicit TypeError is"]
-    ///   thrown and no callback is invoked."]
+    /// Sets an accessor on the object template.
+    ///
+    /// Whenever the property with the given name is accessed on objects
+    /// created from this ObjectTemplate the getter and setter callbacks
+    /// are called instead of getting and setting the property directly
+    /// on the JavaScript object.
+    ///
+    /// @param name The name of the property for which an accessor is added.
+    /// @param getter The callback to invoke when getting the property.
+    /// @param setter The callback to invoke when setting the property.
+    /// @param data A piece of data that will be passed to the getter and setter
+    ///   callbacks whenever they are invoked.
+    /// @param settings Access control settings for the accessor. This is a bit
+    ///   field consisting of one of more of
+    ///   DEFAULT = 0, ALL_CAN_READ = 1, or ALL_CAN_WRITE = 2.
+    ///   The default is to not allow cross-context access.
+    ///   ALL_CAN_READ means that all cross-context reads are allowed.
+    ///   ALL_CAN_WRITE means that all cross-context writes are allowed.
+    ///   The combination ALL_CAN_READ | ALL_CAN_WRITE can be used to allow all
+    ///   cross-context access.
+    /// @param attribute The attributes of the property for which an accessor
+    ///   is added.
+    /// @param signature The signature describes valid receivers for the accessor
+    ///   and is used to perform implicit instance checks against them. If the
+    ///   receiver is incompatible (i.e. is not an instance of the constructor as
+    ///   defined by FunctionTemplate::HasInstance()), an implicit TypeError is
+    ///   thrown and no callback is invoked.
     #[inline]
     pub fn set_accessor(&mut self,
                         name: Local<V8String>,
@@ -138,6 +139,30 @@ impl Local<ObjectTemplate> {
     pub fn set_handler(&mut self, configuration: *const NamedPropertyHandlerConfiguration) {
         unsafe {
             self.SetHandler(configuration)
+        }
+    }
+
+    /// Sets the callback to be used when calling instances created from
+    /// this template as a function. If no callback is set, instances
+    /// behave like normal JavaScript objects that cannot be called as a
+    /// function.
+    #[inline]
+    pub fn set_call_as_function_handler(&mut self, callback: FunctionCallback, data: Local<Value>) {
+        unsafe {
+            self.SetCallAsFunctionHandler(callback, data)
+        }
+    }
+
+    /// Mark object instances of the template as undectable.
+    ///
+    /// In many ways, undetectable objects behave as though they are not
+    /// there. They behave like 'undefined' in conditioals and when
+    /// printed. However, properties can be accessed and called as on
+    /// normal objects.
+    #[inline]
+    pub fn mark_as_undetectable(&mut self) {
+        unsafe {
+            self.MarkAsUndetectable()
         }
     }
 }
