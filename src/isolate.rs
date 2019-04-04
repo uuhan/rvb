@@ -48,7 +48,10 @@ impl Isolate {
     #[inline]
     pub fn Current() -> Self {
         unsafe {
-            mem::transmute(raw::Isolate_GetCurrent())
+            let isolate: Self = mem::transmute(raw::Isolate_GetCurrent());
+            let ref mut data = isolate.get_data::<IsolateData>(ISOLATE_DATA_SLOT);
+            data.count += 1;
+            isolate
         }
     }
 
