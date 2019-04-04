@@ -315,3 +315,5 @@ impl Default for DeserializeInternalFieldsCallback {
 pub enum V8Error {
     V8CastErr,
 }
+
+impl V8Value for Value {}
