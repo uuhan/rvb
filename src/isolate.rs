@@ -45,6 +45,9 @@ impl Isolate {
 
     /// Returns the entered isolate for the current thread or NULL in
     /// case there is no current isolate.
+    ///
+    /// If it is not convenient to pass the reference of Isolate, you can use
+    /// this static function.
     #[inline]
     pub fn Current() -> Self {
         unsafe {
@@ -52,6 +55,14 @@ impl Isolate {
             let ref mut data = isolate.get_data::<IsolateData>(ISOLATE_DATA_SLOT);
             data.count += 1;
             isolate
+        }
+    }
+
+    /// Get the reference of raw Isolate.
+    #[inline]
+    pub fn current(&self) -> &mut raw::Isolate {
+        unsafe {
+            self.0.as_mut().unwrap()
         }
     }
 
