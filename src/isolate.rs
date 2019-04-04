@@ -9,10 +9,9 @@ use crate::v8::{
     Primitive,
     Context,
     HandleScope,
+    utils,
     raw::internal::{
         Address,
-        kApiSystemPointerSize,
-        Internals_kIsolateRootsOffset,
         Internals_kUndefinedValueRootIndex,
     },
 };
@@ -231,15 +230,7 @@ impl Isolate {
     // Internals::GetRoot implementation
     #[inline]
     pub fn get_root(&self, index: i32) -> *mut Address {
-        unsafe {
-            let isolate = self.current();
-            let isolate_address: Address = mem::transmute(isolate);
-            let addr: Address = isolate_address
-                + Internals_kIsolateRootsOffset as Address
-                + (index as Address) * kApiSystemPointerSize as Address;
-
-            mem::transmute(addr)
-        }
+        utils::get_root(self.current(), index)
     }
 
     /// v8::Undefined(Isolate* isolate)
