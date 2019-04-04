@@ -26,7 +26,6 @@ extern fn print_fn (info: *const FunctionCallbackInfo) {
         let mut rc = args.get_return_value();
         println!("Hello from Rust!");
         println!("args.Data(): {}", value);
-        let isolate = Isolate::Current();
 
         rc.set::<Local<Value>>(args.at(0));
     }

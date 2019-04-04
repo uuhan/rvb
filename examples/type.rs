@@ -13,6 +13,7 @@ use v8::v8::{
 pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
+    let mut undefined = isolate.undefined();
 
     isolate.exec(move |context| {
         let mut str1 = Local::<V8String>::New("foo");
@@ -21,5 +22,6 @@ pub fn main() {
         println!("str1 is name: {}", str1.is_name());
         println!("str1 is nubmer object: {}", str1.is_number_object());
         println!("obj1 is object: {}", obj1.is_object());
+        println!("undefined is object: {}", undefined.is_object());
     });
 }

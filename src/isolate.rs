@@ -231,25 +231,24 @@ impl Isolate {
     // Internals::GetRoot implementation
     #[inline]
     pub fn get_root(&self, index: i32) -> *mut Address {
-        // let isolate = self.current();
-        // let addr: Address = isolate._address as Address
-        //     + Internals_kIsolateRootsOffset as Address
-        //     + (index as Address) * kApiSystemPointerSize as Address;
-        //
-        // unsafe {
-        //     mem::transmute(addr)
-        // }
-        unimplemented!()
+        unsafe {
+            let isolate = self.current();
+            let isolate_address: Address = mem::transmute(isolate);
+            let addr: Address = isolate_address
+                + Internals_kIsolateRootsOffset as Address
+                + (index as Address) * kApiSystemPointerSize as Address;
+
+            mem::transmute(addr)
+        }
     }
 
     /// v8::Undefined(Isolate* isolate)
     #[inline]
     pub fn undefined(&self) -> Local<Primitive> {
-        // let slot = self.get_root(Internals_kUndefinedValueRootIndex);
-        // unsafe {
-        //     mem::transmute(slot)
-        // }
-        unimplemented!()
+        let slot = self.get_root(Internals_kUndefinedValueRootIndex);
+        unsafe {
+            mem::transmute(slot)
+        }
     }
 
     /// TODO: Lock this Isolate
