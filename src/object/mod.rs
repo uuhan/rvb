@@ -176,15 +176,15 @@ impl Local<Object> {
         }
     }
 
-    pub fn set(&mut self, key: Local<Value>, value: Local<Value>) -> bool {
+    pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, key: K, value: V) -> bool {
         unsafe {
-            self.Set(key, value)
+            self.Set(key.into(), value.into())
         }
     }
 
-    pub fn get(&mut self, key: Local<Value>) -> Local<Value> {
+    pub fn get<K: Into<Local<Value>>>(&mut self, key: K) -> Local<Value> {
         unsafe {
-            self.Get(key)
+            self.Get(key.into())
         }
     }
 }
