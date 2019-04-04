@@ -1,4 +1,6 @@
 #![allow(non_camel_case_types, unused)]
+use std::mem;
+
 pub use crate::v8::raw::Signature;
 pub use crate::v8::raw::Function;
 pub use crate::v8::raw::FunctionTemplate;
@@ -13,7 +15,9 @@ pub use crate::v8::raw::SideEffectType_kHasSideEffectToReceiver;
 
 use crate::v8::{
     raw,
-    raw::internal::Address,
+    raw::internal::{
+        Address,
+    },
     Isolated,
     Template,
     V8Template,
@@ -113,6 +117,19 @@ impl FunctionCallbackInfo {
     pub fn is_constructor_call(&self) -> bool {
         unsafe {
             V8_FunctionCallbackInfo_IsConstructorCall(self)
+        }
+    }
+
+    /// Get arguments[index]
+    #[inline]
+    pub fn at(&self, index: u32) -> Local<Value> {
+        unsafe {
+            let target = self.values_.offset(-(index as isize));
+            if target.is_null() {
+                Local::<Value>::Empty()
+            } else {
+                mem::transmute(target)
+            }
         }
     }
 }

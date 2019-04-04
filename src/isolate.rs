@@ -1,12 +1,21 @@
 use std::mem;
 
-use crate::v8::raw;
-use crate::v8::Rooted;
-use crate::v8::Isolated;
-use crate::v8::Context;
-use crate::v8::Local;
-use crate::v8::Value;
-use crate::v8::HandleScope;
+use crate::v8::{
+    raw,
+    Rooted,
+    Isolated,
+    Local,
+    Value,
+    Primitive,
+    Context,
+    HandleScope,
+    raw::internal::{
+        Address,
+        kApiSystemPointerSize,
+        Internals_kIsolateRootsOffset,
+        Internals_kUndefinedValueRootIndex,
+    },
+};
 
 pub use raw::Locker;
 pub use raw::Unlocker;
@@ -217,6 +226,40 @@ impl Isolate {
         unsafe {
             self.Dispose()
         }
+    }
+
+    // Internals::GetRoot implementation
+    #[inline]
+    pub fn get_root(&self, index: i32) -> *mut Address {
+        // let isolate = self.current();
+        // let addr: Address = isolate._address as Address
+        //     + Internals_kIsolateRootsOffset as Address
+        //     + (index as Address) * kApiSystemPointerSize as Address;
+        //
+        // unsafe {
+        //     mem::transmute(addr)
+        // }
+        unimplemented!()
+    }
+
+    /// v8::Undefined(Isolate* isolate)
+    #[inline]
+    pub fn undefined(&self) -> Local<Primitive> {
+        // let slot = self.get_root(Internals_kUndefinedValueRootIndex);
+        // unsafe {
+        //     mem::transmute(slot)
+        // }
+        unimplemented!()
+    }
+
+    /// TODO: Lock this Isolate
+    pub fn lock(&mut self) -> &mut Self {
+        self
+    }
+
+    /// TODO: Unlock this Isolate
+    pub fn unlock(&mut self) -> &mut Self {
+        self
     }
 }
 

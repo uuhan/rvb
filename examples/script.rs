@@ -8,10 +8,11 @@ use v8::v8::{
     Context,
     ContextParams,
     ContextScope,
-    String as V8String,
+    V8String,
     Script,
     Local,
     Value,
+    Primitive,
     ObjectTemplate,
     FunctionTemplate,
     FunctionCallbackInfo,
@@ -19,13 +20,15 @@ use v8::v8::{
 
 extern fn print_fn (info: *const FunctionCallbackInfo) {
     unsafe {
-        let this = (*info).this();
-        let value: String = (*info).data().into();
-        let mut rc = (*info).get_return_value();
+        let args = *info;
+        let this = args.this();
+        let value: String = args.data().into();
+        let mut rc = args.get_return_value();
         println!("Hello from Rust!");
         println!("args.Data(): {}", value);
+        let isolate = Isolate::Current();
 
-        rc.set::<Local<Value>>(this.into());
+        rc.set::<Local<Value>>(args.at(0));
     }
 }
 
@@ -39,9 +42,9 @@ pub fn main() {
         let mut global = Local::<ObjectTemplate>::New(None);
         let mut print = Local::<FunctionTemplate>::New(Some(print_fn));
 
-        global.set(Local::<V8String>::New("global").into(), Local::<ObjectTemplate>::New(None).into());
-        global.set(Local::<V8String>::New("setTimeout").into(), Local::<FunctionTemplate>::New(None).into());
-        global.set(Local::<V8String>::New("print").into(), print.into());
+        global.set(Local::<V8String>::New("global"), Local::<ObjectTemplate>::New(None));
+        global.set(Local::<V8String>::New("setTimeout"), Local::<FunctionTemplate>::New(None));
+        global.set(Local::<V8String>::New("print"), print);
 
         let mut params = ContextParams::default();
         params.global_template = global.into();
