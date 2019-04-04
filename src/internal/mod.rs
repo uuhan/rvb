@@ -44,15 +44,16 @@ pub trait PersistentValue<T> {}
 pub trait V8Template {
     /// NB: use std::mem::transmute_copy to reinterpert_cast class to it's base class
     /// should only impl this trait for ObjectTemplate & FunctionTemplate...
-    fn set(&mut self, name: Local<Name>, value: Local<Data>) {
-        unsafe {
-            let base = mem::transmute_copy::<&mut Self, &mut Template>(&self);
-            base.Set(
-                name,
-                value,
-                PropertyAttribute_None)
+    fn set<T1: Into<Local<Name>>, T2: Into<Local<Data>>>
+        (&mut self, name: T1, value: T2) {
+            unsafe {
+                let base = mem::transmute_copy::<&mut Self, &mut Template>(&self);
+                base.Set(
+                    name.into(),
+                    value.into(),
+                    PropertyAttribute_None)
+            }
         }
-    }
 }
 
 /// isomorphism to v8::Value base class
