@@ -43,6 +43,26 @@ V8_Isolate_GetData(Isolate* isolate, uint32_t slot) {
     return isolate->GetData(slot);
 }
 
+void
+V8_Isolate_Locker(Isolate* isolate, Locker* locker) {
+    new (locker) Locker(isolate);
+}
+
+void
+V8_Isolate_Locker_Drop(Locker* locker) {
+    delete locker;
+}
+
+void
+V8_Isolate_Unlocker(Isolate* isolate, Unlocker* unlocker) {
+    new (unlocker) Unlocker(isolate);
+}
+
+void
+V8_Isolate_Unlocker_Drop(Unlocker* unlocker) {
+    delete unlocker;
+}
+
 Isolate*
 V8_FunctionCallbackInfo_GetIsolate(FunctionCallbackInfo<Value>& args) {
     return args.GetIsolate();

@@ -2,12 +2,14 @@
 extern crate v8_rs as v8;
 use v8::v8::prelude::*;
 use v8::v8::{
+    raw,
     Platform,
     Isolate,
+    Unlocker,
     Context,
     ContextScope,
     Object,
-    String as V8String,
+    V8String,
 };
 
 pub fn main() {

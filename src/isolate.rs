@@ -16,13 +16,43 @@ use crate::v8::{
     },
 };
 
-pub use raw::Locker;
-pub use raw::Unlocker;
+extern {
+    fn V8_Isolate_locker(isolate: *const raw::Isolate, locker: &mut Locker);
+    fn V8_Isolate_Unlocker(isolate: *const raw::Isolate, unlocker: &mut Unlocker);
+}
 
 pub const ISOLATE_DATA_SLOT: u32 = 0;
 
 pub struct IsolateData {
     pub count: usize,
+}
+
+#[must_use]
+#[repr(C)]
+pub struct Locker(*mut Locker);
+impl Locker {
+    pub fn New() -> Self {
+        unsafe {
+            let mut locker = mem::uninitialized();
+            let isolate = raw::Isolate::GetCurrent();
+            V8_Isolate_Unlocker(isolate, &mut locker);
+            locker
+        }
+    }
+}
+
+#[must_use]
+#[repr(C)]
+pub struct Unlocker(*mut Unlocker);
+impl Unlocker {
+    pub fn New() -> Self {
+        unsafe {
+            let mut unlocker = mem::uninitialized();
+            let isolate = raw::Isolate::GetCurrent();
+            V8_Isolate_Unlocker(isolate, &mut unlocker);
+            unlocker
+        }
+    }
 }
 
 #[repr(C)]
