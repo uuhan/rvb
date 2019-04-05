@@ -17,7 +17,7 @@ use crate::v8::{
 };
 
 extern {
-    fn V8_Isolate_locker(isolate: *const raw::Isolate, locker: &mut Locker);
+    fn V8_Isolate_Locker(isolate: *const raw::Isolate, locker: &mut Locker);
     fn V8_Isolate_Unlocker(isolate: *const raw::Isolate, unlocker: &mut Unlocker);
 }
 
@@ -35,7 +35,7 @@ impl Locker {
         unsafe {
             let mut locker = mem::uninitialized();
             let isolate = raw::Isolate::GetCurrent();
-            V8_Isolate_Unlocker(isolate, &mut locker);
+            V8_Isolate_Locker(isolate, &mut locker);
             locker
         }
     }
