@@ -17,6 +17,7 @@ use v8::v8::{
     V8String,
     Script,
     Local,
+    Object,
     External,
     Value,
     Primitive,
@@ -52,7 +53,7 @@ pub fn main() {
         // print.set_call_handler(Some(print_fn), None);
         print.set_call_closure(|args, rv| {
             println!("Call From Closure!");
-            rv.set::<Local<Value>>(args.at(0));
+            rv.set::<Local<Value>>(args.this().into());
         });
 
         global.set(Local::<V8String>::New("global"), Local::<ObjectTemplate>::New(None));
