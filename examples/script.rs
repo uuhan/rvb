@@ -14,8 +14,6 @@ use v8::v8::{
     Context,
     ContextParams,
     ContextScope,
-    Script,
-    Local,
     Object,
     External,
     Value,
@@ -37,22 +35,22 @@ pub fn main() {
         let mut global = ObjectT::New(None);
         let mut print = FunctionT::Call(|args, rv| {
             println!("{}", text);
-            rv.set::<Local<Value>>(args.at(0));
+            rv.set::<V8Value>(args.at(0));
         });
 
 
-        global.set(V8String::New("global"), Local::<ObjectTemplate>::New(None));
+        global.set(V8String::New("global"), ObjectT::New(None));
         global.set(V8String::New("print"), print);
 
         let mut params = ContextParams::default();
         params.global_template = global.into();
-        let ctx = Local::<Context>::New(params);
+        let ctx = V8Context::New(params);
 
         let _scope_2 = ContextScope::New(ctx);
 
 
         let source = V8String::New(script);
-        let mut script = Local::<Script>::New(ctx, source);
+        let mut script = V8Script::New(ctx, source);
         let result = script.run(ctx);
 
         if result.is_empty() {
