@@ -1,6 +1,6 @@
 ## Rust Bindings To V8
 
-NB: This crate assume you have a pre-compiled v8 installed in your os, and with pkg-config support:
+NB: This crate assumes you have a pre-compiled v8 installed in your os, and with pkg-config support:
 
 For example (/usr/local/share/pkgconfig/v8.pc):
 
@@ -14,3 +14,25 @@ Cflags: -I${prefix}/include
 Libs: -L${prefix}/lib -lv8_monolith
 ```
 
+
+## Examples
+
+### 1. Hello, World
+
+```rust
+let _platform = Platform::New();
+let mut isolate = Isolate::New();
+
+isolate.exec(move |context| {
+    let source = Local::<V8String>::New(r#"
+        "Hello, World!"
+    "#);
+    let mut script = Local::<Script>::New(context, source);
+    let result: String = script.run(context).to_local_checked().into();
+    println!("{}", result)
+})
+```
+
+## Contributing
+
+## License
