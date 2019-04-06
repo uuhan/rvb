@@ -33,6 +33,40 @@ isolate.exec(move |context| {
 })
 ```
 
+### 2. Wrapper Rust function into V8 FunctionTemplate
+
+```rust
+let text = "Hello from Rust!"
+let mut function = Local::<FunctionTemplate>::Call(|args, rv| {
+    println!("{}", text);
+    rv.set::<Local<Value>>(args.at(0));
+})
+```
+
+or set callback later:
+
+```rust
+let mut function = Local::<FunctionTemplate>::New();
+function.set_call_closure(|args, rv| {
+    rv.set::<Local<Value>>(args.at(0));
+})
+```
+
+or use rust extern fn:
+
+```rust
+extern fn function_tpl(info: *const FunctionCallbackInfo) {
+    unsafe {
+        let args = *info;
+        let mut rv = args.get_return_value();
+        rv.set::<Local<Value>>(args.at(0));
+    }
+}
+let data = Local::<Value>::Empty();
+let mut function = Local::<FunctionTemplate>::New();
+function.set_call_handler(Some(function_tpl), Some(data));
+```
+
 ## Contributing
 
 ## License

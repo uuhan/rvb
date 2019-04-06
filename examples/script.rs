@@ -31,12 +31,12 @@ pub fn main() {
     let script = fs::read_to_string("./script.js").expect("file script.js not found");
     let mut isolate = Isolate::New();
 
-    let text = "Hello from closure!";
+    let text = "Hello from Rust!";
 
     isolate.exec(move |context| {
         let _scope = ContextScope::New(context);
         let mut global = Local::<ObjectTemplate>::New(None);
-        let mut print = Local::<FunctionTemplate>::Call(|args, rv|  {
+        let mut print = Local::<FunctionTemplate>::Call(|args, rv| {
             println!("{}", text);
             rv.set::<Local<Value>>(args.this().into());
         });
