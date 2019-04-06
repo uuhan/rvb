@@ -183,6 +183,7 @@ impl Local<FunctionTemplate> {
         self
     }
 
+    /// Set the callback for a FunctionTemplate by closure.
     #[inline]
     pub fn set_call_closure<F>(&mut self, callback: F)
         where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
