@@ -35,8 +35,8 @@ pub fn main() {
 
     isolate.exec(move |context| {
         let _scope = ContextScope::New(context);
-        let mut global = Local::<ObjectTemplate>::New(None);
-        let mut print = Local::<FunctionTemplate>::Call(|args, rv| {
+        let mut global = ObjectT::New(None);
+        let mut print = FunctionT::Call(|args, rv| {
             println!("{}", text);
             rv.set::<Local<Value>>(args.at(0));
         });

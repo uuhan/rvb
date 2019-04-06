@@ -37,5 +37,7 @@ pub mod v8 {
 
     pub mod prelude {
         pub use crate::internal::*;
+        pub type ObjectT = Local<crate::v8::ObjectTemplate>;
+        pub type FunctionT = Local<crate::v8::FunctionTemplate>;
     }
 }
