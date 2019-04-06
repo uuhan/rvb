@@ -8,7 +8,6 @@ use v8_rs::v8::{
     HandleScope,
     Rooted,
     Isolated,
-    Local,
     Context,
     ContextScope,
     String as V8String,

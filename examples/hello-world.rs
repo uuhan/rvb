@@ -6,7 +6,6 @@ use v8_rs::v8::{
     Platform,
     Isolate,
     HandleScope,
-    Local,
     Context,
     ContextScope,
     Script,
@@ -21,7 +20,7 @@ pub fn main() {
         let source = V8String::New(r#"
                 "Hello, " + "World!"
             "#);
-        let mut script = Local::<Script>::New(context, source);
+        let mut script = V8Script::New(context, source);
         let result: String = script.run(context).to_local_checked().into();
         println!("{}", result);
     });
@@ -32,7 +31,7 @@ pub fn main() {
         let source = V8String::New(r#"
                 "Hello, " + "World!"
             "#);
-        let mut script = Local::<Script>::New(context, source);
+        let mut script = V8Script::New(context, source);
         let result: String = script.run(context).to_local_checked().into();
         println!("{}", result);
     });

@@ -3,7 +3,6 @@ use v8_rs::v8;
 use v8::prelude::*;
 use v8::{
     Rooted,
-    Local,
     Isolated,
     Platform,
     Context,
@@ -25,7 +24,7 @@ pub fn main() {
         global.set(name, value);
         let mut params = ContextParams::default();
         params.global_template = global.into();
-        let ctx = Local::<Context>::New(params);
+        let ctx = V8Context::New(params);
 
         let source = V8String::New(r#"
                 function concat(a, b) {
@@ -33,7 +32,7 @@ pub fn main() {
                 }
                 concat("foo: ", foo)
             "#);
-        let mut script = Local::<Script>::New(ctx, source);
+        let mut script = V8Script::New(ctx, source);
         let result: String = script.run(ctx).to_local_checked().into();
         println!("{}", result);
     });
