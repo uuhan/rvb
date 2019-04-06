@@ -138,6 +138,7 @@ impl FunctionCallbackInfo {
 impl<'a> Isolated<'a> for FunctionTemplate {}
 impl V8Template for FunctionTemplate {}
 
+#[inline]
 extern fn function_template(info: *const FunctionCallbackInfo) {
     unsafe {
         let args = &*info;
