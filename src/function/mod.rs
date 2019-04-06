@@ -154,12 +154,12 @@ extern fn function_template(info: *const FunctionCallbackInfo) {
 impl Local<FunctionTemplate> {
     /// Create a function template.
     #[inline]
-    pub fn New(handler: FunctionCallback) -> Self {
+    pub fn New() -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
             FunctionTemplate::New(
                 isolate,
-                handler,
+                None,
                 Local::<Value>::Empty(),
                 Local::<Signature>::Empty(),
                 0,
@@ -168,6 +168,28 @@ impl Local<FunctionTemplate> {
                 )
         }
     }
+
+    /// Create a function template.
+    #[inline]
+    pub fn Call<F>(callback: F) -> Self
+        where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
+        {
+            let isolate = Self::GetIsolate();
+            let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+                = Box::new(Box::new(callback));
+            let data = Local::<External>::New(Box::into_raw(callback) as *mut c_void);
+            unsafe {
+                FunctionTemplate::New(
+                    isolate,
+                    Some(function_template),
+                    data.into(),
+                    Local::<Signature>::Empty(),
+                    0,
+                    ConstructorBehavior_kAllow,
+                    SideEffectType_kHasSideEffect,
+                    )
+            }
+        }
 
     /// Set the call-handler callback for a FunctionTemplate.
     /// This callback is called whenever the function created from this
@@ -188,8 +210,9 @@ impl Local<FunctionTemplate> {
     pub fn set_call_closure<F>(&mut self, callback: F)
         where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
         {
-            let cb: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>> = Box::new(Box::new(callback));
-            let data = Local::<External>::New(Box::into_raw(cb) as *mut c_void);
+            let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+                = Box::new(Box::new(callback));
+            let data = Local::<External>::New(Box::into_raw(callback) as *mut c_void);
             self.set_call_handler(Some(function_template), Some(data.into()));
         }
 
