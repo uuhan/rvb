@@ -38,7 +38,7 @@ pub fn main() {
         let mut global = Local::<ObjectTemplate>::New(None);
         let mut print = Local::<FunctionTemplate>::Call(|args, rv| {
             println!("{}", text);
-            rv.set::<Local<Value>>(args.this().into());
+            rv.set::<Local<Value>>(args.at(0));
         });
 
 
