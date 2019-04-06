@@ -10,7 +10,7 @@ use crate::v8::{
 pub use crate::v8::raw::Value;
 
 /// isomorphism to v8::Value base class
-pub trait V8Value {
+pub trait ValueTrait {
     #[inline]
     base!(is_true, bool, Value, IsTrue);
     #[inline]
@@ -114,7 +114,7 @@ pub trait V8Value {
     // TODO: convert function
 }
 
-impl V8Value for Value {}
+impl ValueTrait for Value {}
 
 /// cast local value into string
 /// use v8::String::Utf8Value

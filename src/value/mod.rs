@@ -2,7 +2,7 @@ use crate::v8::{
     raw,
     Value,
     Data,
-    V8Value,
+    ValueTrait,
 };
 
 mod bigint;
@@ -33,4 +33,4 @@ inherit_local!(Number, Primitive, Value, Data);
 inherit!(Integer, Number, Primitive, Value, Data);
 inherit_local!(Integer, Number, Primitive, Value, Data);
 
-impl V8Value for Primitive {}
+impl ValueTrait for Primitive {}

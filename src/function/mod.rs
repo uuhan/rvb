@@ -23,7 +23,7 @@ use crate::v8::{
     Template,
     V8Template,
     String,
-    V8Value,
+    ValueTrait,
     ObjectTemplate,
     Local,
     MaybeLocal,
@@ -303,5 +303,5 @@ inherit_local!(FunctionTemplate, Template, Data);
 inherit!(Function, Object, Value, Data);
 inherit_local!(Function, Object, Value, Data);
 
-impl V8Value for Function {}
-impl V8Value for FunctionTemplate {}
+impl ValueTrait for Function {}
+impl ValueTrait for FunctionTemplate {}

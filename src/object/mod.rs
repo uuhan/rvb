@@ -21,7 +21,7 @@ use crate::v8::{
     Data,
     Context,
     V8Template,
-    V8Value,
+    ValueTrait,
     String,
     Template,
     FunctionTemplate,
@@ -197,4 +197,4 @@ inherit_local!(Object, Value, Data);
 
 
 impl V8Template for ObjectTemplate {}
-impl V8Value for Object {}
+impl ValueTrait for Object {}

@@ -8,7 +8,7 @@ use crate::v8::{
     Primitive,
     Value,
     Data,
-    V8Value,
+    ValueTrait,
 };
 
 pub use raw::String;
@@ -31,5 +31,4 @@ impl Local<String> {
 inherit!(String, Name, Primitive, Value, Data);
 inherit_local!(String, Name, Primitive, Value, Data);
 
-
-impl V8Value for String {}
+impl ValueTrait for String {}
