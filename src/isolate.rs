@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::mem;
 
 use crate::v8::{

@@ -18,7 +18,6 @@ pub mod utils;
 pub mod v8 {
     pub use crate::utils;
     pub use crate::ffi::root::v8 as raw;
-    pub use raw::Value;
 
     pub use crate::context::Context;
     pub use crate::context::ContextParams;

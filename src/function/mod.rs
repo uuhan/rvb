@@ -44,7 +44,6 @@ extern "C" {
     fn V8_FunctionCallbackInfo_IsConstructorCall(args: *const FunctionCallbackInfo) -> bool;
     fn V8_FunctionCallbackInfo_Data(args: *const FunctionCallbackInfo) -> Local<Value>;
     fn V8_FunctionCallbackInfo_GetReturnValue(args: *const FunctionCallbackInfo, out: &mut ReturnValue);
-
 }
 
 // static kHolderIndex: i8 = 0;

@@ -18,6 +18,8 @@ pub use crate::v8::raw::{
     MaybeLocal,
     Persistent,
     PersistentBase,
+    Value,
+    External,
     DeserializeInternalFieldsCallback,
     TryCatch,
     Name,
@@ -30,8 +32,6 @@ pub use crate::v8::raw::{
     PropertyAttribute_DontEnum,
     PropertyAttribute_DontDelete,
 };
-
-use crate::v8::Value;
 
 extern "C" {
     fn V8_To_Local_Checked(value: MaybeLocal<*mut c_void>) -> Local<*mut c_void>;
@@ -317,3 +317,6 @@ pub enum V8Error {
 }
 
 impl V8Value for Value {}
+
+inherit!(External, Value);
+inherit_local!(External, Value);
