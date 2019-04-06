@@ -22,7 +22,7 @@ use crate::v8::{
     Context,
     V8Template,
     V8Value,
-    V8String,
+    String,
     Template,
     FunctionTemplate,
     Isolated,
@@ -103,7 +103,7 @@ impl Local<ObjectTemplate> {
     ///   thrown and no callback is invoked.
     #[inline]
     pub fn set_accessor(&mut self,
-                        name: Local<V8String>,
+                        name: Local<String>,
                         getter: AccessorGetterCallback,
                         setter: AccessorSetterCallback,
                         data: Local<Value>,

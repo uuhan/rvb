@@ -14,7 +14,6 @@ use v8::v8::{
     Context,
     ContextParams,
     ContextScope,
-    V8String,
     Script,
     Local,
     Object,
@@ -42,8 +41,8 @@ pub fn main() {
         });
 
 
-        global.set(Local::<V8String>::New("global"), Local::<ObjectTemplate>::New(None));
-        global.set(Local::<V8String>::New("print"), print);
+        global.set(V8String::New("global"), Local::<ObjectTemplate>::New(None));
+        global.set(V8String::New("print"), print);
 
         let mut params = ContextParams::default();
         params.global_template = global.into();
@@ -52,7 +51,7 @@ pub fn main() {
         let _scope_2 = ContextScope::New(ctx);
 
 
-        let source = Local::<V8String>::New(script);
+        let source = V8String::New(script);
         let mut script = Local::<Script>::New(ctx, source);
         let result = script.run(ctx);
 

@@ -7,7 +7,6 @@ use v8::{
     Isolate,
     ISOLATE_DATA_SLOT,
     IsolateData,
-    V8String,
 };
 
 pub fn main() {
@@ -17,7 +16,7 @@ pub fn main() {
     isolate.set_data::<String>(1, "Come on, Isolate!".into());
 
     isolate.exec(move |_context| {
-        let mut str1 = Local::<V8String>::New("foo");
+        let mut str1 = V8String::New("foo");
 
         println!("str1 is name: {}", str1.is_name());
     });

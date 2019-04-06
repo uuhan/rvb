@@ -39,5 +39,8 @@ pub mod v8 {
         pub use crate::internal::*;
         pub type ObjectT = Local<crate::v8::ObjectTemplate>;
         pub type FunctionT = Local<crate::v8::FunctionTemplate>;
+        pub type V8String = Local<crate::v8::String>;
+        pub type V8Object = Local<crate::v8::Object>;
+        pub type V8Script = Local<crate::v8::Script>;
     }
 }

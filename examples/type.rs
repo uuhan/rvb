@@ -8,8 +8,6 @@ use v8::v8::{
     Unlocker,
     Context,
     ContextScope,
-    Object,
-    V8String,
 };
 
 pub fn main() {
@@ -18,8 +16,8 @@ pub fn main() {
     let mut undefined = isolate.undefined();
 
     isolate.exec(move |context| {
-        let mut str1 = Local::<V8String>::New("foo");
-        let mut obj1 = Local::<Object>::New();
+        let mut str1 = V8String::New("foo");
+        let mut obj1 = V8Object::New();
 
         println!("str1 is name: {}", str1.is_name());
         println!("str1 is nubmer object: {}", str1.is_number_object());

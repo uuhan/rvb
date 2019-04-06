@@ -22,7 +22,7 @@ use crate::v8::{
     Isolated,
     Template,
     V8Template,
-    V8String,
+    String,
     V8Value,
     ObjectTemplate,
     Local,
@@ -237,7 +237,7 @@ impl Local<FunctionTemplate> {
     /// printing objects created with the function created from the
     /// FunctionTemplate as its constructor.
     #[inline]
-    pub fn set_class_name(&mut self, name: Local<V8String>) {
+    pub fn set_class_name(&mut self, name: Local<String>) {
         unsafe {
             self.SetClassName(name)
         }

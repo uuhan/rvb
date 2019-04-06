@@ -10,10 +10,8 @@ use v8::{
     ContextScope,
     Isolate,
     Script,
-    ObjectTemplate,
     FunctionTemplate,
     ContextParams,
-    String as V8String,
 };
 
 pub fn main() {
@@ -21,15 +19,15 @@ pub fn main() {
     let mut isolate = Isolate::New();
 
     isolate.exec(move |context| {
-        let mut global = Local::<ObjectTemplate>::New(None);
-        let name = Local::<V8String>::New("foo");
-        let value = Local::<V8String>::New("bar");
+        let mut global = ObjectT::New(None);
+        let name = V8String::New("foo");
+        let value = V8String::New("bar");
         global.set(name, value);
         let mut params = ContextParams::default();
         params.global_template = global.into();
         let ctx = Local::<Context>::New(params);
 
-        let source = Local::<V8String>::New(r#"
+        let source = V8String::New(r#"
                 function concat(a, b) {
                   return a + b
                 }
