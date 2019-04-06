@@ -1,5 +1,6 @@
 #![allow(unused_imports)]
 mod utils;
+mod external;
 
 use std::ops::Deref;
 use std::ops::DerefMut;
@@ -12,6 +13,8 @@ use std::mem;
 use std::convert::Into;
 
 pub(crate) use utils::*;
+pub use external::*;
+
 use crate::v8::raw;
 pub use crate::v8::raw::{
     Local,
@@ -19,7 +22,6 @@ pub use crate::v8::raw::{
     Persistent,
     PersistentBase,
     Value,
-    External,
     DeserializeInternalFieldsCallback,
     TryCatch,
     Name,
@@ -317,6 +319,3 @@ pub enum V8Error {
 }
 
 impl V8Value for Value {}
-
-inherit!(External, Value);
-inherit_local!(External, Value);

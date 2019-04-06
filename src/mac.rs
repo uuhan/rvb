@@ -79,6 +79,15 @@ macro_rules! inherit_local {
                     }
                 }
             }
+
+            impl ::std::convert::From<crate::v8::Local<$base>> for crate::v8::Local<$source> {
+                fn from(v: crate::v8::Local<$base>) -> Self {
+                    unsafe {
+                        // TODO: use TryFrom
+                        ::std::mem::transmute::<crate::v8::Local<$base>, Self>(v)
+                    }
+                }
+            }
         )+
     }
 }

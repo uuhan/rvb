@@ -1,5 +1,6 @@
 #![allow(non_camel_case_types, unused)]
 use std::mem;
+use std::ffi::c_void;
 
 pub use crate::v8::raw::Signature;
 pub use crate::v8::raw::Function;
@@ -29,6 +30,7 @@ use crate::v8::{
     Context,
     Object,
     Value,
+    External,
     Data,
 };
 
@@ -136,6 +138,19 @@ impl FunctionCallbackInfo {
 impl<'a> Isolated<'a> for FunctionTemplate {}
 impl V8Template for FunctionTemplate {}
 
+extern fn function_template(info: *const FunctionCallbackInfo) {
+    unsafe {
+        let args = &*info;
+        let external = Local::<External>::from(args.data());
+        let external_ptr = external.Value();
+        let ref mut rv = args.get_return_value();
+
+        let closure: &mut Box<FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
+            = mem::transmute(external_ptr);
+        closure(args, rv);
+    }
+}
+
 impl Local<FunctionTemplate> {
     /// Create a function template.
     #[inline]
@@ -161,11 +176,28 @@ impl Local<FunctionTemplate> {
     pub fn set_call_handler(&mut self, handler: FunctionCallback, data: Option<Local<Value>>) -> &mut Self {
         unsafe {
             match data {
-                Some(data) => self.SetCallHandler(handler, data, SideEffectType_kHasSideEffect),
+                Some(data) => self.SetCallHandler(handler, data.into(), SideEffectType_kHasSideEffect),
                 None => self.SetCallHandler(handler, Local::<Value>::Empty(), SideEffectType_kHasSideEffect),
             }
         }
         self
+    }
+
+    #[inline]
+    pub fn set_call_closure<F>(&mut self, callback: F)
+        where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
+        {
+            let cb: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>> = Box::new(Box::new(callback));
+            let data = Local::<External>::New(Box::into_raw(cb) as *mut c_void);
+            self.set_call_handler(Some(function_template), Some(data.into()));
+        }
+
+    /// Returns the unique function instance in the current execution context.
+    #[inline]
+    pub fn get_function(&mut self, context: Local<Context>) -> MaybeLocal<Function> {
+        unsafe {
+            self.GetFunction(context)
+        }
     }
 
     /// Set the predefined length property for the FunctionTemplate.
@@ -213,11 +245,23 @@ impl Local<FunctionTemplate> {
         }
     }
 
-    /// Returns the unique function instance in the current execution context.
+    /// A PrototypeProviderTemplate is another function template whose prototype
+    /// property is used for this template. This is manually exclusive with setting
+    /// a prototype template indirectly by calling PrototypeTemplate() or using
+    /// Inherit().
     #[inline]
-    pub fn get_function(&mut self, context: Local<Context>) -> MaybeLocal<Function> {
+    pub fn set_property_provider_template(&mut self, prototype_provider: Local<FunctionTemplate>) {
         unsafe {
-            self.GetFunction(context)
+            self.SetPrototypeProviderTemplate(prototype_provider)
+        }
+    }
+
+    /// When set to true, no access check will be performed on the receiver of a
+    /// function call. Currently defaults to true, but this is subject to change.
+    #[inline]
+    pub fn set_accept_any_receiver(&mut self, value: bool) {
+        unsafe {
+            self.SetAcceptAnyReceiver(value)
         }
     }
 }
