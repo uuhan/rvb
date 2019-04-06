@@ -26,10 +26,10 @@ let _platform = Platform::New();
 let mut isolate = Isolate::New();
 
 isolate.exec(move |context| {
-    let source = Local::<V8String>::New(r#"
+    let source = V8String::New(r#"
         "Hello, World!"
     "#);
-    let mut script = Local::<Script>::New(context, source);
+    let mut script = V8Script::New(context, source);
     let result: String = script.run(context).to_local_checked().into();
     println!("{}", result)
 })
@@ -39,18 +39,18 @@ isolate.exec(move |context| {
 
 ```rust
 let text = "Hello from Rust!"
-let mut function = Local::<FunctionTemplate>::Call(|args, rv| {
+let mut function = FunctionT::Call(|args, rv| {
     println!("{}", text);
-    rv.set::<Local<Value>>(args.at(0));
+    rv.set::<V8Value>(args.at(0));
 })
 ```
 
 or set callback later:
 
 ```rust
-let mut function = Local::<FunctionTemplate>::New();
+let mut function = FunctionT::New();
 function.set_call_closure(|args, rv| {
-    rv.set::<Local<Value>>(args.at(0));
+    rv.set::<V8Value>(args.at(0));
 })
 ```
 
@@ -61,11 +61,11 @@ extern fn function_tpl(info: *const FunctionCallbackInfo) {
     unsafe {
         let args = *info;
         let mut rv = args.get_return_value();
-        rv.set::<Local<Value>>(args.at(0));
+        rv.set::<V8Value>(args.at(0));
     }
 }
-let data = Local::<Value>::Empty();
-let mut function = Local::<FunctionTemplate>::New();
+let data = V8Value::Empty();
+let mut function = FunctionT::New();
 function.set_call_handler(Some(function_tpl), Some(data));
 ```
 
