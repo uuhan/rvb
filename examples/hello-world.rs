@@ -24,15 +24,4 @@ pub fn main() {
         let result: String = script.run(context).to_local_checked().into();
         println!("{}", result);
     });
-
-    let mut isolate = Isolate::New();
-    isolate.exec(move |context| {
-        let scope = ContextScope::New(context);
-        let source = V8String::New(r#"
-                "Hello, " + "World!"
-            "#);
-        let mut script = V8Script::New(context, source);
-        let result: String = script.run(context).to_local_checked().into();
-        println!("{}", result);
-    });
 }
