@@ -35,7 +35,7 @@ isolate.exec(move |context| {
 })
 ```
 
-### 2. Wrapper Rust function into V8 FunctionTemplate
+### 2. Wrap Rust function into V8 FunctionTemplate
 
 ```rust
 let text = "Hello from Rust!"
