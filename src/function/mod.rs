@@ -21,7 +21,7 @@ use crate::v8::{
     },
     Isolated,
     Template,
-    V8Template,
+    TemplateTrait,
     String,
     ValueTrait,
     ObjectTemplate,
@@ -136,7 +136,7 @@ impl FunctionCallbackInfo {
 }
 
 impl<'a> Isolated<'a> for FunctionTemplate {}
-impl V8Template for FunctionTemplate {}
+impl TemplateTrait for FunctionTemplate {}
 
 #[inline]
 extern fn function_template(info: *const FunctionCallbackInfo) {

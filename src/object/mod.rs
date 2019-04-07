@@ -20,7 +20,7 @@ use crate::v8::{
     Value,
     Data,
     Context,
-    V8Template,
+    TemplateTrait,
     ValueTrait,
     String,
     Template,
@@ -196,5 +196,5 @@ inherit!(Object, Value, Data);
 inherit_local!(Object, Value, Data);
 
 
-impl V8Template for ObjectTemplate {}
+impl TemplateTrait for ObjectTemplate {}
 impl ValueTrait for Object {}

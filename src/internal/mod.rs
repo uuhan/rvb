@@ -43,7 +43,7 @@ pub struct Address(*mut raw::internal::Address);
 pub trait PersistentValue<T> {}
 
 /// isomorphism to v8::Template base class
-pub trait V8Template {
+pub trait TemplateTrait {
     /// NB: use std::mem::transmute_copy to reinterpert_cast class to it's base class
     /// should only impl this trait for ObjectTemplate & FunctionTemplate...
     fn set<T1: Into<Local<Name>>, T2: Into<Local<Data>>>
