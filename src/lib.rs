@@ -40,6 +40,7 @@ pub mod v8 {
         pub type ObjectT = Local<crate::v8::ObjectTemplate>;
         pub type FunctionT = Local<crate::v8::FunctionTemplate>;
         pub type V8Value = Local<crate::v8::Value>;
+        pub type V8External = Local<crate::v8::External>;
         pub type V8String = Local<crate::v8::String>;
         pub type V8Object = Local<crate::v8::Object>;
         pub type V8Function = Local<crate::v8::Function>;

@@ -8,8 +8,8 @@ impl TemplateTrait for FunctionTemplate {}
 extern fn function_template(info: *const FunctionCallbackInfo) {
     unsafe {
         let args = &*info;
-        let external = Local::<External>::from(args.data());
-        let external_ptr = external.Value();
+        let external = V8External::from(args.data());
+        let external_ptr = external.value();
         let ref mut rv = args.get_return_value();
 
         let closure: &mut Box<FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
@@ -18,7 +18,7 @@ extern fn function_template(info: *const FunctionCallbackInfo) {
     }
 }
 
-impl Local<FunctionTemplate> {
+impl FunctionT {
     /// Create a function template.
     #[inline]
     pub fn New() -> Self {
@@ -27,8 +27,8 @@ impl Local<FunctionTemplate> {
             FunctionTemplate::New(
                 isolate,
                 None,
-                Local::<Value>::Empty(),
-                Local::<Signature>::Empty(),
+                V8Value::Empty(),
+                V8Signature::Empty(),
                 0,
                 ConstructorBehavior_kAllow,
                 SideEffectType_kHasSideEffect,
@@ -44,13 +44,13 @@ impl Local<FunctionTemplate> {
             let isolate = Self::GetIsolate();
             let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
                 = Box::new(Box::new(callback));
-            let data = Local::<External>::New(Box::into_raw(callback) as *mut c_void);
+            let data = V8External::New(Box::into_raw(callback) as *mut c_void);
             unsafe {
                 FunctionTemplate::New(
                     isolate,
                     Some(function_template),
                     data.into(),
-                    Local::<Signature>::Empty(),
+                    V8Signature::Empty(),
                     0,
                     ConstructorBehavior_kAllow,
                     SideEffectType_kHasSideEffect,
@@ -62,11 +62,11 @@ impl Local<FunctionTemplate> {
     /// This callback is called whenever the function created from this
     /// FunctionTemplate is called.
     #[inline]
-    pub fn set_call_handler(&mut self, handler: FunctionCallback, data: Option<Local<Value>>) -> &mut Self {
+    pub fn set_call_handler(&mut self, handler: FunctionCallback, data: Option<V8Value>) -> &mut Self {
         unsafe {
             match data {
                 Some(data) => self.SetCallHandler(handler, data.into(), SideEffectType_kHasSideEffect),
-                None => self.SetCallHandler(handler, Local::<Value>::Empty(), SideEffectType_kHasSideEffect),
+                None => self.SetCallHandler(handler, V8Value::Empty(), SideEffectType_kHasSideEffect),
             }
         }
         self
@@ -79,7 +79,7 @@ impl Local<FunctionTemplate> {
         {
             let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
                 = Box::new(Box::new(callback));
-            let data = Local::<External>::New(Box::into_raw(callback) as *mut c_void);
+            let data = V8External::New(Box::into_raw(callback) as *mut c_void);
             self.set_call_handler(Some(function_template), Some(data.into()));
         }
 
@@ -103,7 +103,7 @@ impl Local<FunctionTemplate> {
     /// printing objects created with the function created from the
     /// FunctionTemplate as its constructor.
     #[inline]
-    pub fn set_class_name(&mut self, name: Local<String>) {
+    pub fn set_class_name(&mut self, name: V8String) {
         unsafe {
             self.SetClassName(name)
         }
@@ -121,7 +121,7 @@ impl Local<FunctionTemplate> {
 
     /// Get the InstanceTemplate.
     #[inline]
-    pub fn instance_template(&mut self) -> Local<ObjectTemplate> {
+    pub fn instance_template(&mut self) -> ObjectT {
         unsafe {
             self.InstanceTemplate()
         }
@@ -130,7 +130,7 @@ impl Local<FunctionTemplate> {
     /// A PrototypeTemplate is the template used to create the prototype object
     /// of the function created by this template.
     #[inline]
-    pub fn prototype_template(&mut self) -> Local<ObjectTemplate> {
+    pub fn prototype_template(&mut self) -> ObjectT {
         unsafe {
             self.PrototypeTemplate()
         }
@@ -141,7 +141,7 @@ impl Local<FunctionTemplate> {
     /// a prototype template indirectly by calling PrototypeTemplate() or using
     /// Inherit().
     #[inline]
-    pub fn set_property_provider_template(&mut self, prototype_provider: Local<FunctionTemplate>) {
+    pub fn set_property_provider_template(&mut self, prototype_provider: FunctionT) {
         unsafe {
             self.SetPrototypeProviderTemplate(prototype_provider)
         }

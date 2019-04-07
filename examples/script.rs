@@ -15,7 +15,6 @@ use v8::v8::{
     ContextParams,
     ContextScope,
     Object,
-    External,
     Value,
     Primitive,
     ObjectTemplate,
