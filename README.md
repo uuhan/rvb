@@ -1,6 +1,6 @@
 ## Rust Bindings To V8
 
-Aims to become the best bridge between Rust & V8 ;)
+Aims to be the best bridge between Rust & V8 ;)
 
 NB: This crate assumes you have a pre-compiled v8 installed in your os, and with pkg-config support:
 
