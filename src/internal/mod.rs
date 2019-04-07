@@ -2,6 +2,7 @@
 mod utils;
 mod external;
 mod value;
+mod error;
 
 use std::ops::Deref;
 use std::ops::DerefMut;
@@ -15,6 +16,7 @@ use std::convert::Into;
 pub(crate) use utils::*;
 pub use external::*;
 pub use value::*;
+pub use error::*;
 
 use crate::v8::raw;
 pub use crate::v8::raw::{
@@ -34,10 +36,6 @@ pub use crate::v8::raw::{
     PropertyAttribute_DontEnum,
     PropertyAttribute_DontDelete,
 };
-
-extern "C" {
-    fn V8_To_Local_Checked(value: MaybeLocal<*mut c_void>) -> Local<*mut c_void>;
-}
 
 pub struct Address(*mut raw::internal::Address);
 pub trait PersistentValue<T> {}
@@ -164,11 +162,14 @@ impl<T> MaybeLocal<T> {
     }
 
     /// unwrap maybelocal to local
-    pub fn to_local_checked(self) -> Local<T> {
-        unsafe {
-            mem::transmute(
-                V8_To_Local_Checked(mem::transmute(self))
-            )
+    pub fn to_local_checked(&self) -> V8Result<Local<T>> {
+        if self.is_empty() {
+            Err(V8Error::V8EmptyMaybeLocalErr)
+        } else {
+            Ok(Local {
+                val_: self.val_,
+                _phantom_0: PhantomData,
+            })
         }
     }
 }
@@ -195,8 +196,4 @@ impl Default for DeserializeInternalFieldsCallback {
             data: ptr::null_mut(),
         }
     }
-}
-
-pub enum V8Error {
-    V8CastErr,
 }

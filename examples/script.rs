@@ -15,6 +15,7 @@ use v8::v8::{
     ContextParams,
     ContextScope,
     Object,
+    V8Result,
     Value,
     Primitive,
     ObjectTemplate,
@@ -22,7 +23,7 @@ use v8::v8::{
     FunctionCallbackInfo,
 };
 
-pub fn main() {
+pub fn main() -> V8Result<()> {
     let _platform = Platform::New();
     let script = fs::read_to_string("./script.js").expect("file script.js not found");
     let mut isolate = Isolate::New();
@@ -49,14 +50,14 @@ pub fn main() {
 
 
         let source = V8String::New(script);
-        let mut script = V8Script::New(ctx, source);
+        let mut script = V8Script::New(ctx, source)?;
         let result = script.run(ctx);
 
-        if result.is_empty() {
-            ()
-        } else {
-            let result: String = result.to_local_checked().into();
+        if !result.is_empty() {
+            let result: String = result.to_local_checked()?.into();
             println!("{}", result);
         }
-    });
+
+        Ok(())
+    })
 }

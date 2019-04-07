@@ -19,6 +19,7 @@ pub fn main() {
         let mut str1 = V8String::New("foo");
 
         println!("str1 is name: {}", str1.is_name());
+        Ok(())
     });
 
     let v = isolate.get_data::<String>(1);

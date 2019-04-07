@@ -1,5 +1,13 @@
 use std::ptr;
-use crate::v8::{MaybeLocal, Local, Context, raw::Value, String, raw};
+use crate::v8::{
+    prelude::*,
+    raw,
+    V8Result,
+    V8Error,
+    MaybeLocal,
+    Local,
+    Value,
+};
 
 pub use raw::Script;
 pub use raw::UnboundScript;
@@ -7,9 +15,12 @@ pub use raw::UnboundScript;
 impl Local<Script> {
     /// A shorthand for ScriptComiler::Compile().
     #[inline]
-    pub fn New(context: Local<Context>, source: Local<String>) -> Self {
+    pub fn New(context: V8Context, source: V8String) -> V8Result<Self> {
         unsafe {
-            raw::Script::Compile(context, source, ptr::null_mut()).to_local_checked()
+            match raw::Script::Compile(context, source, ptr::null_mut()).to_local_checked() {
+                Ok(value) => Ok(value),
+                Err(_) => Err(V8Error::V8ScriptCompileErr),
+            }
         }
     }
 
@@ -17,7 +28,7 @@ impl Local<Script> {
     /// context in which it was created (ScriptCompiler::CompilBound or
     /// UnboundScript::BindToCurrentContext()).
     #[inline]
-    pub fn run (&mut self, context: Local<Context>) -> MaybeLocal<Value> {
+    pub fn run (&mut self, context: V8Context) -> MaybeLocal<Value> {
         unsafe {
             self.Run(context)
         }

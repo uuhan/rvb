@@ -23,5 +23,6 @@ pub fn main() {
         println!("str1 is nubmer object: {}", str1.is_number_object());
         println!("obj1 is object: {}", obj1.is_object());
         println!("undefined is object: {}", undefined.is_object());
+        Ok(())
     });
 }

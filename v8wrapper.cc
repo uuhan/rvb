@@ -20,11 +20,6 @@ V8_Get_Platform(std::unique_ptr<Platform> platform, Platform** out) {
     *out = platform.get();
 }
 
-Local<Value>
-V8_To_Local_Checked(v8::MaybeLocal<v8::Value> value) {
-    return value.ToLocalChecked();
-}
-
 /**
  * Associate embedder-specific data with the isolate. |slot| has to be
  * between 0 and GetNumberOfDataSlots() - 1.

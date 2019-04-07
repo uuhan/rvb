@@ -29,9 +29,10 @@ isolate.exec(move |context| {
     let source = V8String::New(r#"
         "Hello, World!"
     "#);
-    let mut script = V8Script::New(context, source);
-    let result: String = script.run(context).to_local_checked().into();
+    let mut script = V8Script::New(context, source)?;
+    let result: String = script.run(context).to_local_checked()?.into();
     println!("{}", result)
+    Ok(())
 })
 ```
 

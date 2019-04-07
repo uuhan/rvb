@@ -32,10 +32,11 @@ pub fn main() {
                 }
                 concat("foo: ", foo)
             "#);
-        let mut script = V8Script::New(ctx, source);
-        let result: String = script.run(ctx).to_local_checked().into();
+        let mut script = V8Script::New(ctx, source)?;
+        let result: String = script.run(ctx).to_local_checked()?.into();
         println!("{}", result);
-    });
+        Ok(())
+    }).unwrap();
 }
 
 struct HttpRequest;

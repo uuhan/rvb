@@ -22,7 +22,8 @@ pub fn main() {
             eprintln!("Error create context!");
             process::exit(1);
         }
-    })
+        Ok(())
+    }).unwrap()
 }
 
 fn create_shell_context(isolate: Isolate) {}

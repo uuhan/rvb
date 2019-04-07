@@ -3,6 +3,11 @@ use std::mem;
 
 use crate::v8::{
     raw,
+    raw::internal::{
+        Address,
+        Internals_kUndefinedValueRootIndex,
+    },
+    prelude::*,
     Rooted,
     Isolated,
     Local,
@@ -11,10 +16,6 @@ use crate::v8::{
     Context,
     HandleScope,
     utils,
-    raw::internal::{
-        Address,
-        Internals_kUndefinedValueRootIndex,
-    },
 };
 
 extern {
@@ -199,20 +200,20 @@ impl Isolate {
     }
 
     /// Helper function to execute.
-    pub fn exec<U, F>(&mut self, run: F) -> U
-        where F: FnOnce(Local<Context>) -> U
+    pub fn exec<U, F>(&mut self, run: F) -> V8Result<U>
+        where F: FnOnce(Local<Context>) -> V8Result<U>
         {
             self.enter();
             let _handle_scole = HandleScope::New();
-            let mut context = Local::<Context>::Default();
+            let mut context = V8Context::Default();
             context.enter();
 
-            let result = run(context);
+            let result = run(context)?;
 
             context.exit();
             self.exit();
 
-            result
+            Ok(result)
         }
 
     /// Tells the VM whether the embedder is idle or not.
