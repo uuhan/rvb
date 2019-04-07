@@ -1,4 +1,7 @@
 use std::mem;
+use std::ffi::CStr;
+use std::os::raw::c_char;
+
 use crate::v8::{
     raw,
     raw::internal::{
@@ -13,6 +16,10 @@ use crate::v8::{
     Local,
     Primitive,
 };
+
+extern {
+    fn V8_Version() -> *const c_char;
+}
 
 /// Internals::GetRoot()
 #[inline]
@@ -60,5 +67,12 @@ pub fn r#false() -> Local<Primitive> {
         let isolate: *const raw::Isolate = raw::Isolate_GetCurrent();
         let slot = get_root(isolate, Internals_kFalseValueRootIndex);
         mem::transmute(slot)
+    }
+}
+
+/// V8_VERSION_STRING
+pub fn version() -> &'static str {
+    unsafe {
+        CStr::from_ptr(V8_Version()).to_str().unwrap()
     }
 }

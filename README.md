@@ -70,6 +70,10 @@ let mut function = FunctionT::New();
 function.set_call_handler(Some(function_tpl), Some(data));
 ```
 
+## Tested V8 Version
+
+- [x] 7.5.0 (candidate)
+
 ## Contributing
 
 ## License

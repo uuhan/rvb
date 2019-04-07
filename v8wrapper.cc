@@ -6,6 +6,13 @@ using namespace v8;
 
 extern "C" {
 
+const char*
+V8_Version()
+{
+    const char* version = V8_VERSION_STRING;
+    return version;
+}
+
 std::unique_ptr<Platform>
 V8_Initialize_Platform()
 {
@@ -16,7 +23,8 @@ V8_Initialize_Platform()
 }
 
 void
-V8_Get_Platform(std::unique_ptr<Platform> platform, Platform** out) {
+V8_Get_Platform(std::unique_ptr<Platform> platform, Platform** out)
+{
     *out = platform.get();
 }
 
@@ -25,7 +33,8 @@ V8_Get_Platform(std::unique_ptr<Platform> platform, Platform** out) {
  * between 0 and GetNumberOfDataSlots() - 1.
  */
 void
-V8_Isolate_SetData(Isolate* isolate, uint32_t slot, void* data) {
+V8_Isolate_SetData(Isolate* isolate, uint32_t slot, void* data)
+{
     isolate->SetData(slot, data);
 }
 
@@ -34,102 +43,123 @@ V8_Isolate_SetData(Isolate* isolate, uint32_t slot, void* data) {
  * Returns NULL if SetData has never been called for the given |slot|.
  */
 void*
-V8_Isolate_GetData(Isolate* isolate, uint32_t slot) {
+V8_Isolate_GetData(Isolate* isolate, uint32_t slot)
+{
     return isolate->GetData(slot);
 }
 
 void
-V8_Isolate_Locker(Isolate* isolate, Locker* locker) {
+V8_Isolate_Locker(Isolate* isolate, Locker* locker)
+{
     new (locker) Locker(isolate);
 }
 
 void
-V8_Isolate_Locker_Drop(Locker* locker) {
+V8_Isolate_Locker_Drop(Locker* locker)
+{
     delete locker;
 }
 
 void
-V8_Isolate_Unlocker(Isolate* isolate, Unlocker* unlocker) {
+V8_Isolate_Unlocker(Isolate* isolate, Unlocker* unlocker)
+{
     new (unlocker) Unlocker(isolate);
 }
 
 void
-V8_Isolate_Unlocker_Drop(Unlocker* unlocker) {
+V8_Isolate_Unlocker_Drop(Unlocker* unlocker)
+{
     delete unlocker;
 }
 
 Isolate*
-V8_FunctionCallbackInfo_GetIsolate(FunctionCallbackInfo<Value>& args) {
+V8_FunctionCallbackInfo_GetIsolate(FunctionCallbackInfo<Value>& args)
+{
     return args.GetIsolate();
 }
 
 Local<Object>
-V8_FunctionCallbackInfo_This(FunctionCallbackInfo<Value>& args) {
+V8_FunctionCallbackInfo_This(FunctionCallbackInfo<Value>& args)
+{
     return args.This();
 }
 
 int
-V8_FunctionCallbackInfo_Length(FunctionCallbackInfo<Value>& args) {
+V8_FunctionCallbackInfo_Length(FunctionCallbackInfo<Value>& args)
+{
     return args.Length();
 }
 
 Local<Object>
-V8_FunctionCallbackInfo_Holder(FunctionCallbackInfo<Value>& args) {
+V8_FunctionCallbackInfo_Holder(FunctionCallbackInfo<Value>& args)
+{
     return args.Holder();
 }
 
 Local<Value>
-V8_FunctionCallbackInfo_NewTarget(FunctionCallbackInfo<Value>& args) {
+V8_FunctionCallbackInfo_NewTarget(FunctionCallbackInfo<Value>& args)
+{
     return args.NewTarget();
 }
 
 bool
-V8_FunctionCallbackInfo_IsConstructorCall(FunctionCallbackInfo<Value>& args) {
+V8_FunctionCallbackInfo_IsConstructorCall(FunctionCallbackInfo<Value>& args)
+{
     return args.IsConstructCall();
 }
 
 Local<Value>
-V8_FunctionCallbackInfo_Data(FunctionCallbackInfo<Value>& args) {
+V8_FunctionCallbackInfo_Data(FunctionCallbackInfo<Value>& args)
+{
     return args.Data();
 }
 
 void
-V8_FunctionCallbackInfo_GetReturnValue(FunctionCallbackInfo<Value>& args, ReturnValue<Value>* out) {
+V8_FunctionCallbackInfo_GetReturnValue(FunctionCallbackInfo<Value>& args,
+                                       ReturnValue<Value>* out)
+{
     *out = args.GetReturnValue();
 }
 
 void
-V8_ReturnValue_SetLocalValue(ReturnValue<Value>& in, Local<Value> value) {
+V8_ReturnValue_SetLocalValue(ReturnValue<Value>& in, Local<Value> value)
+{
     in.Set(value);
 }
 
 void
-V8_ReturnValue_SetNull(ReturnValue<Value>& in) {
+V8_ReturnValue_SetNull(ReturnValue<Value>& in)
+{
     in.SetNull();
 }
 
 void
-V8_ReturnValue_SetUndefined(ReturnValue<Value>& in) {
+V8_ReturnValue_SetUndefined(ReturnValue<Value>& in)
+{
     in.SetUndefined();
 }
 
 void
-V8_ReturnValue_SetBool(ReturnValue<Value>& in, bool value) {
+V8_ReturnValue_SetBool(ReturnValue<Value>& in, bool value)
+{
     in.Set(value);
 }
 
 void
-V8_ReturnValue_SetDouble(ReturnValue<Value>& in, double value) {
+V8_ReturnValue_SetDouble(ReturnValue<Value>& in, double value)
+{
     in.Set(value);
 }
 
 void
-V8_ReturnValue_SetInt32(ReturnValue<Value>& in, int32_t value) {
+V8_ReturnValue_SetInt32(ReturnValue<Value>& in, int32_t value)
+{
     in.Set(value);
 }
 
 void
-V8_ReturnValue_SetUint32(ReturnValue<Value>& in, uint32_t value) {
+V8_ReturnValue_SetUint32(ReturnValue<Value>& in, uint32_t value)
+{
     in.Set(value);
 }
 }
