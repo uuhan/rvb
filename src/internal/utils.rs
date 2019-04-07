@@ -1,11 +1,13 @@
 #![allow(dead_code, unused_variables)]
-// internal utils
-use crate::v8::raw;
 
-pub struct Internals;
+use crate::v8::{
+    raw::{
+        Isolate,
+        FunctionCallback,
+    },
+    prelude::*,
+};
 
-impl Internals {
-    pub fn GetRoot(isolate: *const raw::Isolate, index: u32) -> *const raw::internal::Address {
-        unimplemented!()
-    }
+pub fn function_template_new() {
+    unimplemented!()
 }
