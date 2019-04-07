@@ -4,9 +4,7 @@ use crate::v8::{
     raw,
     V8Result,
     V8Error,
-    MaybeLocal,
     Local,
-    Value,
 };
 
 pub use raw::Script;
@@ -17,10 +15,9 @@ impl Local<Script> {
     #[inline]
     pub fn New(context: V8Context, source: V8String) -> V8Result<Self> {
         unsafe {
-            match raw::Script::Compile(context, source, ptr::null_mut()).to_local_checked() {
-                Ok(value) => Ok(value),
-                Err(_) => Err(V8Error::V8ScriptCompileErr),
-            }
+            raw::Script::Compile(context, source, ptr::null_mut())
+                .to_local_checked()
+                .map_err(|_| V8Error::V8ScriptCompileErr)
         }
     }
 
@@ -28,9 +25,11 @@ impl Local<Script> {
     /// context in which it was created (ScriptCompiler::CompilBound or
     /// UnboundScript::BindToCurrentContext()).
     #[inline]
-    pub fn run (&mut self, context: V8Context) -> MaybeLocal<Value> {
+    pub fn run (&mut self, context: V8Context) -> V8Result<V8Value> {
         unsafe {
             self.Run(context)
+                .to_local_checked()
+                .map_err(|_| V8Error::V8ScriptRunErr)
         }
     }
 

@@ -20,7 +20,7 @@ pub fn main() {
 
         println!("str1 is name: {}", str1.is_name());
         Ok(())
-    });
+    }).unwrap();
 
     let v = isolate.get_data::<String>(1);
     let data = isolate.get_data::<IsolateData>(ISOLATE_DATA_SLOT);

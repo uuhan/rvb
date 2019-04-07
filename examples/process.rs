@@ -33,7 +33,7 @@ pub fn main() {
                 concat("foo: ", foo)
             "#);
         let mut script = V8Script::New(ctx, source)?;
-        let result: String = script.run(ctx).to_local_checked()?.into();
+        let result: String = script.run(ctx)?.into();
         println!("{}", result);
         Ok(())
     }).unwrap();

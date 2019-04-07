@@ -21,7 +21,7 @@ pub fn main() {
                 "Hello, " + "World!"
             "#);
         let mut script = V8Script::New(context, source)?;
-        let result: String = script.run(context).to_local_checked()?.into();
+        let result: String = script.run(context)?.into();
         println!("{}", result);
         Ok(())
     });

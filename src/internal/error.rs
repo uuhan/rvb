@@ -7,6 +7,7 @@ pub enum V8Error {
     V8CastErr,
     V8EmptyMaybeLocalErr,
     V8ScriptCompileErr,
+    V8ScriptRunErr,
 }
 
 impl fmt::Display for V8Error {
@@ -15,6 +16,7 @@ impl fmt::Display for V8Error {
             V8Error::V8CastErr => write!(fmt, "V8 Cast Error."),
             V8Error::V8EmptyMaybeLocalErr => write!(fmt, "Empty MaybeLocal."),
             V8Error::V8ScriptCompileErr => write!(fmt, "Script Compile Failed."),
+            V8Error::V8ScriptRunErr => write!(fmt, "Script Run Failed."),
         }
     }
 }

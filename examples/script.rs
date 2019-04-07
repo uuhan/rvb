@@ -51,12 +51,8 @@ pub fn main() -> V8Result<()> {
 
         let source = V8String::New(script);
         let mut script = V8Script::New(ctx, source)?;
-        let result = script.run(ctx);
-
-        if !result.is_empty() {
-            let result: String = result.to_local_checked()?.into();
-            println!("{}", result);
-        }
+        let result: String = script.run(ctx)?.into();
+        println!("{}", result);
 
         Ok(())
     })
