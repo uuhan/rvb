@@ -1,10 +1,4 @@
 use super::*;
-use crate::v8::{
-    raw,
-    Local,
-    prelude::*,
-};
-
 pub use crate::v8::raw::FunctionTemplate;
 
 impl<'a> Isolated<'a> for FunctionTemplate {}
