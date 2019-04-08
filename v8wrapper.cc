@@ -162,4 +162,9 @@ V8_ReturnValue_SetUint32(ReturnValue<Value>& in, uint32_t value)
 {
     in.Set(value);
 }
+
+void
+V8_Object_GetInternalField(Local<Object>& obj, int index, Local<Value>* field) {
+    *field = obj->GetInternalField(index);
+}
 }

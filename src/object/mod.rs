@@ -1,3 +1,4 @@
+use std::ptr;
 mod array;
 mod map;
 mod set;
@@ -29,6 +30,7 @@ use crate::v8::{
 };
 
 pub use crate::v8::raw::{
+    internal::Address,
     Object,
     AccessorGetterCallback,
     AccessorSetterCallback,
@@ -46,6 +48,10 @@ pub use crate::v8::raw::{
     PropertyAttribute_DontEnum,
     PropertyAttribute_DontDelete,
 };
+
+extern {
+    fn V8_Object_GetInternalField(obj: &mut Object, index: u32, out: *mut V8Value);
+}
 
 impl Local<Object> {
     #[inline]
@@ -111,8 +117,12 @@ impl Local<Object> {
 
     /// Gets the value from an internal field.
     #[inline]
-    pub fn get_internal_field(&mut self, index: u32) {
-        unimplemented!()
+    pub fn get_internal_field(&mut self, index: u32) -> Option<&mut V8Value> {
+        unsafe {
+            let field = ptr::null_mut();
+            V8_Object_GetInternalField(self, index, field);
+            field.as_mut::<'static>()
+        }
     }
 }
 
