@@ -19,15 +19,11 @@ pub use template::*;
 
 use crate::v8::{
     Local,
-    MaybeLocal,
     Value,
     Data,
-    Context,
-    TemplateTrait,
-    ValueTrait,
     String,
-    Template,
-    FunctionTemplate,
+    Context,
+    ValueTrait,
     Isolated,
 };
 

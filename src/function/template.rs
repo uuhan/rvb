@@ -4,7 +4,6 @@ pub use crate::v8::raw::FunctionTemplate;
 impl<'a> Isolated<'a> for FunctionTemplate {}
 impl TemplateTrait for FunctionTemplate {}
 
-#[inline]
 extern fn function_template(info: *const FunctionCallbackInfo) {
     unsafe {
         let args = &*info;

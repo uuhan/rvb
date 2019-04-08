@@ -1,6 +1,22 @@
+use std::mem;
 use super::*;
 
+use crate::function::*;
+use crate::v8::prelude::*;
 pub use crate::v8::raw::ObjectTemplate;
+
+extern fn function_template(info: *const FunctionCallbackInfo) {
+    unsafe {
+        let args = &*info;
+        let external = V8External::from(args.data());
+        let external_ptr = external.value();
+        let ref mut rv = args.get_return_value();
+
+        let closure: &mut Box<FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
+            = mem::transmute(external_ptr);
+        closure(args, rv);
+    }
+}
 
 impl Local<ObjectTemplate> {
     /// Creates an ObjectTemplate.
@@ -114,6 +130,20 @@ impl Local<ObjectTemplate> {
             self.SetCallAsFunctionHandler(callback, data)
         }
     }
+
+    /// Sets the callback to be used with a Rust closure when calling
+    /// instances created from this template as a function.
+    #[inline]
+    pub fn set_call_as_function_closure<F>(&mut self, callback: F)
+        where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
+        {
+            let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+                = Box::new(Box::new(callback));
+            let data = V8External::New(Box::into_raw(callback) as *mut std::ffi::c_void);
+            unsafe {
+                self.SetCallAsFunctionHandler(Some(function_template), data.into());
+            }
+        }
 
     /// Mark object instances of the template as undectable.
     ///
