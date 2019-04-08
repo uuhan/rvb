@@ -40,6 +40,7 @@ pub use crate::v8::raw::{
 };
 
 impl Local<Object> {
+    #[inline]
     pub fn New() -> Self {
         let isolate = Self::GetIsolate();
         unsafe {
@@ -47,16 +48,32 @@ impl Local<Object> {
         }
     }
 
+    #[inline]
     pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, key: K, value: V) -> bool {
         unsafe {
             self.Set(key.into(), value.into())
         }
     }
 
+    #[inline]
     pub fn get<K: Into<Local<Value>>>(&mut self, key: K) -> Local<Value> {
         unsafe {
             self.Get(key.into())
         }
+    }
+
+    /// Sets the value in an internal field.
+    #[inline]
+    pub fn set_internal_field(&mut self, index: u32, value: Local<Value>) {
+        unsafe {
+            self.SetInternalField(index as ::std::os::raw::c_int, value)
+        }
+    }
+
+    /// Gets the value from an internal field.
+    #[inline]
+    pub fn get_internal_field(&mut self, index: u32) {
+        unimplemented!()
     }
 }
 

@@ -157,6 +157,41 @@ impl Local<ObjectTemplate> {
             self.MarkAsUndetectable()
         }
     }
+
+    /// Gets the number of internal fields for objects generated from
+    /// this template.
+    #[inline]
+    pub fn internal_field_count(&mut self) -> u32 {
+        unsafe {
+            self.InternalFieldCount() as u32
+        }
+    }
+
+    /// Sets the number of internal fields for objects generated from
+    /// this template.
+    #[inline]
+    pub fn set_internal_field_count(&mut self, value: u32) {
+        unsafe {
+            self.SetInternalFieldCount(value as ::std::os::raw::c_int)
+        }
+    }
+
+    /// Returns true if the object will be an immutable prototype exotic object.
+    #[inline]
+    pub fn is_immutable_proto(&mut self) -> bool {
+        unsafe {
+            self.IsImmutableProto()
+        }
+    }
+
+    /// Makes the ObjectTemplate for an immutable prototype exotic object, with an
+    /// immutable __proto__.
+    #[inline]
+    pub fn set_immutable_proto(&mut self) {
+        unsafe {
+            self.SetImmutableProto()
+        }
+    }
 }
 
 inherit!(ObjectTemplate, Template, Data);
