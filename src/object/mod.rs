@@ -1,4 +1,6 @@
 use std::ptr;
+use std::mem;
+
 mod array;
 mod map;
 mod set;
@@ -50,7 +52,7 @@ pub use crate::v8::raw::{
 };
 
 extern {
-    fn V8_Object_GetInternalField(obj: &mut Object, index: u32, out: *mut V8Value);
+    fn V8_Object_GetInternalField(obj: &mut V8Object, index: u32, out: *mut V8Value);
 }
 
 impl Local<Object> {
@@ -134,11 +136,11 @@ impl Local<Object> {
 
     /// Gets the value from an internal field.
     #[inline]
-    pub fn get_internal_field<T: From<V8Value>>(&mut self, index: u32) -> Option<T> {
+    pub fn get_internal_field<T: From<V8Value>>(&mut self, index: u32) -> T {
         unsafe {
-            let field = ptr::null_mut();
-            V8_Object_GetInternalField(self, index, field);
-            field.as_mut::<'static>().map(|v| T::from(*v))
+            let mut field = mem::uninitialized();
+            V8_Object_GetInternalField(self, index, &mut field);
+            T::from(field)
         }
     }
 }
