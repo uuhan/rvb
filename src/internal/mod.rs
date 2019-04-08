@@ -1,6 +1,7 @@
 #![allow(unused_imports)]
 mod utils;
 mod external;
+mod persistent;
 mod value;
 mod error;
 
@@ -15,6 +16,7 @@ use std::convert::Into;
 
 pub(crate) use utils::*;
 pub use external::*;
+pub use persistent::*;
 pub use value::*;
 pub use error::*;
 
@@ -23,8 +25,6 @@ pub use crate::v8::raw::{
     Local,
     MaybeLocal,
     Maybe,
-    Persistent,
-    PersistentBase,
     DeserializeInternalFieldsCallback,
     TryCatch,
     Name,
