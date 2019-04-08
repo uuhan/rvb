@@ -33,11 +33,18 @@ pub use crate::v8::raw::{
     AccessorGetterCallback,
     AccessorSetterCallback,
     AccessControl,
-    PropertyAttribute,
     AccessorSignature,
     FunctionCallback,
     SideEffectType,
     NamedPropertyHandlerConfiguration,
+
+    PropertyDescriptor,
+
+    PropertyAttribute,
+    PropertyAttribute_None,
+    PropertyAttribute_ReadOnly,
+    PropertyAttribute_DontEnum,
+    PropertyAttribute_DontDelete,
 };
 
 impl Local<Object> {
@@ -70,6 +77,27 @@ impl Local<Object> {
                                 value: V8Value) -> Maybe<bool> {
         unsafe {
             self.CreateDataProperty(context, key ,value)
+        }
+    }
+
+    #[inline]
+    pub fn define_own_property(&mut self,
+                               context: V8Context,
+                               key: V8Name,
+                               value: V8Value,
+                               attributes: PropertyAttribute) -> Maybe<bool> {
+        unsafe {
+            self.DefineOwnProperty(context, key, value, attributes)
+        }
+    }
+
+    #[inline]
+    pub fn define_property(&mut self,
+                           context: V8Context,
+                           key: V8Name,
+                           descriptor: &mut PropertyDescriptor) -> Maybe<bool> {
+        unsafe {
+            self.DefineProperty(context, key, descriptor)
         }
     }
 
