@@ -70,6 +70,33 @@ let mut function = FunctionT::New();
 function.set_call_handler(Some(function_tpl), Some(data));
 ```
 
+### 3. Set Object's Internal Field
+
+```rust
+use v8_rs::v8::{
+    prelude::*,
+}
+
+isolate.exec(|ctx| {
+    let mut objt = ObjectT::New(None);
+    objt.set_internal_field_count(1);
+    let mut object = objt.new_instance(ctx).to_local_checked()?;
+
+    let closure: Box<Box<FnMut()>> = Box::new(Box::new(|| {
+        println!("Hello from internal field!");
+    }));
+
+    object.set_internal_field(0, V8External::New(Box::into_raw(closure) as *mut ::std::ffi::c_void));
+
+    let closure_ptr = object.get_internal_field::<V8External>(0).value();
+    let closure: &mut Box<FnMut()> = unsafe { mem::transmute(closure_ptr) };
+
+    closure();
+
+    Ok(())
+}).unwrap();
+```
+
 ## Tested V8 Version
 
 - [x] 7.5.0 (candidate)
