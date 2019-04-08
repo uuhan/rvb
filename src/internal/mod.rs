@@ -22,6 +22,7 @@ use crate::v8::raw;
 pub use crate::v8::raw::{
     Local,
     MaybeLocal,
+    Maybe,
     Persistent,
     PersistentBase,
     DeserializeInternalFieldsCallback,

@@ -18,6 +18,7 @@ pub use regexp::*;
 pub use template::*;
 
 use crate::v8::{
+    prelude::*,
     Local,
     Value,
     Data,
@@ -59,6 +60,16 @@ impl Local<Object> {
     pub fn get<K: Into<Local<Value>>>(&mut self, key: K) -> Local<Value> {
         unsafe {
             self.Get(key.into())
+        }
+    }
+
+    #[inline]
+    pub fn create_data_property(&mut self,
+                                context: V8Context,
+                                key: V8Name,
+                                value: V8Value) -> Maybe<bool> {
+        unsafe {
+            self.CreateDataProperty(context, key ,value)
         }
     }
 
