@@ -19,4 +19,8 @@ cc = "1.0.30"
 libc = "0.2.50"
 
 [dev-dependencies]
-criterion = "0.2.10"
+criterion = "0.2.11"
+
+[[bench]]
+name = "benchmark"
+harness = false
