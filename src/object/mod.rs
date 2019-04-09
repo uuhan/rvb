@@ -35,6 +35,8 @@ pub use crate::v8::raw::{
     Object,
     AccessorGetterCallback,
     AccessorSetterCallback,
+    AccessorNameGetterCallback,
+    AccessorNameSetterCallback,
     AccessControl,
     AccessorSignature,
     FunctionCallback,
@@ -140,6 +142,75 @@ impl Local<Object> {
             let mut field = mem::uninitialized();
             V8_Object_GetInternalField(self, index, &mut field);
             T::from(field)
+        }
+    }
+
+    /// Gets the property attributes of a property which can be None or
+    /// any combination of ReadOnly, DontEnum and DontDelete. Returns
+    /// None when the property doesn't exist.
+    #[inline]
+    pub fn get_property_attributes(&mut self, context: V8Context, key: V8Value) -> Maybe<PropertyAttribute> {
+        unsafe {
+            self.GetPropertyAttributes(context, key)
+        }
+    }
+
+    /// Object::Has() calls the abstract operation HasProperty(O, P) described
+    /// in ECMA-262, 7.3.10. Has() returns true, if the object has the property,
+    /// either own or on the prototype chain.  Interceptors, i.e.,
+    /// PropertyQueryCallbacks, are called if present.
+    ///
+    /// Has() has the same side effects as JavaScript's variable in object.
+    /// For example, calling Has() on a revoked proxy will throw an exception.
+    ///
+    /// Note Has() converts the key to a name, which possibly calls back into
+    /// JavaScript.
+    ///
+    /// See also Object::hasOwnProperty() and Object::HasRealNamedProperty()
+    #[inline]
+    pub fn has(&mut self, context: V8Context, key: V8Value) -> Maybe<bool> {
+        unsafe {
+            self.Has(context, key)
+        }
+    }
+
+    #[inline]
+    pub fn set_accessor(&mut self,
+                        context: V8Context,
+                        name: V8Name,
+                        getter: AccessorNameGetterCallback,
+                        setter: AccessorNameSetterCallback,
+                        data: MaybeLocal<Value>,
+                        settings: AccessControl,
+                        attribute: PropertyAttribute,
+                        getter_side_effect_type: SideEffectType,
+                        setter_side_effect_type: SideEffectType) -> Maybe<bool> {
+        unsafe {
+            self.SetAccessor(context,
+                             name,
+                             getter,
+                             setter,
+                             data,
+                             settings,
+                             attribute,
+                             getter_side_effect_type,
+                             setter_side_effect_type)
+        }
+    }
+
+    #[inline]
+    pub fn set_accessor_property(&mut self,
+                                 name: V8Name,
+                                 getter: V8Function,
+                                 setter: V8Function,
+                                 attribute: PropertyAttribute,
+                                 settings: AccessControl) {
+        unsafe {
+            self.SetAccessorProperty(name,
+                                     getter,
+                                     setter,
+                                     attribute,
+                                     settings)
         }
     }
 }
