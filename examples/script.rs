@@ -1,26 +1,13 @@
-#![allow(unused)]
-#![feature(fnbox)]
 extern crate v8_rs as v8;
 use std::fs;
-use std::boxed::FnBox;
-use std::ffi::c_void;
-use std::mem;
-use std::ffi::CString;
 
 use v8::v8::prelude::*;
 use v8::v8::{
     Platform,
     Isolate,
-    Context,
     ContextParams,
     ContextScope,
-    Object,
     V8Result,
-    Value,
-    Primitive,
-    ObjectTemplate,
-    FunctionTemplate,
-    FunctionCallbackInfo,
 };
 
 pub fn main() -> V8Result<()> {
@@ -33,7 +20,7 @@ pub fn main() -> V8Result<()> {
     isolate.exec(move |context| {
         let _scope = ContextScope::New(context);
         let mut global = ObjectT::New(None);
-        let mut print = FunctionT::Call(|args, rv| {
+        let print = FunctionT::Call(|args, rv| {
             println!("{}", text);
             rv.set::<V8Value>(args.at(0));
         });
