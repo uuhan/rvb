@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate criterion;
 use criterion::Criterion;
+use criterion::ParameterizedBenchmark;
 use criterion::black_box;
 use std::mem;
 use v8_rs::v8::{
@@ -30,7 +31,12 @@ fn fib_bench(c: &mut Criterion) {
     c.bench_function("fib 20", |b| b.iter(|| fibonacci(black_box(20))));
 }
 
-fn boxed_fn() {
+fn normal_closure() {
+    let closure = || {};
+    closure()
+}
+
+fn boxed_closure() {
     let closure = || {};
     let closure: Box<Box<FnMut()>>
         = Box::new(Box::new(closure));
@@ -39,16 +45,23 @@ fn boxed_fn() {
     closure()
 }
 
-fn boxed_fn_bench(c: &mut Criterion) {
-    c.bench_function(
-        "boxed closure",
-        |b| b.iter(|| boxed_fn())
+fn boxed_closure_bench(c: &mut Criterion) {
+    c.bench(
+        "closure",
+        ParameterizedBenchmark::new(
+            "boxed closure",
+            |b, _| b.iter(|| boxed_closure()),
+            vec![1,2,3])
+        .with_function(
+            "normal closure",
+            |b, _| b.iter(|| normal_closure())
+        )
     );
 }
 
 criterion_group!(
     benches,
     fib_bench,
-    boxed_fn_bench,
+    boxed_closure_bench,
     );
 criterion_main!(benches);
