@@ -200,6 +200,23 @@ impl Isolate {
     }
 
     /// Helper function to execute.
+    ///
+    /// ```no_run
+    /// # extern crate v8_rs;
+    /// use v8_rs::v8::{
+    ///     prelude::*,
+    ///     Platform,
+    ///     Isolate,
+    /// };
+    /// fn main () {
+    ///     let _platform = Platform::New();
+    ///     let mut isolate = Isolate::New();
+    ///
+    ///     isolate.exec(|ctx| {
+    ///         Ok(())
+    ///     }).unwrap();
+    /// }
+    /// ```
     pub fn exec<U, F>(&mut self, run: F) -> V8Result<U>
         where F: FnOnce(Local<Context>) -> V8Result<U>
         {
