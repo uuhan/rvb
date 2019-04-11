@@ -199,7 +199,10 @@ impl Isolate {
         }
     }
 
-    /// Helper function to execute.
+    /// Helper function to run your function.
+    /// Providing the current context, returns V8Result<T>
+    ///
+    /// # Examples
     ///
     /// ```no_run
     /// # extern crate v8_rs;
