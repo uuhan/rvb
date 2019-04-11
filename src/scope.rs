@@ -1,5 +1,7 @@
 pub use crate::v8::raw::HandleScope;
+pub use crate::v8::raw::EscapableHandleScope;
 pub use crate::v8::raw::Context_Scope as ContextScope;
+
 use crate::v8::Isolated;
 use crate::v8::Context;
 use crate::v8::Local;
@@ -10,6 +12,17 @@ impl<'a> Isolated<'a> for HandleScope {
         Box::new(
             unsafe {
                 HandleScope::new(isolate)
+            }
+        )
+    }
+}
+
+impl<'a> Isolated<'a> for EscapableHandleScope {
+    fn New() -> Box<Self> {
+        let isolate = Self::GetIsolate();
+        Box::new(
+            unsafe {
+                EscapableHandleScope::new(isolate)
             }
         )
     }
