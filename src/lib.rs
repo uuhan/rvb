@@ -36,6 +36,9 @@
 //!     }).unwrap();
 //! }
 //! ```
+//!
+//! See [examples](./examples) for more.
+//!
 
 #[macro_use]
 pub(crate) mod mac;
