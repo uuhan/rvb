@@ -4,7 +4,17 @@
 //! This crate aims to be the best bridge between Rust & V8 ;).
 //! You can use this crate to power your app with js script support.
 //!
-//! NB: You should have V8 installed in your os and provide pkg-config config (v8.pc).
+//! NB: You should have V8 installed in your os and provide pkg-config config (v8.pc),
+//! for example:
+//!
+//! ```sh
+//! prefix=/home/v8/source/v8
+//! Name: v8
+//! Description: v8
+//! Version: 7.5.0
+//! Cflags: -I${prefix}/include
+//! Libs: -L${prefix}/lib -lv8_monolith
+//! ```
 //!
 //! ## Usage
 //!
