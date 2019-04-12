@@ -1,4 +1,31 @@
 #![allow(non_snake_case)]
+//! # v8_rs
+//!
+//! This crate aims to be the best bridge between Rust & V8 ;).
+//! You can use this crate to power your app with js script support.
+//!
+//! NB: You should have V8 installed in your os and provide pkg-config config (v8.pc).
+//!
+//! ## Usage
+//!
+//! ```rust,no_run
+//! # extern crate v8_rs;
+//! use v8_rs::v8::{
+//!     prelude::*,
+//!     Platform,
+//!     Isolate,
+//! };
+//!
+//! fn main() {
+//!     let _platform = Platform::New();
+//!     let mut isolate = Isolate::New();
+//!
+//!     isolate.exec(|ctx| {
+//!         // <do something>
+//!         Ok(())
+//!     }).unwrap();
+//! }
+//! ```
 
 #[macro_use]
 pub(crate) mod mac;
