@@ -4,6 +4,8 @@
 
 using namespace v8;
 
+typedef Local<Value> (*rust_callback)(void*);
+
 extern "C" {
 
 const char*
@@ -49,27 +51,10 @@ V8_Isolate_GetData(Isolate* isolate, uint32_t slot)
 }
 
 void
-V8_Isolate_Locker(Isolate* isolate, Locker* locker)
+V8_Isolate_With_Locker(Isolate* isolate, rust_callback callback, void* data)
 {
-    new (locker) Locker(isolate);
-}
-
-void
-V8_Isolate_Locker_Drop(Locker* locker)
-{
-    delete locker;
-}
-
-void
-V8_Isolate_Unlocker(Isolate* isolate, Unlocker* unlocker)
-{
-    new (unlocker) Unlocker(isolate);
-}
-
-void
-V8_Isolate_Unlocker_Drop(Unlocker* unlocker)
-{
-    delete unlocker;
+    Locker locker(isolate);
+    callback(data);
 }
 
 Isolate*

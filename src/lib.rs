@@ -63,7 +63,6 @@ pub mod v8 {
     pub use crate::context::ContextParams;
     pub use crate::isolate::Isolate;
     pub use crate::isolate::IsolateData;
-    pub use crate::isolate::Unlocker;
     pub use crate::isolate::ISOLATE_DATA_SLOT;
     pub use crate::platform::Platform;
     pub use crate::scope::HandleScope;

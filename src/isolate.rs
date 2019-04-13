@@ -19,42 +19,23 @@ use crate::v8::{
 };
 
 extern {
-    fn V8_Isolate_Locker(isolate: *const raw::Isolate, locker: &mut Locker);
-    fn V8_Isolate_Unlocker(isolate: *const raw::Isolate, unlocker: &mut Unlocker);
+    fn V8_Isolate_With_Locker(
+        isolate: *const raw::Isolate,
+        callback: extern fn(data: *mut std::ffi::c_void),
+        data: *mut std::ffi::c_void);
+}
+
+extern fn with_locker_callback(data: *mut std::ffi::c_void) {
+    unsafe {
+        let closure: &mut Box<FnMut()> = mem::transmute(data);
+        closure()
+    }
 }
 
 pub const ISOLATE_DATA_SLOT: u32 = 0;
 
 pub struct IsolateData {
     pub count: usize,
-}
-
-#[must_use]
-#[repr(C)]
-pub struct Locker(*mut Locker);
-impl Locker {
-    pub fn New() -> Self {
-        unsafe {
-            let mut locker = mem::uninitialized();
-            let isolate = raw::Isolate::GetCurrent();
-            V8_Isolate_Locker(isolate, &mut locker);
-            locker
-        }
-    }
-}
-
-#[must_use]
-#[repr(C)]
-pub struct Unlocker(*mut Unlocker);
-impl Unlocker {
-    pub fn New() -> Self {
-        unsafe {
-            let mut unlocker = mem::uninitialized();
-            let isolate = raw::Isolate::GetCurrent();
-            V8_Isolate_Unlocker(isolate, &mut unlocker);
-            unlocker
-        }
-    }
 }
 
 #[repr(C)]
@@ -294,15 +275,29 @@ impl Isolate {
         }
     }
 
-    /// TODO: Lock this Isolate
-    pub fn lock(&mut self) -> &mut Self {
-        self
-    }
+    /// Isolate Run Within A V8::Locker
+    pub fn with_locker<F>(&mut self, mut run: F)
+        where F: FnMut(V8Context)
+        {
+            let mut cloned = self.clone();
+            let callback: Box<Box<FnMut()>>
+                = Box::new(Box::new(|| {
+                    cloned.enter();
+                    let _handle_scole = HandleScope::New();
+                    let mut context = V8Context::Default();
+                    context.enter();
+                    run(context);
+                    context.exit();
+                    cloned.exit();
+                }));
 
-    /// TODO: Unlock this Isolate
-    pub fn unlock(&mut self) -> &mut Self {
-        self
-    }
+            unsafe {
+                V8_Isolate_With_Locker(
+                    self.0,
+                    with_locker_callback,
+                    Box::into_raw(callback) as *mut std::ffi::c_void)
+            }
+        }
 }
 
 deref_mut!(Isolate);
