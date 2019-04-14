@@ -1,11 +1,11 @@
 use crate::v8::{
-    raw::Promise,
     Object,
     Value,
     Data,
 };
 
 pub use crate::v8::raw::{
+    Promise,
     PromiseHook,
     PromiseHookType,
     PromiseHookType_kInit,

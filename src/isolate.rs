@@ -303,7 +303,24 @@ impl Isolate {
     /// Set the PromiseHook callback for various promise lifecycle
     /// events.
     pub fn set_promise_hook(&mut self, hook: PromiseHook) {
-        unimplemented!()
+        unsafe {
+            self.SetPromiseHook(hook)
+        }
+    }
+
+    /// Runs the default MicrotaskQueue until it gets empty.
+    /// Any exceptions thrown by microtask callbacks are awallowed.
+    pub fn run_microtasks(&mut self) {
+        unsafe {
+            self.RunMicrotasks()
+        }
+    }
+
+    /// Enqueues the callback to the default MicrotaskQueue
+    pub fn enqueue_microtasks(&mut self, microtask: V8Function) {
+        unsafe {
+            self.EnqueueMicrotask(microtask)
+        }
     }
 }
 
