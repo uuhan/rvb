@@ -15,6 +15,7 @@ use crate::v8::{
     Primitive,
     Context,
     HandleScope,
+    PromiseHook,
     utils,
 };
 
@@ -298,6 +299,12 @@ impl Isolate {
                     Box::into_raw(callback) as *mut std::ffi::c_void)
             }
         }
+
+    /// Set the PromiseHook callback for various promise lifecycle
+    /// events.
+    pub fn set_promise_hook(&mut self, hook: PromiseHook) {
+        unimplemented!()
+    }
 }
 
 deref_mut!(Isolate);
