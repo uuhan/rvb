@@ -4,6 +4,7 @@ mod external;
 mod persistent;
 mod value;
 mod error;
+mod promise;
 
 use std::ops::Deref;
 use std::ops::DerefMut;
@@ -19,6 +20,7 @@ pub use external::*;
 pub use persistent::*;
 pub use value::*;
 pub use error::*;
+pub use promise::*;
 
 use crate::v8::raw;
 pub use crate::v8::raw::{
