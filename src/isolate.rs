@@ -26,6 +26,7 @@ pub use crate::v8::{
         MicrotasksPolicy_kScoped,
         MicrotasksPolicy_kAuto,
     },
+    EmbedderHeapTracer,
 };
 
 extern {
@@ -150,6 +151,22 @@ impl Isolate {
     pub fn throw_exception(&mut self, exception: Local<Value>) -> Local<Value> {
         unsafe {
             self.ThrowException(exception)
+        }
+    }
+
+    /// Sets the embedder heap tracer for the isolate.
+    #[inline]
+    pub fn set_embedder_heap_tracer(&mut self, tracer: *mut EmbedderHeapTracer) {
+        unsafe {
+            self.SetEmbedderHeapTracer(tracer)
+        }
+    }
+
+    /// Gets the embedder heap tracer for the isolate.
+    #[inline]
+    pub fn get_embedder_heap_tracer(&mut self) -> *mut EmbedderHeapTracer {
+        unsafe {
+            self.GetEmbedderHeapTracer()
         }
     }
 
