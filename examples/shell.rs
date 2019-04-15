@@ -1,7 +1,7 @@
 #![allow(unused)]
-extern crate v8_rs;
+extern crate rvb;
 use std::process;
-use v8_rs::v8::{
+use rvb::v8::{
     self,
     Platform,
     Isolate,

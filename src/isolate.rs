@@ -213,8 +213,8 @@ impl Isolate {
     /// # Examples
     ///
     /// ```no_run
-    /// # extern crate v8_rs;
-    /// use v8_rs::v8::{
+    /// # extern crate rvb;
+    /// use rvb::v8::{
     ///     prelude::*,
     ///     Platform,
     ///     Isolate,
@@ -255,6 +255,15 @@ impl Isolate {
 
     /// Check if V8 is dead and thereforce unusable. This is the case after
     /// fatal errors such as out-of-meomory situations.
+    ///
+    /// # Usage
+    ///
+    /// ```rust
+    /// use rvb::v8::{Platform, Isolate};
+    /// let _platform = Platform::New();
+    /// let mut isolate = Isolate::New();
+    /// assert!(!isolate.is_dead());
+    /// ```
     #[inline]
     pub fn is_dead(&mut self) -> bool {
         unsafe {
@@ -355,6 +364,21 @@ impl Isolate {
     }
 
     /// Enqueues a rust closure to the default MicrotaskQueue
+    ///
+    /// # Usage
+    ///
+    /// ```rust
+    /// use rvb::v8::{Platform, Isolate};
+    /// let _platform = Platform::New();
+    /// let mut isolate = Isolate::New();
+    /// isolate.enqueue_closure(|_isolate| {
+    ///     println!("Hello from enqueued closure. #1");
+    /// });
+    /// isolate.enqueue_closure(|_isolate| {
+    ///     println!("Hello from enqueued closure. #2");
+    /// });
+    /// isolate.run_microtasks();
+    /// ```
     #[inline]
     pub fn enqueue_closure<F>(&mut self, mut closure: F)
         where F: FnMut(&mut Self)
@@ -380,8 +404,18 @@ impl Isolate {
     }
 
     /// Returns the policy controlling how Microtasks are invoked.
+    /// Default: MicrotasksPolicy_kAuto.
+    ///
+    /// # Usage
+    ///
+    /// ```rust
+    /// use rvb::v8::{Platform, Isolate, MicrotasksPolicy_kAuto};
+    /// let _platform = Platform::New();
+    /// let mut isolate = Isolate::New();
+    /// assert_eq!(MicrotasksPolicy_kAuto, isolate.get_microtasks_policy());
+    /// ```
     #[inline]
-    pub fn get_midrotasks_policy(&mut self) -> MicrotasksPolicy {
+    pub fn get_microtasks_policy(&mut self) -> MicrotasksPolicy {
         unsafe {
             self.GetMicrotasksPolicy()
         }

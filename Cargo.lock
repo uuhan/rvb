@@ -499,6 +499,17 @@ version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "rvb"
+version = "1.0.0-alpha"
+dependencies = [
+ "bindgen 0.48.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "cc 1.0.34 (registry+https://github.com/rust-lang/crates.io-index)",
+ "criterion 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pkg-config 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "ryu"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -618,17 +629,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "utf8-ranges"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "v8-rs"
-version = "1.0.0"
-dependencies = [
- "bindgen 0.48.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "cc 1.0.34 (registry+https://github.com/rust-lang/crates.io-index)",
- "criterion 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)",
- "pkg-config 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
-]
 
 [[package]]
 name = "vec_map"

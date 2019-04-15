@@ -1,5 +1,5 @@
 #![allow(non_snake_case)]
-//! # v8_rs
+//! # rvb - (r)ust-(v)8-(b)ridge
 //!
 //! This crate aims to be the best bridge between Rust & V8 ;).
 //! You can use this crate to power your app with js script support.
@@ -19,8 +19,8 @@
 //! ## Usage
 //!
 //! ```rust,no_run
-//! # extern crate v8_rs;
-//! use v8_rs::v8::{
+//! # extern crate rvb;
+//! use rvb::v8::{
 //!     prelude::*,
 //!     Platform,
 //!     Isolate,

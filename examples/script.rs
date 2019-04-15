@@ -1,4 +1,4 @@
-extern crate v8_rs as v8;
+extern crate rvb as v8;
 use std::fs;
 
 use v8::v8::prelude::*;

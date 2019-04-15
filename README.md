@@ -1,4 +1,4 @@
-## Rust Bindings To V8
+## rvb (rust-v8-bridge)
 
 Aims to be the best bridge between Rust & V8 ;)
 
@@ -73,7 +73,7 @@ function.set_call_handler(Some(function_tpl), Some(data));
 ### 3. Set Object's Internal Field
 
 ```rust
-use v8_rs::v8::{
+use rvb::v8::{
     prelude::*,
 }
 

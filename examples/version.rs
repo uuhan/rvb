@@ -1,4 +1,4 @@
-extern crate v8_rs as v8;
+extern crate rvb as v8;
 
 use v8::utils::version;
 

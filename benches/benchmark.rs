@@ -4,7 +4,7 @@ use criterion::Criterion;
 use criterion::ParameterizedBenchmark;
 use criterion::black_box;
 use std::mem;
-use v8_rs::v8::{
+use rvb::v8::{
     prelude::*,
     Platform,
     Isolate,

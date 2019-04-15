@@ -1,15 +1,9 @@
-extern crate v8_rs;
-use v8_rs::v8;
-use v8::prelude::*;
-use v8::{
-    Rooted,
-    Isolated,
+#![allow(dead_code,non_snake_case)]
+extern crate rvb as v8;
+use v8::v8::{
+    prelude::*,
     Platform,
-    Context,
-    ContextScope,
     Isolate,
-    Script,
-    FunctionTemplate,
     ContextParams,
 };
 
@@ -17,7 +11,7 @@ pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
 
-    isolate.exec(move |context| {
+    isolate.exec(move |_| {
         let mut global = ObjectT::New(None);
         let name = V8String::New("foo");
         let value = V8String::New("bar");

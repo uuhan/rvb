@@ -1,12 +1,12 @@
 [package]
-name = "v8-rs"
-description = "rust bindings to v8"
+name = "rvb"
+description = "(r)ust (v)8 (b)ridge"
 keywords = ["v8"]
 readme = "README.md"
 repository = "https://github.com/uuhan/v8-rust"
 homepage = "https://github.com/uuhan/v8-rust"
 license = "MIT"
-version = "1.0.0"
+version = "1.0.0-alpha"
 authors = ["uuhan <xuminhui189@gmail.com>"]
 edition = "2018"
 

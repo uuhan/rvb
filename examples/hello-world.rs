@@ -1,7 +1,7 @@
 #![allow(unused)]
-extern crate v8_rs;
-use v8_rs::v8::prelude::*;
-use v8_rs::v8::{
+extern crate rvb;
+use rvb::v8::prelude::*;
+use rvb::v8::{
     self,
     Platform,
     Isolate,

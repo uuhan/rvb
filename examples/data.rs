@@ -1,6 +1,6 @@
-extern crate v8_rs;
+extern crate rvb;
 
-use v8_rs::v8;
+use rvb::v8;
 use v8::prelude::*;
 use v8::{
     Platform,
