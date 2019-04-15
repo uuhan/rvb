@@ -21,12 +21,12 @@ use crate::v8::{
 
 pub use crate::v8::{
     raw::{
+        EmbedderHeapTracer,
         MicrotasksPolicy,
         MicrotasksPolicy_kExplicit,
         MicrotasksPolicy_kScoped,
         MicrotasksPolicy_kAuto,
     },
-    EmbedderHeapTracer,
 };
 
 extern {
