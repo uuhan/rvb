@@ -211,6 +211,7 @@ impl Isolate {
     ///     }).unwrap();
     /// }
     /// ```
+    #[inline]
     pub fn exec<U, F>(&mut self, run: F) -> V8Result<U>
         where F: FnOnce(Local<Context>) -> V8Result<U>
         {
@@ -286,6 +287,7 @@ impl Isolate {
     }
 
     /// Isolate Run Within A V8::Locker
+    #[inline]
     pub fn with_locker<F>(&mut self, mut run: F)
         where F: FnMut(V8Context)
         {
@@ -311,6 +313,7 @@ impl Isolate {
 
     /// Set the PromiseHook callback for various promise lifecycle
     /// events.
+    #[inline]
     pub fn set_promise_hook(&mut self, hook: PromiseHook) {
         unsafe {
             self.SetPromiseHook(hook)
@@ -319,6 +322,7 @@ impl Isolate {
 
     /// Runs the default MicrotaskQueue until it gets empty.
     /// Any exceptions thrown by microtask callbacks are awallowed.
+    #[inline]
     pub fn run_microtasks(&mut self) {
         unsafe {
             self.RunMicrotasks()
@@ -326,6 +330,7 @@ impl Isolate {
     }
 
     /// Enqueues the callback to the default MicrotaskQueue
+    #[inline]
     pub fn enqueue_microtask(&mut self, microtask: V8Function) {
         unsafe {
             self.EnqueueMicrotask(microtask)
@@ -333,6 +338,7 @@ impl Isolate {
     }
 
     /// Enqueues a rust closure to the default MicrotaskQueue
+    #[inline]
     pub fn enqueue_closure<F>(&mut self, mut closure: F)
         where F: FnMut(&mut Self)
         {
@@ -349,6 +355,7 @@ impl Isolate {
         }
 
     /// Controls how Microtasks are invoked. See MicrotasksPolicy for details.
+    #[inline]
     pub fn set_microtasks_policy(&mut self, policy: MicrotasksPolicy) {
         unsafe {
             self.SetMicrotasksPolicy(policy)
@@ -356,6 +363,7 @@ impl Isolate {
     }
 
     /// Returns the policy controlling how Microtasks are invoked.
+    #[inline]
     pub fn get_midrotasks_policy(&mut self) -> MicrotasksPolicy {
         unsafe {
             self.GetMicrotasksPolicy()
