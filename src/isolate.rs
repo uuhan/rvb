@@ -19,6 +19,15 @@ use crate::v8::{
     utils,
 };
 
+pub use crate::v8::{
+    raw::{
+        MicrotasksPolicy,
+        MicrotasksPolicy_kExplicit,
+        MicrotasksPolicy_kScoped,
+        MicrotasksPolicy_kAuto,
+    },
+};
+
 extern {
     fn V8_Isolate_With_Locker(
         isolate: *const raw::Isolate,
@@ -26,7 +35,7 @@ extern {
         data: *mut std::ffi::c_void);
 }
 
-extern fn with_locker_callback(data: *mut std::ffi::c_void) {
+extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
     unsafe {
         let closure: &mut Box<FnMut()> = mem::transmute(data);
         closure()
@@ -295,7 +304,7 @@ impl Isolate {
             unsafe {
                 V8_Isolate_With_Locker(
                     self.0,
-                    with_locker_callback,
+                    callback_data_wrapper,
                     Box::into_raw(callback) as *mut std::ffi::c_void)
             }
         }
@@ -317,11 +326,27 @@ impl Isolate {
     }
 
     /// Enqueues the callback to the default MicrotaskQueue
-    pub fn enqueue_microtasks(&mut self, microtask: V8Function) {
+    pub fn enqueue_microtask(&mut self, microtask: V8Function) {
         unsafe {
             self.EnqueueMicrotask(microtask)
         }
     }
+
+    /// Enqueues a rust closure to the default MicrotaskQueue
+    pub fn enqueue_closure<F>(&mut self, mut closure: F)
+        where F: FnMut(&mut Self)
+        {
+            let mut cloned = self.clone();
+            let callback: Box<Box<FnMut()>>
+                = Box::new(Box::new(|| {
+                    closure(&mut cloned)
+                }));
+            unsafe {
+                self.EnqueueMicrotask1(
+                    Some(callback_data_wrapper),
+                    Box::into_raw(callback) as *mut std::ffi::c_void)
+            }
+        }
 }
 
 deref_mut!(Isolate);
