@@ -347,6 +347,20 @@ impl Isolate {
                     Box::into_raw(callback) as *mut std::ffi::c_void)
             }
         }
+
+    /// Controls how Microtasks are invoked. See MicrotasksPolicy for details.
+    pub fn set_microtasks_policy(&mut self, policy: MicrotasksPolicy) {
+        unsafe {
+            self.SetMicrotasksPolicy(policy)
+        }
+    }
+
+    /// Returns the policy controlling how Microtasks are invoked.
+    pub fn get_midrotasks_policy(&mut self) -> MicrotasksPolicy {
+        unsafe {
+            self.GetMicrotasksPolicy()
+        }
+    }
 }
 
 deref_mut!(Isolate);

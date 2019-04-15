@@ -59,18 +59,16 @@ pub mod v8 {
     pub use crate::utils;
     pub use crate::ffi::root::v8 as raw;
 
+    pub use crate::isolate::*;
+    pub use crate::object::*;
+    pub use crate::function::*;
+    pub use crate::value::*;
     pub use crate::context::Context;
     pub use crate::context::ContextParams;
-    pub use crate::isolate::Isolate;
-    pub use crate::isolate::IsolateData;
-    pub use crate::isolate::ISOLATE_DATA_SLOT;
     pub use crate::platform::Platform;
     pub use crate::scope::HandleScope;
     pub use crate::scope::ContextScope;
     pub use crate::script::Script;
-    pub use crate::object::*;
-    pub use crate::function::*;
-    pub use crate::value::*;
 
     pub use crate::internal::*;
 
