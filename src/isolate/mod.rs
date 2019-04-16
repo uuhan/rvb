@@ -29,6 +29,9 @@ pub use crate::v8::{
     },
 };
 
+mod tasks;
+pub use tasks::*;
+
 extern {
     fn V8_Isolate_With_Locker(
         isolate: *const raw::Isolate,
