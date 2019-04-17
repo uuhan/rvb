@@ -210,6 +210,12 @@ impl Isolate {
         }
     }
 
+    /// Gets Isolate Reference Count
+    #[inline]
+    pub fn reference_count(&mut self) -> usize {
+        self.get_data::<IsolateData>(ISOLATE_DATA_SLOT).count
+    }
+
     /// Helper function to run your function.
     /// Providing the current context, returns V8Result<T>
     ///
@@ -384,12 +390,11 @@ impl Isolate {
     /// ```
     #[inline]
     pub fn enqueue_closure<F>(&mut self, mut closure: F)
-        where F: FnMut(&mut Self)
+        where F: FnMut()
         {
-            let mut cloned = self.clone();
             let callback: Box<Box<FnMut()>>
                 = Box::new(Box::new(|| {
-                    closure(&mut cloned)
+                    closure()
                 }));
             unsafe {
                 self.EnqueueMicrotask1(

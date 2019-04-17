@@ -8,19 +8,19 @@ pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
 
-    isolate.enqueue_closure(|_isolate| {
+    isolate.enqueue_closure(|| {
         println!("Hello from enqueued closure. #1");
     });
-    isolate.enqueue_closure(|_isolate| {
+    isolate.enqueue_closure(|| {
         println!("Hello from enqueued closure. #2");
     });
-    isolate.enqueue_closure(|_isolate| {
+    isolate.enqueue_closure(|| {
         println!("Hello from enqueued closure. #3");
     });
-    isolate.enqueue_closure(|_isolate| {
+    isolate.enqueue_closure(|| {
         println!("Hello from enqueued closure. #4");
     });
-    isolate.enqueue_closure(|_isolate| {
+    isolate.enqueue_closure(|| {
         println!("Hello from enqueued closure. #5");
     });
 
