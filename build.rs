@@ -29,7 +29,7 @@ pub fn main() {
         .clang_args(&["-x", "c++", "-std=c++11"])
         .rust_target(bindgen::RustTarget::Nightly)
         .layout_tests(false)
-        .generate_inline_functions(true)
+        .generate_inline_functions(false)
         .opaque_type("std::.*")
         .blacklist_type("std::basic_string.*")
         .whitelist_type("v8::.*")
