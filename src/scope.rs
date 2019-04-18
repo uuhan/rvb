@@ -5,10 +5,11 @@ pub use crate::v8::raw::Context_Scope as ContextScope;
 use crate::v8::Isolated;
 use crate::v8::Context;
 use crate::v8::Local;
+use crate::v8::raw::Isolate_GetCurrent;
 
 impl<'a> Isolated<'a> for HandleScope {
     fn New() -> Box<Self> {
-        let isolate = Self::GetIsolate();
+        let isolate = unsafe {Isolate_GetCurrent()};
         Box::new(
             unsafe {
                 HandleScope::new(isolate)
