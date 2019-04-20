@@ -65,7 +65,6 @@ extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
 /// trampoline function for:
 ///     typedef (*wrapper)(Isolate* isolate, void* data)
 extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut std::ffi::c_void) {
-    println!("#1");
     unsafe {
         let closure: &mut Box<FnMut(&mut raw::Isolate)> = mem::transmute(data);
         closure(isolate.as_mut().unwrap())
