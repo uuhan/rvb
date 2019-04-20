@@ -27,5 +27,9 @@ pub fn main() {
     let policy = isolate.get_microtasks_policy();
     println!("default policy: {}", policy);
 
+    isolate.add_microtasks_completed_closure(|_| {
+        println!("microtasks completed.");
+    });
+
     isolate.run_microtasks();
 }

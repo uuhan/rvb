@@ -46,6 +46,13 @@ extern "C" {
     fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut std::ffi::c_void;
 }
 
+/// default slot for internal usage.
+pub const ISOLATE_DATA_SLOT: u32 = 0;
+/// internal Isolate data
+pub struct IsolateData {
+    pub count: usize,
+}
+
 /// trampoline function for:
 ///     typedef (*wrapper)(void* data)
 extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
@@ -55,24 +62,13 @@ extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
     }
 }
 
-/// default slot for internal usage.
-pub const ISOLATE_DATA_SLOT: u32 = 0;
-/// internal Isolate data
-pub struct IsolateData {
-    pub count: usize,
-    pub microtasks_completed_callback: Option<*mut std::ffi::c_void>,
-}
-
 /// trampoline function for:
-///     typedef (*wrapper)(Isolate* isolate)
-extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate) {
+///     typedef (*wrapper)(Isolate* isolate, void* data)
+extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut std::ffi::c_void) {
+    println!("#1");
     unsafe {
-        let internal_data_ptr =
-            V8_Isolate_GetData(isolate, ISOLATE_DATA_SLOT);
-        let data: &mut IsolateData = mem::transmute(internal_data_ptr);
-        let closure: &mut Box<FnMut()>
-            = mem::transmute(data.microtasks_completed_callback.unwrap());
-        closure()
+        let closure: &mut Box<FnMut(&mut raw::Isolate)> = mem::transmute(data);
+        closure(isolate.as_mut().unwrap())
     }
 }
 
@@ -94,7 +90,6 @@ impl Isolate {
                     Box::into_raw(Box::new(
                             IsolateData {
                                 count: 1,
-                                microtasks_completed_callback: None,
                             }));
                 V8_Isolate_SetData(isolate, ISOLATE_DATA_SLOT, init_data_ptr as *mut std::ffi::c_void);
             }
@@ -467,14 +462,16 @@ impl Isolate {
     }
 
     #[inline]
-    pub fn add_microtasks_completed_closure<F>(&mut self, callback: F)
-        where F: FnMut()
+    pub fn add_microtasks_completed_closure<F>(&mut self, closure: F)
+        where F: FnMut(&mut raw::Isolate)
         {
-            unimplemented!();
-            // let ref mut data = self.get_0();
-            // data.microtasks_completed_callback = Some(Box::into_raw(
-            //         Box::new(Box::new(callback))) as *mut std::ffi::c_void);
-            // self.add_microtasks_completed_callback(Some(callback_isolate_wrapper))
+            let callback: Box<Box<FnMut(&mut raw::Isolate)>>
+                = Box::new(Box::new(closure));
+            unsafe {
+                self.AddMicrotasksCompletedCallback1(
+                    Some(callback_isolate_wrapper),
+                    Box::into_raw(callback) as *mut std::ffi::c_void)
+            }
         }
 }
 
@@ -509,7 +506,7 @@ impl Clone for Isolate {
 /// Drop an Isolate
 impl Drop for Isolate {
     fn drop(&mut self) {
-        let ref mut data = self.get_data::<IsolateData>(ISOLATE_DATA_SLOT);
+        let ref mut data = self.get_0();
         data.count -= 1;
 
         if data.count == 0 {
