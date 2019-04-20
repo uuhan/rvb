@@ -26,6 +26,8 @@ pub use crate::v8::{
         MicrotasksPolicy_kExplicit,
         MicrotasksPolicy_kScoped,
         MicrotasksPolicy_kAuto,
+
+        MicrotasksCompletedCallback,
     },
 };
 
@@ -39,6 +41,13 @@ extern {
         data: *mut std::ffi::c_void);
 }
 
+extern "C" {
+    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: *mut std::ffi::c_void);
+    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut std::ffi::c_void;
+}
+
+/// trampoline function for:
+///     typedef (*wrapper)(void* data)
 extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
     unsafe {
         let closure: &mut Box<FnMut()> = mem::transmute(data);
@@ -46,19 +55,29 @@ extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
     }
 }
 
+/// default slot for internal usage.
 pub const ISOLATE_DATA_SLOT: u32 = 0;
-
+/// internal Isolate data
 pub struct IsolateData {
     pub count: usize,
+    pub microtasks_completed_callback: Option<*mut std::ffi::c_void>,
+}
+
+/// trampoline function for:
+///     typedef (*wrapper)(Isolate* isolate)
+extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate) {
+    unsafe {
+        let internal_data_ptr =
+            V8_Isolate_GetData(isolate, ISOLATE_DATA_SLOT);
+        let data: &mut IsolateData = mem::transmute(internal_data_ptr);
+        let closure: &mut Box<FnMut()>
+            = mem::transmute(data.microtasks_completed_callback.unwrap());
+        closure()
+    }
 }
 
 #[repr(C)]
 pub struct Isolate(pub *mut raw::Isolate);
-
-extern "C" {
-    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: *mut std::ffi::c_void);
-    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut std::ffi::c_void;
-}
 
 impl Isolate {
     pub fn New() -> Self {
@@ -71,7 +90,12 @@ impl Isolate {
             panic!("create isolate failed");
         } else {
             unsafe {
-                let init_data_ptr = Box::into_raw(Box::new(IsolateData { count: 1 }));
+                let init_data_ptr =
+                    Box::into_raw(Box::new(
+                            IsolateData {
+                                count: 1,
+                                microtasks_completed_callback: None,
+                            }));
                 V8_Isolate_SetData(isolate, ISOLATE_DATA_SLOT, init_data_ptr as *mut std::ffi::c_void);
             }
             Self(isolate)
@@ -191,6 +215,12 @@ impl Isolate {
                 None => panic!(format!("Isolate::GetData with slot: {} got nothing.", slot)),
             }
         }
+    }
+
+    /// Get Default Internal Data
+    #[inline]
+    pub fn get_0(&self) -> &mut IsolateData {
+        self.get_data::<IsolateData>(0)
     }
 
     /// Set data to slot.
@@ -428,6 +458,24 @@ impl Isolate {
             self.GetMicrotasksPolicy()
         }
     }
+
+    #[inline]
+    pub fn add_microtasks_completed_callback(&mut self, callback: MicrotasksCompletedCallback) {
+        unsafe {
+            self.AddMicrotasksCompletedCallback(callback)
+        }
+    }
+
+    #[inline]
+    pub fn add_microtasks_completed_closure<F>(&mut self, callback: F)
+        where F: FnMut()
+        {
+            unimplemented!();
+            // let ref mut data = self.get_0();
+            // data.microtasks_completed_callback = Some(Box::into_raw(
+            //         Box::new(Box::new(callback))) as *mut std::ffi::c_void);
+            // self.add_microtasks_completed_callback(Some(callback_isolate_wrapper))
+        }
 }
 
 deref_mut!(Isolate);
