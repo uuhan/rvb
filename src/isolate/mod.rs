@@ -28,6 +28,49 @@ pub use crate::v8::{
         MicrotasksPolicy_kAuto,
 
         MicrotasksCompletedCallback,
+        CounterLookupCallback,
+        Isolate_UseCounterCallback,
+        Isolate_UseCounterFeature,
+        Isolate_UseCounterFeature_kUseAsm,
+        Isolate_UseCounterFeature_kBreakIterator,
+        Isolate_UseCounterFeature_kLegacyConst,
+        Isolate_UseCounterFeature_kMarkDequeOverflow,
+        Isolate_UseCounterFeature_kStoreBufferOverflow,
+        Isolate_UseCounterFeature_kSlotsBufferOverflow,
+        Isolate_UseCounterFeature_kObjectObserve,
+        Isolate_UseCounterFeature_kForcedGC,
+        Isolate_UseCounterFeature_kSloppyMode,
+        Isolate_UseCounterFeature_kStrictMode,
+        Isolate_UseCounterFeature_kStrongMode,
+        Isolate_UseCounterFeature_kRegExpPrototypeStickyGetter,
+        Isolate_UseCounterFeature_kRegExpPrototypeToString,
+        Isolate_UseCounterFeature_kRegExpPrototypeUnicodeGetter,
+        Isolate_UseCounterFeature_kIntlV8Parse,
+        Isolate_UseCounterFeature_kIntlPattern,
+        Isolate_UseCounterFeature_kIntlResolved,
+        Isolate_UseCounterFeature_kPromiseChain,
+        Isolate_UseCounterFeature_kPromiseAccept,
+        Isolate_UseCounterFeature_kHtmlCommentInExternalScript,
+        Isolate_UseCounterFeature_kHtmlComment,
+        Isolate_UseCounterFeature_kSloppyModeBlockScopedFunctionRedefinition,
+        Isolate_UseCounterFeature_kForInInitializer,
+        Isolate_UseCounterFeature_kArrayProtectorDirtied,
+        Isolate_UseCounterFeature_kArraySpeciesModified,
+        Isolate_UseCounterFeature_kArrayPrototypeConstructorModified,
+        Isolate_UseCounterFeature_kArrayInstanceProtoModified,
+        Isolate_UseCounterFeature_kArrayInstanceConstructorModified,
+        Isolate_UseCounterFeature_kLegacyFunctionDeclaration,
+        Isolate_UseCounterFeature_kRegExpPrototypeSourceGetter,
+        Isolate_UseCounterFeature_kRegExpPrototypeOldFlagGetter,
+        Isolate_UseCounterFeature_kDecimalWithLeadingZeroInStrictMode,
+        Isolate_UseCounterFeature_kLegacyDateParser,
+        Isolate_UseCounterFeature_kDefineGetterOrSetterWouldThrow,
+        Isolate_UseCounterFeature_kFunctionConstructorReturnedUndefined,
+        Isolate_UseCounterFeature_kAssigmentExpressionLHSIsCallInSloppy,
+        Isolate_UseCounterFeature_kAssigmentExpressionLHSIsCallInStrict,
+        Isolate_UseCounterFeature_kPromiseConstructorReturnedUndefined,
+        Isolate_UseCounterFeature_kConstructorNonUndefinedPrimitiveReturn,
+        Isolate_UseCounterFeature_kLabeledExpressionStatement,
     },
 };
 
@@ -69,6 +112,12 @@ extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut std::f
         let closure: &mut Box<FnMut(&mut raw::Isolate)> = mem::transmute(data);
         closure(isolate.as_mut().unwrap())
     }
+}
+
+/// trampoline function for:
+///     typedef int* (*wrapper)(char* name)
+extern fn callback_counter_wrapper(name: *const std::os::raw::c_char) -> *mut std::os::raw::c_int {
+    unimplemented!()
 }
 
 #[repr(C)]
@@ -460,6 +509,9 @@ impl Isolate {
         }
     }
 
+    /// Hook when microtasks completed
+    ///
+    /// See [examples/tasks.rs]
     #[inline]
     pub fn add_microtasks_completed_closure<F>(&mut self, closure: F)
         where F: FnMut(&mut raw::Isolate)
@@ -472,6 +524,47 @@ impl Isolate {
                     Box::into_raw(callback) as *mut std::ffi::c_void)
             }
         }
+
+    #[inline]
+    pub fn remove_microtasks_completed_callback(&mut self, callback: MicrotasksCompletedCallback) {
+        unsafe {
+            self.RemoveMicrotasksCompletedCallback(callback)
+        }
+    }
+
+    #[inline]
+    pub fn remove_microtasks_completed_closure<F>(&mut self, closure: F)
+        where F: FnMut(&mut raw::Isolate)
+        {
+            let callback: Box<Box<FnMut(&mut raw::Isolate)>>
+                = Box::new(Box::new(closure));
+            unsafe {
+                self.RemoveMicrotasksCompletedCallback1(
+                    Some(callback_isolate_wrapper),
+                    Box::into_raw(callback) as *mut std::ffi::c_void)
+            }
+        }
+
+    #[inline]
+    pub fn set_use_counter_callback(&mut self, callback: Isolate_UseCounterCallback) {
+        unsafe {
+            self.SetUseCounterCallback(callback)
+        }
+    }
+
+    /// Enables the host application to provide a mechanism for recording
+    /// statistics counters.
+    #[inline]
+    pub fn set_counter_function(&mut self, callback: CounterLookupCallback) {
+        unsafe {
+            self.SetCounterFunction(callback)
+        }
+    }
+
+    #[inline]
+    pub fn set_counter_name<N: ToString>(&mut self, name: N) {
+        unimplemented!()
+    }
 }
 
 deref_mut!(Isolate);
