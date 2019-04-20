@@ -1,5 +1,9 @@
 #![allow(dead_code)]
 use std::mem;
+use std::os::raw::{
+    c_int,
+    c_char,
+};
 
 use crate::v8::{
     raw,
@@ -71,6 +75,21 @@ pub use crate::v8::{
         Isolate_UseCounterFeature_kPromiseConstructorReturnedUndefined,
         Isolate_UseCounterFeature_kConstructorNonUndefinedPrimitiveReturn,
         Isolate_UseCounterFeature_kLabeledExpressionStatement,
+
+        RAILMode,
+        RAILMode_PERFORMANCE_RESPONSE,
+        RAILMode_PERFORMANCE_ANIMATION,
+        RAILMode_PERFORMANCE_IDLE,
+        RAILMode_PERFORMANCE_LOAD,
+
+        JitCodeEvent,
+        JitCodeEventOptions,
+        JitCodeEventOptions_kJitCodeEventDefault,
+        JitCodeEventOptions_kJitCodeEventEnumExisting,
+        JitCodeEventHandler,
+
+        FatalErrorCallback,
+        OOMErrorCallback,
     },
 };
 
@@ -116,7 +135,13 @@ extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut std::f
 
 /// trampoline function for:
 ///     typedef int* (*wrapper)(char* name)
-extern fn callback_counter_wrapper(name: *const std::os::raw::c_char) -> *mut std::os::raw::c_int {
+extern fn callback_counter_wrapper(name: *const c_char) -> *mut c_int {
+    unimplemented!()
+}
+
+/// trampoline function for:
+///     typedef (*wrapper)(const* JitCodeEvent)
+extern fn callback_jitcodeevent_wrapper(event: *const JitCodeEvent) {
     unimplemented!()
 }
 
@@ -564,6 +589,157 @@ impl Isolate {
     #[inline]
     pub fn set_counter_name<N: ToString>(&mut self, name: N) {
         unimplemented!()
+    }
+
+    /// Option notification that a context has been disposed. V8 uses
+    /// these notifications to guide the GC heuristic. Returns the number
+    /// of context disposals - includeing this one - since the last time
+    /// V8 had a chance to clean up.
+    ///
+    /// This optional parameter |dependant_context| specifies whether the disposed
+    /// context was depending on state from other contexts or not.
+    #[inline]
+    pub fn context_dispose_notification(&mut self, dependant_context: bool) -> u32 {
+        unsafe {
+            self.ContextDisposedNotification(dependant_context) as u32
+        }
+    }
+
+    /// Optional notification that the isolate switched to the foreground.
+    /// V8 uses these notifications to guide heuristics.
+    #[inline]
+    pub fn in_foreground_notification(&mut self) {
+        unsafe {
+            self.IsolateInForegroundNotification()
+        }
+    }
+
+    /// Optional notification that the isolate switched to the background.
+    /// V8 uses these notifications to guide heuristics.
+    #[inline]
+    pub fn in_background_notification(&mut self) {
+        unsafe {
+            self.IsolateInBackgroundNotification()
+        }
+    }
+
+    /// Options notification which will enable the memory savings mode.
+    /// V8 uses this notification to guide heuristics which may result in a
+    /// smaller memory footprint at the cost of reduced runtime performance.
+    #[inline]
+    pub fn enable_memory_savings_mode(&mut self) {
+        unsafe {
+            self.EnableMemorySavingsMode()
+        }
+    }
+
+    /// Optional notification which will disable the memory savings mode.
+    #[inline]
+    pub fn disable_memory_savings_mode(&mut self) {
+        unsafe {
+            self.DisableMemorySavingsMode()
+        }
+    }
+
+    /// Optional notification to tell V8 the current performance requirements
+    /// of the embedder based on RAIL.
+    /// V8 Uses these notifications to guide heuristics.
+    #[inline]
+    pub fn set_rail_mode(&mut self, rail_mode: RAILMode) {
+        unsafe {
+            self.SetRAILMode(rail_mode)
+        }
+    }
+
+    /// Optional notification to tell V8 the current isolate is used for debugging
+    /// and requires higher heap limit.
+    #[inline]
+    pub fn increase_heap_limit_for_debugging(&mut self) {
+        unsafe {
+            self.IncreaseHeapLimitForDebugging()
+        }
+    }
+
+    /// Restores the original heap limit after IncreaseHeapLimitForDebugging().
+    #[inline]
+    pub fn restore_original_heap_limit(&mut self) {
+        unsafe {
+            self.RestoreOriginalHeapLimit()
+        }
+    }
+
+    /// Returns true if the heap limit was increased for debugging and the
+    /// original heap limit was not restored yet.
+    #[inline]
+    pub fn is_heap_limit_increased_for_debugging(&mut self) -> bool {
+        unsafe {
+            self.IsHeapLimitIncreasedForDebugging()
+        }
+    }
+
+    /// Allows the host application to provide the address of a function that is
+    /// notified each time code is added, moved or removed.
+    ///
+    /// \param options options for the JIT code event handler.
+    ///
+    /// \param event_handler the JIT code event handler, which will be invoked
+    ///     each time code is added, moved or removed.
+    ///
+    /// \note event_handler won't get notified of existent code.
+    /// \note since code removal notifications are not currently issued, the
+    ///     event_handler may get notifications of code that overlaps earlier
+    ///     code notifications. This happens when code areas are reused, and the
+    ///     earlier overlapping code areas should therefore be discarded.
+    /// \note the events passed to event_handler and the strings they point to
+    ///     are not guaranteed to live past each call. The event_handler must
+    ///     copy strings and other parameters it needs to keep around.
+    /// \note the set of events declared in JitCodeEvent::EventType is expected to
+    ///     grow over time, and the JitCodeEvent structure is expected to accrue
+    ///     new members, The event_handler function must ignore event codes
+    ///     it does not recognize to maintain future compatibility.
+    /// \note Use Isolate::CreateParams to get events for code executed during
+    ///     Isolate setup.
+    #[inline]
+    pub fn set_jit_code_event_handler(&mut self, options: JitCodeEventOptions, handler: JitCodeEventHandler) {
+        unsafe {
+            self.SetJitCodeEventHandler(options, handler)
+        }
+    }
+
+    /// Modifies the stack limit for this Isolate.
+    ///
+    /// \param stack_limit An address beyond which the Vm's stack may not grow.
+    ///
+    /// \note If you are using threads then you should hold the V8::Locker lock
+    ///     while setting the stack limit and you must set a non-default stack
+    ///     limit separately for each thread.
+    #[inline]
+    pub fn set_stack_limit(&mut self, stack_limit: usize) {
+        unsafe {
+            self.SetStackLimit(stack_limit)
+        }
+    }
+
+    #[inline]
+    pub fn get_code_range() { unimplemented!() }
+
+    #[inline]
+    pub fn get_unwind_state() { unimplemented!() }
+
+    /// Set the callback to invoke in case of fatal errors.
+    #[inline]
+    pub fn set_fatal_error_handler(&mut self, that: FatalErrorCallback) {
+        unsafe {
+            self.SetFatalErrorHandler(that)
+        }
+    }
+
+    /// Set the callback to invoke in case of OOM errors.
+    #[inline]
+    pub fn set_oom_error_handler(&mut self, that: OOMErrorCallback) {
+        unsafe {
+            self.SetOOMErrorHandler(that)
+        }
     }
 }
 
