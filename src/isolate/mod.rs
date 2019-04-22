@@ -4,6 +4,7 @@ use std::os::raw::{
     c_int,
     c_char,
 };
+use std::ffi::c_void;
 
 use crate::v8::{
     raw,
@@ -126,6 +127,7 @@ pub use crate::v8::{
 
         FatalErrorCallback,
         OOMErrorCallback,
+        NearHeapLimitCallback,
     },
 };
 
@@ -135,13 +137,13 @@ pub use tasks::*;
 extern {
     fn V8_Isolate_With_Locker(
         isolate: *const raw::Isolate,
-        callback: extern fn(data: *mut std::ffi::c_void),
-        data: *mut std::ffi::c_void);
+        callback: extern fn(data: *mut c_void),
+        data: *mut c_void);
 }
 
 extern "C" {
-    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: *mut std::ffi::c_void);
-    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut std::ffi::c_void;
+    fn V8_Isolate_SetData(isolate: *mut raw::Isolate, slot: u32, data: *mut c_void);
+    fn V8_Isolate_GetData(isolate: *mut raw::Isolate, slot: u32) -> *mut c_void;
 }
 
 /// default slot for internal usage.
@@ -153,7 +155,7 @@ pub struct IsolateData {
 
 /// trampoline function for:
 ///     typedef (*wrapper)(void* data)
-extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
+extern fn callback_data_wrapper(data: *mut c_void) {
     unsafe {
         let closure: &mut Box<FnMut()> = mem::transmute(data);
         closure()
@@ -162,7 +164,7 @@ extern fn callback_data_wrapper(data: *mut std::ffi::c_void) {
 
 /// trampoline function for:
 ///     typedef (*wrapper)(Isolate* isolate, void* data)
-extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut std::ffi::c_void) {
+extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut c_void) {
     unsafe {
         let closure: &mut Box<FnMut(&mut raw::Isolate)> = mem::transmute(data);
         closure(isolate.as_mut().unwrap())
@@ -178,6 +180,12 @@ extern fn callback_counter_wrapper(name: *const c_char) -> *mut c_int {
 /// trampoline function for:
 ///     typedef (*wrapper)(const* JitCodeEvent)
 extern fn callback_jitcodeevent_wrapper(event: *const JitCodeEvent) {
+    unimplemented!()
+}
+
+/// trampoline function for:
+///     typedef size_t (*wrapper)(const* data, size_t current_heap_limit, size_t initial_heap_limit)
+extern fn callback_near_heap_limit_wrapper(data: *mut c_void, current_heap_limit: usize, initial_heap_limit: usize) -> usize {
     unimplemented!()
 }
 
@@ -200,7 +208,7 @@ impl Isolate {
                             IsolateData {
                                 count: 1,
                             }));
-                V8_Isolate_SetData(isolate, ISOLATE_DATA_SLOT, init_data_ptr as *mut std::ffi::c_void);
+                V8_Isolate_SetData(isolate, ISOLATE_DATA_SLOT, init_data_ptr as *mut c_void);
             }
             Self(isolate)
         }
@@ -332,7 +340,7 @@ impl Isolate {
     pub fn set_data<T>(&mut self, slot: u32, data: T) {
         unsafe {
             let data_ptr = Box::into_raw(Box::new(data));
-            V8_Isolate_SetData(self.0, slot, data_ptr as *mut std::ffi::c_void);
+            V8_Isolate_SetData(self.0, slot, data_ptr as *mut c_void);
         }
     }
 
@@ -476,7 +484,7 @@ impl Isolate {
                 V8_Isolate_With_Locker(
                     self.0,
                     callback_data_wrapper,
-                    Box::into_raw(callback) as *mut std::ffi::c_void)
+                    Box::into_raw(callback) as *mut c_void)
             }
         }
 
@@ -533,7 +541,7 @@ impl Isolate {
             unsafe {
                 self.EnqueueMicrotask1(
                     Some(callback_data_wrapper),
-                    Box::into_raw(callback) as *mut std::ffi::c_void)
+                    Box::into_raw(callback) as *mut c_void)
             }
         }
 
@@ -582,7 +590,7 @@ impl Isolate {
             unsafe {
                 self.AddMicrotasksCompletedCallback1(
                     Some(callback_isolate_wrapper),
-                    Box::into_raw(callback) as *mut std::ffi::c_void)
+                    Box::into_raw(callback) as *mut c_void)
             }
         }
 
@@ -602,7 +610,7 @@ impl Isolate {
             unsafe {
                 self.RemoveMicrotasksCompletedCallback1(
                     Some(callback_isolate_wrapper),
-                    Box::into_raw(callback) as *mut std::ffi::c_void)
+                    Box::into_raw(callback) as *mut c_void)
             }
         }
 
@@ -777,6 +785,23 @@ impl Isolate {
             self.SetOOMErrorHandler(that)
         }
     }
+
+    /// Add a callback to invoke in case the heap size is close to the heap limit.
+    /// If multiple callbacks are added, only the most recently added callback is
+    /// invoked.
+    #[inline]
+    pub fn add_near_heap_limit_callback(&mut self, callback: NearHeapLimitCallback, data: *mut c_void) {
+        unsafe {
+            self.AddNearHeapLimitCallback(callback, data)
+        }
+    }
+
+    #[inline]
+    pub fn add_near_heap_limit_closure<F>(&mut self, closure: F)
+        where F: FnMut()
+        {
+            unimplemented!()
+        }
 }
 
 deref_mut!(Isolate);
