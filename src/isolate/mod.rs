@@ -186,7 +186,10 @@ extern fn callback_jitcodeevent_wrapper(event: *const JitCodeEvent) {
 /// trampoline function for:
 ///     typedef size_t (*wrapper)(const* data, size_t current_heap_limit, size_t initial_heap_limit)
 extern fn callback_near_heap_limit_wrapper(data: *mut c_void, current_heap_limit: usize, initial_heap_limit: usize) -> usize {
-    unimplemented!()
+    unsafe {
+        let closure: &mut Box<FnMut(usize, usize) -> usize> = mem::transmute(data);
+        closure(current_heap_limit, initial_heap_limit)
+    }
 }
 
 #[repr(C)]
@@ -798,10 +801,27 @@ impl Isolate {
 
     #[inline]
     pub fn add_near_heap_limit_closure<F>(&mut self, closure: F)
-        where F: FnMut()
+        where F: FnMut(usize, usize) -> usize
         {
-            unimplemented!()
+            let callback: Box<Box<FnMut(usize, usize) -> usize>>
+                = Box::new(Box::new(closure));
+            unsafe {
+                self.AddNearHeapLimitCallback(
+                    Some(callback_near_heap_limit_wrapper),
+                    Box::into_raw(callback) as *mut c_void)
+            }
         }
+
+    /// Remove the given callbak and restore the heap limit to the given limit.
+    /// If the given limit is zero, then it is ignored. If the current heap size is greater
+    /// than the given limit, then the heap limit is restored to the minimal limit that
+    /// is possible for the current heap size.
+    #[inline]
+    pub fn remove_near_heap_limit_callback(&mut self, callback: NearHeapLimitCallback, heap_limit: usize) {
+        unsafe {
+            self.RemoveNearHeapLimitCallback(callback, heap_limit)
+        }
+    }
 }
 
 deref_mut!(Isolate);
