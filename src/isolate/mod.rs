@@ -258,6 +258,15 @@ impl Isolate {
     }
 
     /// Returns true if this isolate has a current context.
+    ///
+    /// # Usage
+    ///
+    /// ```rust
+    /// use rvb::v8::{Platform, Isolate};
+    /// let _platform = Platform::New();
+    /// let mut isolate = Isolate::New();
+    /// assert!(!isolate.in_context());
+    /// ```
     #[inline]
     pub fn in_context(&mut self) -> bool {
         unsafe {
