@@ -390,23 +390,20 @@ impl Isolate {
     /// Helper function to run your function.
     /// Providing the current context, returns V8Result<T>
     ///
-    /// # Examples
+    /// # Usage
     ///
-    /// ```no_run
+    /// ```rust
     /// # extern crate rvb;
     /// use rvb::v8::{
-    ///     prelude::*,
     ///     Platform,
     ///     Isolate,
     /// };
-    /// fn main () {
-    ///     let _platform = Platform::New();
-    ///     let mut isolate = Isolate::New();
+    /// let _platform = Platform::New();
+    /// let mut isolate = Isolate::New();
     ///
-    ///     isolate.exec(|ctx| {
-    ///         Ok(())
-    ///     }).unwrap();
-    /// }
+    /// isolate.exec(|ctx| {
+    ///     Ok(())
+    /// }).unwrap();
     /// ```
     #[inline]
     pub fn exec<U, F>(&mut self, run: F) -> V8Result<U>
