@@ -86,5 +86,6 @@ pub mod v8 {
         pub type V8Signature = Local<crate::v8::Signature>;
         pub type V8Script = Local<crate::v8::Script>;
         pub type V8Context = Local<crate::v8::Context>;
+        pub type V8Message = Local<crate::v8::Message>;
     }
 }

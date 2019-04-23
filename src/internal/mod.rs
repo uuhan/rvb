@@ -30,6 +30,7 @@ pub use crate::v8::raw::{
     Name,
     Data,
     Template,
+    Message,
 
     PropertyAttribute,
     PropertyAttribute_None,

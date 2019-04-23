@@ -130,6 +130,7 @@ pub use crate::v8::{
         NearHeapLimitCallback,
         AllowCodeGenerationFromStringsCallback,
         AllowWasmCodeGenerationCallback,
+        MessageCallback,
     },
 };
 
@@ -191,6 +192,20 @@ extern fn callback_near_heap_limit_wrapper(data: *mut c_void, current_heap_limit
     unsafe {
         let closure: &mut Box<FnMut(usize, usize) -> usize> = mem::transmute(data);
         closure(current_heap_limit, initial_heap_limit)
+    }
+}
+
+/// trampoline function for:
+///     typedef (*wrapper)(Local<Message> m, Local<Calue> d)
+extern fn callback_message_wrapper(message: V8Message, data: V8Value) {
+    println!("message callback");
+    unsafe {
+        let external = V8External::from(data);
+        let external_ptr = external.value();
+        let closure: &mut Box<FnMut(V8Message)>
+            = mem::transmute(external_ptr);
+
+        closure(message)
     }
 }
 
@@ -854,6 +869,35 @@ impl Isolate {
             self.SetAllowWasmCodeGenerationCallback(callback)
         }
     }
+
+    // TODO: wasm facility
+
+    /// Adds a message listener (errors only).
+    /// The same message listener can be added more than ince and in that case
+    /// it will be called more than once for each message.
+    /// If data is specified, it will be passwd to the callback instead.
+    #[inline]
+    pub fn add_message_listener_callback(&mut self, that: MessageCallback, data: V8Value) -> bool {
+        unsafe {
+            self.AddMessageListener(that, data)
+        }
+    }
+
+    /// FIXME: not work
+    #[inline]
+    pub fn add_message_listener<F>(&mut self, closure: F) -> bool
+        where F: FnMut(V8Message)
+        {
+            let callback: Box<Box<FnMut(V8Message)>>
+                = Box::new(Box::new(closure));
+            let data = V8External::New(Box::into_raw(callback) as *mut c_void);
+            unsafe {
+                self.AddMessageListener(
+                    Some(callback_message_wrapper),
+                    data.into()
+                )
+            }
+        }
 }
 
 deref_mut!(Isolate);
