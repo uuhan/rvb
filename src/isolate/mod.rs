@@ -128,6 +128,8 @@ pub use crate::v8::{
         FatalErrorCallback,
         OOMErrorCallback,
         NearHeapLimitCallback,
+        AllowCodeGenerationFromStringsCallback,
+        AllowWasmCodeGenerationCallback,
     },
 };
 
@@ -820,6 +822,36 @@ impl Isolate {
     pub fn remove_near_heap_limit_callback(&mut self, callback: NearHeapLimitCallback, heap_limit: usize) {
         unsafe {
             self.RemoveNearHeapLimitCallback(callback, heap_limit)
+        }
+    }
+
+    /// If the heap limit was changed by the NearHeapLimitCallback, then the
+    /// initial heap limit will be restored once the heap size falls below the
+    /// given threshold percentage of the initial heap limit.
+    /// The threshold percentage is a number in (0.0, 1.0) range.
+    #[inline]
+    pub fn automatically_restore_initial_heap_limit(&mut self, threshold_percent: f64) {
+        unsafe {
+            self.AutomaticallyRestoreInitialHeapLimit(threshold_percent)
+        }
+    }
+
+    /// Set the callback to invoke to check if code generation from
+    /// strings should be allowed.
+    /// TODO: rust closure support
+    #[inline]
+    pub fn set_allow_code_generation_from_strings_callback(&mut self, callback: AllowCodeGenerationFromStringsCallback) {
+        unsafe {
+            self.SetAllowCodeGenerationFromStringsCallback(callback)
+        }
+    }
+
+    /// Set the callback to invoke to check if wasm code generation should be allowed.
+    /// TODO: rust closure support
+    #[inline]
+    pub fn set_allow_wasm_code_generation_callback(&mut self, callback: AllowWasmCodeGenerationCallback) {
+        unsafe {
+            self.SetAllowWasmCodeGenerationCallback(callback)
         }
     }
 }
