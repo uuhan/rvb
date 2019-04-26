@@ -490,6 +490,17 @@ impl Isolate {
     }
 
     /// Isolate Run Within A V8::Locker
+    ///
+    /// # Usage
+    ///
+    /// ```rust
+    /// use rvb::v8::{Platform, Isolate, ValueTrait};
+    /// let _platform = Platform::New();
+    /// let mut isolate = Isolate::New();
+    /// isolate.with_locker(|mut ctx| {
+    ///     assert!(ctx.global().is_object());
+    /// });
+    /// ```
     #[inline]
     pub fn with_locker<F>(&mut self, mut run: F)
         where F: FnMut(V8Context)
