@@ -176,13 +176,13 @@ extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut c_void
 
 /// trampoline function for:
 ///     typedef int* (*wrapper)(char* name)
-extern fn callback_counter_wrapper(name: *const c_char) -> *mut c_int {
+extern fn callback_counter_wrapper(_name: *const c_char) -> *mut c_int {
     unimplemented!()
 }
 
 /// trampoline function for:
 ///     typedef (*wrapper)(const* JitCodeEvent)
-extern fn callback_jitcodeevent_wrapper(event: *const JitCodeEvent) {
+extern fn callback_jitcodeevent_wrapper(_event: *const JitCodeEvent) {
     unimplemented!()
 }
 
