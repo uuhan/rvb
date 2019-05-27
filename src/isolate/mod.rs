@@ -668,7 +668,7 @@ impl Isolate {
     }
 
     #[inline]
-    pub fn set_counter_name<N: ToString>(&mut self, name: N) {
+    pub fn set_counter_name<N: ToString>(&mut self, _name: N) {
         unimplemented!()
     }
 

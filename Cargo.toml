@@ -6,9 +6,16 @@ readme = "README.md"
 repository = "https://github.com/uuhan/v8-rust"
 homepage = "https://github.com/uuhan/v8-rust"
 license = "MIT"
-version = "1.0.0-alpha.1"
+version = "1.0.0-alpha.2"
 authors = ["uuhan <xuminhui189@gmail.com>"]
 edition = "2018"
+
+[features]
+
+default = ["7_6_0"]
+
+7_5_0 = []
+7_6_0 = []
 
 [build-dependencies]
 pkg-config = "0.3.14"

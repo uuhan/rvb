@@ -100,6 +100,7 @@ isolate.exec(|ctx| {
 ## Tested V8 Version
 
 - [x] 7.5.0 (candidate)
+- [x] 7.6.0 (candidate)
 
 ## Contributing
 
