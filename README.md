@@ -101,6 +101,7 @@ isolate.exec(|ctx| {
 
 - [x] 7.5.0 (candidate)
 - [x] 7.6.0 (candidate)
+- [x] 7.7.0 (candidate)
 
 ## Contributing
 
