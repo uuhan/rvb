@@ -66,13 +66,33 @@ impl Local<Object> {
     }
 
     #[inline]
-    pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, key: K, value: V) -> bool {
+    #[cfg(feature = "7_8_0")]
+    pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K, value: V) -> Maybe<bool>
+    {
+        unsafe {
+            self.Set(ctx, key.into(), value.into())
+        }
+    }
+
+    #[inline]
+    #[cfg(any(feature = "7_5_0", feature = "7_6_0"))]
+    pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, key: K, value: V) -> bool
+    {
         unsafe {
             self.Set(key.into(), value.into())
         }
     }
 
     #[inline]
+    #[cfg(feature = "7_8_0")]
+    pub fn get<K: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K) -> MaybeLocal<Value> {
+        unsafe {
+            self.Get(ctx, key.into())
+        }
+    }
+
+    #[inline]
+    #[cfg(any(feature = "7_5_0", feature = "7_6_0"))]
     pub fn get<K: Into<Local<Value>>>(&mut self, key: K) -> Local<Value> {
         unsafe {
             self.Get(key.into())
@@ -91,9 +111,9 @@ impl Local<Object> {
 
     #[inline]
     pub fn create_data_property(&mut self,
-                                context: V8Context,
-                                key: V8Name,
-                                value: V8Value) -> Maybe<bool> {
+        context: V8Context,
+        key: V8Name,
+        value: V8Value) -> Maybe<bool> {
         unsafe {
             self.CreateDataProperty(context, key ,value)
         }
@@ -101,10 +121,10 @@ impl Local<Object> {
 
     #[inline]
     pub fn define_own_property(&mut self,
-                               context: V8Context,
-                               key: V8Name,
-                               value: V8Value,
-                               attributes: PropertyAttribute) -> Maybe<bool> {
+        context: V8Context,
+        key: V8Name,
+        value: V8Value,
+        attributes: PropertyAttribute) -> Maybe<bool> {
         unsafe {
             self.DefineOwnProperty(context, key, value, attributes)
         }
@@ -112,9 +132,9 @@ impl Local<Object> {
 
     #[inline]
     pub fn define_property(&mut self,
-                           context: V8Context,
-                           key: V8Name,
-                           descriptor: &mut PropertyDescriptor) -> Maybe<bool> {
+        context: V8Context,
+        key: V8Name,
+        descriptor: &mut PropertyDescriptor) -> Maybe<bool> {
         unsafe {
             self.DefineProperty(context, key, descriptor)
         }
@@ -176,41 +196,41 @@ impl Local<Object> {
 
     #[inline]
     pub fn set_accessor(&mut self,
-                        context: V8Context,
-                        name: V8Name,
-                        getter: AccessorNameGetterCallback,
-                        setter: AccessorNameSetterCallback,
-                        data: MaybeLocal<Value>,
-                        settings: AccessControl,
-                        attribute: PropertyAttribute,
-                        getter_side_effect_type: SideEffectType,
-                        setter_side_effect_type: SideEffectType) -> Maybe<bool> {
+        context: V8Context,
+        name: V8Name,
+        getter: AccessorNameGetterCallback,
+        setter: AccessorNameSetterCallback,
+        data: MaybeLocal<Value>,
+        settings: AccessControl,
+        attribute: PropertyAttribute,
+        getter_side_effect_type: SideEffectType,
+        setter_side_effect_type: SideEffectType) -> Maybe<bool> {
         unsafe {
             self.SetAccessor(context,
-                             name,
-                             getter,
-                             setter,
-                             data,
-                             settings,
-                             attribute,
-                             getter_side_effect_type,
-                             setter_side_effect_type)
+                name,
+                getter,
+                setter,
+                data,
+                settings,
+                attribute,
+                getter_side_effect_type,
+                setter_side_effect_type)
         }
     }
 
     #[inline]
     pub fn set_accessor_property(&mut self,
-                                 name: V8Name,
-                                 getter: V8Function,
-                                 setter: V8Function,
-                                 attribute: PropertyAttribute,
-                                 settings: AccessControl) {
+        name: V8Name,
+        getter: V8Function,
+        setter: V8Function,
+        attribute: PropertyAttribute,
+        settings: AccessControl) {
         unsafe {
             self.SetAccessorProperty(name,
-                                     getter,
-                                     setter,
-                                     attribute,
-                                     settings)
+                getter,
+                setter,
+                attribute,
+                settings)
         }
     }
 }

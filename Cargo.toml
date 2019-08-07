@@ -12,10 +12,11 @@ edition = "2018"
 
 [features]
 
-default = ["7_6_0"]
+default = ["7_8_0"]
 
 7_5_0 = []
 7_6_0 = []
+7_8_0 = []
 
 [build-dependencies]
 pkg-config = "0.3.14"

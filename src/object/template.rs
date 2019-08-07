@@ -12,7 +12,7 @@ extern fn function_template(info: *const FunctionCallbackInfo) {
         let external_ptr = external.value();
         let ref mut rv = args.get_return_value();
 
-        let closure: &mut Box<FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
+        let closure: &mut Box<dyn FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
             = mem::transmute(external_ptr);
         closure(args, rv);
     }
@@ -80,27 +80,27 @@ impl Local<ObjectTemplate> {
     ///   thrown and no callback is invoked.
     #[inline]
     pub fn set_accessor(&mut self,
-                        name: Local<String>,
-                        getter: AccessorGetterCallback,
-                        setter: AccessorSetterCallback,
-                        data: Local<Value>,
-                        settings: AccessControl,
-                        attribute: PropertyAttribute,
-                        signature: Local<AccessorSignature>,
-                        getter_side_effect_type: SideEffectType,
-                        setter_side_effect_type: SideEffectType,
-                        )
+        name: Local<String>,
+        getter: AccessorGetterCallback,
+        setter: AccessorSetterCallback,
+        data: Local<Value>,
+        settings: AccessControl,
+        attribute: PropertyAttribute,
+        signature: Local<AccessorSignature>,
+        getter_side_effect_type: SideEffectType,
+        setter_side_effect_type: SideEffectType,
+    )
     {
         unsafe {
             self.SetAccessor(name,
-                             getter,
-                             setter,
-                             data,
-                             settings,
-                             attribute,
-                             signature,
-                             getter_side_effect_type,
-                             setter_side_effect_type)
+                getter,
+                setter,
+                data,
+                settings,
+                attribute,
+                signature,
+                getter_side_effect_type,
+                setter_side_effect_type)
         }
     }
 
@@ -136,14 +136,14 @@ impl Local<ObjectTemplate> {
     #[inline]
     pub fn set_call_as_function_closure<F>(&mut self, callback: F)
         where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
-        {
-            let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
-                = Box::new(Box::new(callback));
-            let data = V8External::New(Box::into_raw(callback) as *mut std::ffi::c_void);
-            unsafe {
-                self.SetCallAsFunctionHandler(Some(function_template), data.into());
-            }
+    {
+        let callback: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+            = Box::new(Box::new(callback));
+        let data = V8External::New(Box::into_raw(callback) as *mut std::ffi::c_void);
+        unsafe {
+            self.SetCallAsFunctionHandler(Some(function_template), data.into());
         }
+    }
 
     /// Mark object instances of the template as undectable.
     ///

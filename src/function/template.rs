@@ -11,7 +11,7 @@ extern fn function_template(info: *const FunctionCallbackInfo) {
         let external_ptr = external.value();
         let ref mut rv = args.get_return_value();
 
-        let closure: &mut Box<FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
+        let closure: &mut Box<dyn FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
             = mem::transmute(external_ptr);
         closure(args, rv);
     }
@@ -31,7 +31,7 @@ impl FunctionT {
                 0,
                 ConstructorBehavior_kAllow,
                 SideEffectType_kHasSideEffect,
-                )
+            )
         }
     }
 
@@ -39,23 +39,23 @@ impl FunctionT {
     #[inline]
     pub fn Call<F>(callback: F) -> Self
         where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
-        {
-            let isolate = Self::GetIsolate();
-            let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
-                = Box::new(Box::new(callback));
-            let data = V8External::New(Box::into_raw(callback) as *mut c_void);
-            unsafe {
-                FunctionTemplate::New(
-                    isolate,
-                    Some(function_template),
-                    data.into(),
-                    V8Signature::Empty(),
-                    0,
-                    ConstructorBehavior_kAllow,
-                    SideEffectType_kHasSideEffect,
-                    )
-            }
+    {
+        let isolate = Self::GetIsolate();
+        let callback: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+            = Box::new(Box::new(callback));
+        let data = V8External::New(Box::into_raw(callback) as *mut c_void);
+        unsafe {
+            FunctionTemplate::New(
+                isolate,
+                Some(function_template),
+                data.into(),
+                V8Signature::Empty(),
+                0,
+                ConstructorBehavior_kAllow,
+                SideEffectType_kHasSideEffect,
+            )
         }
+    }
 
     /// Set the call-handler callback for a FunctionTemplate.
     /// This callback is called whenever the function created from this
@@ -75,12 +75,12 @@ impl FunctionT {
     #[inline]
     pub fn set_call_closure<F>(&mut self, callback: F)
         where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
-        {
-            let callback: Box<Box<FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
-                = Box::new(Box::new(callback));
-            let data = V8External::New(Box::into_raw(callback) as *mut c_void);
-            self.set_call_handler(Some(function_template), Some(data.into()));
-        }
+    {
+        let callback: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+            = Box::new(Box::new(callback));
+        let data = V8External::New(Box::into_raw(callback) as *mut c_void);
+        self.set_call_handler(Some(function_template), Some(data.into()));
+    }
 
     /// Returns the unique function instance in the current execution context.
     #[inline]

@@ -9,7 +9,7 @@ pub fn main() {
     let _platform = Platform::New();
     let mut isolate = Isolate::New();
 
-    isolate.add_message_listener(|message| {
+    isolate.add_message_listener(|_message| {
         println!("message listener");
     });
 }

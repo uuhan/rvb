@@ -13,7 +13,7 @@ use crate::v8::{
 
 #[cfg(feature = "7_5_0")]
 pub use raw::String_NewStringType_kNormalString as NewNormalStringType;
-#[cfg(feature = "7_6_0")]
+#[cfg(any(feature = "7_6_0", feature = "7_8_0"))]
 pub use raw::NewStringType_kNormal as NewNormalStringType;
 
 pub use raw::String;
@@ -31,7 +31,7 @@ impl Local<String> {
                 -1
             )
         }
-        #[cfg(feature = "7_6_0")]
+        #[cfg(any(feature = "7_6_0", feature = "7_8_0"))]
         unsafe {
             raw::String::NewFromUtf8(
                 isolate,

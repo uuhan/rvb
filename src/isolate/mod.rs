@@ -160,7 +160,7 @@ pub struct IsolateData {
 ///     typedef (*wrapper)(void* data)
 extern fn callback_data_wrapper(data: *mut c_void) {
     unsafe {
-        let closure: &mut Box<FnMut()> = mem::transmute(data);
+        let closure: &mut Box<dyn FnMut()> = mem::transmute(data);
         closure()
     }
 }
@@ -169,7 +169,7 @@ extern fn callback_data_wrapper(data: *mut c_void) {
 ///     typedef (*wrapper)(Isolate* isolate, void* data)
 extern fn callback_isolate_wrapper(isolate: *mut raw::Isolate, data: *mut c_void) {
     unsafe {
-        let closure: &mut Box<FnMut(&mut raw::Isolate)> = mem::transmute(data);
+        let closure: &mut Box<dyn FnMut(&mut raw::Isolate)> = mem::transmute(data);
         closure(isolate.as_mut().unwrap())
     }
 }
@@ -190,7 +190,7 @@ extern fn callback_jitcodeevent_wrapper(_event: *const JitCodeEvent) {
 ///     typedef size_t (*wrapper)(const* data, size_t current_heap_limit, size_t initial_heap_limit)
 extern fn callback_near_heap_limit_wrapper(data: *mut c_void, current_heap_limit: usize, initial_heap_limit: usize) -> usize {
     unsafe {
-        let closure: &mut Box<FnMut(usize, usize) -> usize> = mem::transmute(data);
+        let closure: &mut Box<dyn FnMut(usize, usize) -> usize> = mem::transmute(data);
         closure(current_heap_limit, initial_heap_limit)
     }
 }
@@ -202,7 +202,7 @@ extern fn callback_message_wrapper(message: V8Message, data: V8Value) {
     unsafe {
         let external = V8External::from(data);
         let external_ptr = external.value();
-        let closure: &mut Box<FnMut(V8Message)>
+        let closure: &mut Box<dyn FnMut(V8Message)>
             = mem::transmute(external_ptr);
 
         closure(message)
@@ -408,19 +408,19 @@ impl Isolate {
     #[inline]
     pub fn exec<U, F>(&mut self, run: F) -> V8Result<U>
         where F: FnOnce(Local<Context>) -> V8Result<U>
-        {
-            self.enter();
-            let _handle_scole = HandleScope::New();
-            let mut context = V8Context::Default();
-            context.enter();
+    {
+        self.enter();
+        let _handle_scole = HandleScope::New();
+        let mut context = V8Context::Default();
+        context.enter();
 
-            let result = run(context)?;
+        let result = run(context)?;
 
-            context.exit();
-            self.exit();
+        context.exit();
+        self.exit();
 
-            Ok(result)
-        }
+        Ok(result)
+    }
 
     /// Tells the VM whether the embedder is idle or not.
     #[inline]
@@ -504,26 +504,26 @@ impl Isolate {
     #[inline]
     pub fn with_locker<F>(&mut self, mut run: F)
         where F: FnMut(V8Context)
-        {
-            let mut cloned = self.clone();
-            let callback: Box<Box<FnMut()>>
-                = Box::new(Box::new(|| {
-                    cloned.enter();
-                    let _handle_scole = HandleScope::New();
-                    let mut context = V8Context::Default();
-                    context.enter();
-                    run(context);
-                    context.exit();
-                    cloned.exit();
-                }));
+    {
+        let mut cloned = self.clone();
+        let callback: Box<Box<dyn FnMut()>>
+            = Box::new(Box::new(|| {
+                cloned.enter();
+                let _handle_scole = HandleScope::New();
+                let mut context = V8Context::Default();
+                context.enter();
+                run(context);
+                context.exit();
+                cloned.exit();
+            }));
 
-            unsafe {
-                V8_Isolate_With_Locker(
-                    self.0,
-                    callback_data_wrapper,
-                    Box::into_raw(callback) as *mut c_void)
-            }
+        unsafe {
+            V8_Isolate_With_Locker(
+                self.0,
+                callback_data_wrapper,
+                Box::into_raw(callback) as *mut c_void)
         }
+    }
 
     /// Set the PromiseHook callback for various promise lifecycle
     /// events.
@@ -570,17 +570,17 @@ impl Isolate {
     #[inline]
     pub fn enqueue_closure<F>(&mut self, mut closure: F)
         where F: FnMut()
-        {
-            let callback: Box<Box<FnMut()>>
-                = Box::new(Box::new(|| {
-                    closure()
-                }));
-            unsafe {
-                self.EnqueueMicrotask1(
-                    Some(callback_data_wrapper),
-                    Box::into_raw(callback) as *mut c_void)
-            }
+    {
+        let callback: Box<Box<dyn FnMut()>>
+            = Box::new(Box::new(|| {
+                closure()
+            }));
+        unsafe {
+            self.EnqueueMicrotask1(
+                Some(callback_data_wrapper),
+                Box::into_raw(callback) as *mut c_void)
         }
+    }
 
     /// Controls how Microtasks are invoked. See MicrotasksPolicy for details.
     #[inline]
@@ -621,15 +621,15 @@ impl Isolate {
     #[inline]
     pub fn add_microtasks_completed_closure<F>(&mut self, closure: F)
         where F: FnMut(&mut raw::Isolate)
-        {
-            let callback: Box<Box<FnMut(&mut raw::Isolate)>>
-                = Box::new(Box::new(closure));
-            unsafe {
-                self.AddMicrotasksCompletedCallback1(
-                    Some(callback_isolate_wrapper),
-                    Box::into_raw(callback) as *mut c_void)
-            }
+    {
+        let callback: Box<Box<dyn FnMut(&mut raw::Isolate)>>
+            = Box::new(Box::new(closure));
+        unsafe {
+            self.AddMicrotasksCompletedCallback1(
+                Some(callback_isolate_wrapper),
+                Box::into_raw(callback) as *mut c_void)
         }
+    }
 
     #[inline]
     pub fn remove_microtasks_completed_callback(&mut self, callback: MicrotasksCompletedCallback) {
@@ -641,15 +641,15 @@ impl Isolate {
     #[inline]
     pub fn remove_microtasks_completed_closure<F>(&mut self, closure: F)
         where F: FnMut(&mut raw::Isolate)
-        {
-            let callback: Box<Box<FnMut(&mut raw::Isolate)>>
-                = Box::new(Box::new(closure));
-            unsafe {
-                self.RemoveMicrotasksCompletedCallback1(
-                    Some(callback_isolate_wrapper),
-                    Box::into_raw(callback) as *mut c_void)
-            }
+    {
+        let callback: Box<Box<dyn FnMut(&mut raw::Isolate)>>
+            = Box::new(Box::new(closure));
+        unsafe {
+            self.RemoveMicrotasksCompletedCallback1(
+                Some(callback_isolate_wrapper),
+                Box::into_raw(callback) as *mut c_void)
         }
+    }
 
     #[inline]
     pub fn set_use_counter_callback(&mut self, callback: Isolate_UseCounterCallback) {
@@ -836,15 +836,15 @@ impl Isolate {
     #[inline]
     pub fn add_near_heap_limit_closure<F>(&mut self, closure: F)
         where F: FnMut(usize, usize) -> usize
-        {
-            let callback: Box<Box<FnMut(usize, usize) -> usize>>
-                = Box::new(Box::new(closure));
-            unsafe {
-                self.AddNearHeapLimitCallback(
-                    Some(callback_near_heap_limit_wrapper),
-                    Box::into_raw(callback) as *mut c_void)
-            }
+    {
+        let callback: Box<Box<dyn FnMut(usize, usize) -> usize>>
+            = Box::new(Box::new(closure));
+        unsafe {
+            self.AddNearHeapLimitCallback(
+                Some(callback_near_heap_limit_wrapper),
+                Box::into_raw(callback) as *mut c_void)
         }
+    }
 
     /// Remove the given callbak and restore the heap limit to the given limit.
     /// If the given limit is zero, then it is ignored. If the current heap size is greater
@@ -904,17 +904,17 @@ impl Isolate {
     #[inline]
     pub fn add_message_listener<F>(&mut self, closure: F) -> bool
         where F: FnMut(V8Message)
-        {
-            let callback: Box<Box<FnMut(V8Message)>>
-                = Box::new(Box::new(closure));
-            let data = V8External::New(Box::into_raw(callback) as *mut c_void);
-            unsafe {
-                self.AddMessageListener(
-                    Some(callback_message_wrapper),
-                    data.into()
-                )
-            }
+    {
+        let callback: Box<Box<dyn FnMut(V8Message)>>
+            = Box::new(Box::new(closure));
+        let data = V8External::New(Box::into_raw(callback) as *mut c_void);
+        unsafe {
+            self.AddMessageListener(
+                Some(callback_message_wrapper),
+                data.into()
+            )
         }
+    }
 }
 
 deref_mut!(Isolate);

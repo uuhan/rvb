@@ -17,14 +17,14 @@ pub fn main() {
         let mut object = objt.new_instance(ctx).to_local_checked()?;
         let count = object.internal_field_count();
 
-        let callback: Box<Box<FnMut()>> = Box::new(Box::new(|| {
+        let callback: Box<Box<dyn FnMut()>> = Box::new(Box::new(|| {
             println!("I am from internal field.");
         }));
 
         object.set_internal_field(0, V8External::New(Box::into_raw(callback) as *mut std::ffi::c_void));
 
         let closure_ptr = object.get_internal_field::<V8External>(0).value();
-        let closure: &mut Box<FnMut()> = unsafe { mem::transmute(closure_ptr) };
+        let closure: &mut Box<dyn FnMut()> = unsafe { mem::transmute(closure_ptr) };
 
         println!("object has {} internal field.", count);
         closure();
