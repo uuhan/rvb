@@ -33,7 +33,7 @@ macro_rules! deref {
 
 /// visit base class's methods
 macro_rules! base {
-    ($d: ident, $r:ty, $t:ty, $f:ident) => {
+    ($d:ident, $r:ty, $t:ty, $f:ident) => {
         fn $d(&mut self) -> $r {
             unsafe {
                 let base = std::mem::transmute_copy::<&mut Self, &mut $t>(&self);
@@ -90,4 +90,21 @@ macro_rules! inherit_local {
             }
         )+
     }
+}
+
+/// define primitive values. e.g. undefined, null, true, false
+macro_rules! prim {
+    ($prim:ident, $idx:ident, $type:ty) => {
+        pub fn $prim() -> Local<$type> {
+            unsafe {
+                let isolate = crate::v8::raw::Isolate_GetCurrent();
+                let slot = get_root(isolate, $idx);
+                ::std::mem::transmute(slot)
+            }
+        }
+    };
+
+    ($prim:ident, $idx:ident) => {
+        prim!($prim, $idx, Primitive);
+    };
 }

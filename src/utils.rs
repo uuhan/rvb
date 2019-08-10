@@ -12,6 +12,7 @@ use crate::v8::{
         Internals_kNullValueRootIndex,
         Internals_kTrueValueRootIndex,
         Internals_kFalseValueRootIndex,
+        Internals_kEmptyStringRootIndex,
     },
     Local,
     Primitive,
@@ -34,41 +35,13 @@ pub fn get_root(isolate: *const raw::Isolate, index: i32) -> *mut Address {
     }
 }
 
-/// v8::Undefined(Isolate* isolate)
-pub fn undefined() -> Local<Primitive> {
-    unsafe {
-        let isolate: *const raw::Isolate = raw::Isolate_GetCurrent();
-        let slot = get_root(isolate, Internals_kUndefinedValueRootIndex);
-        mem::transmute(slot)
-    }
-}
+prim!(undefined, Internals_kUndefinedValueRootIndex);
+prim!(null, Internals_kNullValueRootIndex);
+prim!(r#true, Internals_kTrueValueRootIndex);
+prim!(r#false, Internals_kFalseValueRootIndex);
 
-/// v8::Null(Isolate* isolate)
-pub fn null() -> Local<Primitive> {
-    unsafe {
-        let isolate: *const raw::Isolate = raw::Isolate_GetCurrent();
-        let slot = get_root(isolate, Internals_kNullValueRootIndex);
-        mem::transmute(slot)
-    }
-}
-
-/// v8::True(Isolate* isolate)
-pub fn r#true() -> Local<Primitive> {
-    unsafe {
-        let isolate: *const raw::Isolate = raw::Isolate_GetCurrent();
-        let slot = get_root(isolate, Internals_kTrueValueRootIndex);
-        mem::transmute(slot)
-    }
-}
-
-/// v8::False(Isolate* isolate)
-pub fn r#false() -> Local<Primitive> {
-    unsafe {
-        let isolate: *const raw::Isolate = raw::Isolate_GetCurrent();
-        let slot = get_root(isolate, Internals_kFalseValueRootIndex);
-        mem::transmute(slot)
-    }
-}
+// empty string
+prim!(empty, Internals_kEmptyStringRootIndex, crate::v8::String);
 
 /// V8_VERSION_STRING
 pub fn version() -> &'static str {
