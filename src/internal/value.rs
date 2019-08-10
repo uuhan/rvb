@@ -120,7 +120,7 @@ impl ValueTrait for Value {}
 /// use v8::String::Utf8Value
 impl Into<String> for Local<Value> {
     fn into(self) -> String {
-        let isolate = Local::<Value>::GetIsolate();
+        let isolate = Self::GetIsolate();
         unsafe {
             let ps = raw::String_Utf8Value::new(isolate, self).str_;
             CStr::from_ptr(ps).to_owned().into_string().unwrap_or(format!("{:?}", self))

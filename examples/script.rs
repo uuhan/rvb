@@ -21,8 +21,9 @@ pub fn main() -> V8Result<()> {
         let _scope = ContextScope::New(context);
         let mut global = ObjectT::New(None);
         let print = FunctionT::Call(|args, rv| {
-            println!("{}", text);
-            rv.set::<V8Value>(args.at(0));
+            let arg: String = args.at(0).into();
+            println!("{}", arg);
+            rv.set_undefined()
         });
 
 
