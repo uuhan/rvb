@@ -523,7 +523,7 @@ dependencies = [
 
 [[package]]
 name = "rvb"
-version = "1.0.0-alpha.2"
+version = "1.0.0-alpha.3"
 dependencies = [
  "bindgen 0.48.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "cc 1.0.40 (registry+https://github.com/rust-lang/crates.io-index)",
