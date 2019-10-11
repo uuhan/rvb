@@ -6,7 +6,7 @@ readme = "README.md"
 repository = "https://github.com/uuhan/v8-rust"
 homepage = "https://github.com/uuhan/v8-rust"
 license = "MIT"
-version = "1.0.0-alpha.2"
+version = "1.0.0-alpha.3"
 authors = ["uuhan <xuminhui189@gmail.com>"]
 edition = "2018"
 
@@ -14,6 +14,7 @@ edition = "2018"
 
 default = ["7_8_0"]
 
+7_4_0 = []
 7_5_0 = []
 7_6_0 = []
 7_8_0 = []
@@ -25,9 +26,11 @@ cc = "1.0.30"
 
 [dependencies]
 libc = "0.2.50"
+cfg-if = "0.1.10"
 
 [dev-dependencies]
 criterion = "0.2.11"
+cfg-if = "0.1.10"
 
 [[bench]]
 name = "benchmark"

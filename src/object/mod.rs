@@ -19,6 +19,7 @@ pub use date::*;
 pub use regexp::*;
 pub use template::*;
 
+use cfg_if::cfg_if;
 use crate::v8::{
     prelude::*,
     Local,
@@ -65,37 +66,49 @@ impl Local<Object> {
         }
     }
 
-    #[inline]
-    #[cfg(feature = "7_8_0")]
-    pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K, value: V) -> Maybe<bool>
-    {
-        unsafe {
-            self.Set(ctx, key.into(), value.into())
-        }
-    }
-
-    #[inline]
-    #[cfg(any(feature = "7_5_0", feature = "7_6_0"))]
-    pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, key: K, value: V) -> bool
-    {
-        unsafe {
-            self.Set(key.into(), value.into())
-        }
-    }
-
-    #[inline]
-    #[cfg(feature = "7_8_0")]
-    pub fn get<K: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K) -> MaybeLocal<Value> {
-        unsafe {
-            self.Get(ctx, key.into())
-        }
-    }
-
-    #[inline]
-    #[cfg(any(feature = "7_5_0", feature = "7_6_0"))]
-    pub fn get<K: Into<Local<Value>>>(&mut self, key: K) -> Local<Value> {
-        unsafe {
-            self.Get(key.into())
+    cfg_if! {
+        if #[cfg(any(feature = "7_4_0", feature = "7_5_0", feature = "7_6_0"))] {
+            #[inline]
+            pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, key: K, value: V) -> bool
+            {
+                unsafe {
+                    self.Set(key.into(), value.into())
+                }
+            }
+            #[inline]
+            pub fn get<K: Into<Local<Value>>>(&mut self, key: K) -> Local<Value> {
+                unsafe {
+                    self.Get(key.into())
+                }
+            }
+        } else if #[cfg(feature = "7_8_0")] {
+            #[inline]
+            pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K, value: V) -> Maybe<bool>
+            {
+                unsafe {
+                    self.Set(ctx, key.into(), value.into())
+                }
+            }
+            #[inline]
+            pub fn get<K: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K) -> MaybeLocal<Value> {
+                unsafe {
+                    self.Get(ctx, key.into())
+                }
+            }
+        } else {
+            #[inline]
+            pub fn set<K: Into<Local<Value>>, V: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K, value: V) -> Maybe<bool>
+            {
+                unsafe {
+                    self.Set(ctx, key.into(), value.into())
+                }
+            }
+            #[inline]
+            pub fn get<K: Into<Local<Value>>>(&mut self, ctx: V8Context, key: K) -> MaybeLocal<Value> {
+                unsafe {
+                    self.Get(ctx, key.into())
+                }
+            }
         }
     }
 

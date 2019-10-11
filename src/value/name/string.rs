@@ -1,4 +1,5 @@
 use std::ffi::CString;
+use cfg_if::cfg_if;
 
 use crate::v8::{
     raw,
@@ -22,23 +23,45 @@ impl Local<String> {
     pub fn New<T: ToString>(string: T) -> Self {
         let cstr = CString::new(string.to_string());
         let isolate = Self::GetIsolate();
-        #[cfg(feature = "7_5_0")]
-        unsafe {
-            raw::String::NewFromUtf8(
-                isolate,
-                cstr.unwrap().as_ptr(),
-                NewNormalStringType,
-                -1
-            )
-        }
-        #[cfg(any(feature = "7_6_0", feature = "7_8_0"))]
-        unsafe {
-            raw::String::NewFromUtf8(
-                isolate,
-                cstr.unwrap().as_ptr(),
-                NewNormalStringType,
-                -1
-            ).to_local_checked().unwrap()
+
+        cfg_if! {
+            if #[cfg(feature = "7_4_0")] {
+                unsafe {
+                    raw::String::NewFromUtf8(
+                        isolate,
+                        cstr.unwrap().as_ptr(),
+                        NewNormalStringType as u32,
+                        -1
+                    )
+                }
+            } else if #[cfg(feature = "7_5_0")] {
+                unsafe {
+                    raw::String::NewFromUtf8(
+                        isolate,
+                        cstr.unwrap().as_ptr(),
+                        NewNormalStringType,
+                        -1
+                    )
+                }
+            } else if #[cfg(any(feature = "7_6_0", feature = "7_8_0"))] {
+                unsafe {
+                    raw::String::NewFromUtf8(
+                        isolate,
+                        cstr.unwrap().as_ptr(),
+                        NewNormalStringType,
+                        -1
+                    ).to_local_checked().unwrap()
+                }
+            } else {
+                unsafe {
+                    raw::String::NewFromUtf8(
+                        isolate,
+                        cstr.unwrap().as_ptr(),
+                        NewNormalStringType,
+                        -1
+                    ).to_local_checked().unwrap()
+                }
+            }
         }
     }
 }
