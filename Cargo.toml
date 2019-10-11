@@ -6,7 +6,7 @@ readme = "README.md"
 repository = "https://github.com/uuhan/v8-rust"
 homepage = "https://github.com/uuhan/v8-rust"
 license = "MIT"
-version = "1.0.0-alpha.2"
+version = "1.0.0-alpha.3"
 authors = ["uuhan <xuminhui189@gmail.com>"]
 edition = "2018"
 
