@@ -16,6 +16,29 @@ Cflags: -I${prefix}/include
 Libs: -L${prefix}/lib -lv8_monolith
 ```
 
+NB: If you are working under MacOS, you can also install v8 with brew:
+
+```sh
+brew install v8
+```
+and create a pkg-config file /usr/local/share/pkgconfig/v8.pc:
+
+```sh
+# NB: YOU SHOULD REPLACE [7.4.288.25] with YOUR CURRENT VERSION OF V8
+prefix=/usr/local/Cellar/v8/7.4.288.25/libexec
+
+Name: v8
+Description: v8
+Version: 7.4.288.25
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/ -lv8 -lv8_libbase -lv8_libplatform -licuuc -licui18n
+```
+
+and then, build this crate with feature **7_4_0**:
+
+```sh
+cargo build --features 7_4_0
+```
 
 ## Examples
 
