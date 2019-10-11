@@ -5,6 +5,7 @@ use std::os::raw::{
     c_char,
 };
 use std::ffi::c_void;
+use cfg_if::cfg_if;
 
 use crate::v8::{
     raw,
@@ -615,19 +616,36 @@ impl Isolate {
         }
     }
 
-    /// Hook when microtasks completed
-    ///
-    /// See [examples/tasks.rs]
-    #[inline]
-    pub fn add_microtasks_completed_closure<F>(&mut self, closure: F)
-        where F: FnMut(&mut raw::Isolate)
-    {
-        let callback: Box<Box<dyn FnMut(&mut raw::Isolate)>>
-            = Box::new(Box::new(closure));
-        unsafe {
-            self.AddMicrotasksCompletedCallback1(
-                Some(callback_isolate_wrapper),
-                Box::into_raw(callback) as *mut c_void)
+    cfg_if! {
+        if #[cfg(feature = "7_4_0")] {
+            /// Hook when microtasks completed.
+            ///
+            /// See [examples/tasks.rs]
+            ///
+            #[inline]
+            pub fn add_microtasks_completed_closure<F>(&mut self, closure: F)
+                where F: FnMut(&mut raw::Isolate)
+            {
+                // TODO: v8-7.4.4 not support pass cb & data
+                unimplemented!()
+            }
+        } else {
+            /// Hook when microtasks completed
+            ///
+            /// See [examples/tasks.rs]
+            ///
+            #[inline]
+            pub fn add_microtasks_completed_closure<F>(&mut self, closure: F)
+                where F: FnMut(&mut raw::Isolate)
+            {
+                let callback: Box<Box<dyn FnMut(&mut raw::Isolate)>>
+                    = Box::new(Box::new(closure));
+                unsafe {
+                    self.AddMicrotasksCompletedCallback1(
+                        Some(callback_isolate_wrapper),
+                        Box::into_raw(callback) as *mut c_void)
+                }
+            }
         }
     }
 
@@ -639,6 +657,7 @@ impl Isolate {
     }
 
     #[inline]
+    #[cfg(not(feature = "7_4_0"))]
     pub fn remove_microtasks_completed_closure<F>(&mut self, closure: F)
         where F: FnMut(&mut raw::Isolate)
     {

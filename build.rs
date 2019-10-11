@@ -39,14 +39,14 @@ pub fn main() {
         .whitelist_type("std::unique_ptr\\<v8::TracingController\\>")
         .enable_cxx_namespaces()
         .derive_debug(true)
-        .derive_hash(true)
-        .derive_eq(true)
-        .derive_partialeq(true)
+        // TODO: seems there are some problems of v8-7.4.0 when enable derive_{eq,partialeq,hash}
+        // .derive_hash(true)
+        // .derive_eq(true)
+        // .derive_partialeq(true)
         .clang_args(cflags)
         .header("v8wrapper.h")
         .generate()
         .expect("Unable to generate v8.h bindings!");
-
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings
         .write_to_file(out_path.join("v8.rs"))
