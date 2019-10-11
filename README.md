@@ -40,7 +40,7 @@ and then, build this crate with feature **7_4_0**:
 cargo build --features 7_4_0
 ```
 
-## Examples
+## [Examples](./examples)
 
 ### 1. Hello, World
 
@@ -119,10 +119,6 @@ isolate.exec(|ctx| {
     Ok(())
 }).unwrap();
 ```
-
-### More Examples
-
-[examples](./examples)
 
 ## Tested V8 Version
 
