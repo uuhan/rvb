@@ -120,6 +120,10 @@ isolate.exec(|ctx| {
 }).unwrap();
 ```
 
+### More Examples
+
+[examples](./examples)
+
 ## Tested V8 Version
 
 - [x] 7.4.0
