@@ -20,7 +20,7 @@ pub fn main() -> V8Result<()> {
     isolate.exec(move |context| {
         let _scope = ContextScope::New(context);
         let mut global = ObjectT::New(None);
-        let print = FunctionT::Call(|args, rv| {
+        let print = FunctionT::Fn(|args, rv| {
             let arg: String = args.at(0).into();
             println!("{}", arg);
             rv.set_undefined()

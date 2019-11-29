@@ -55,16 +55,13 @@ pub trait TemplateTrait {
                     value.into(),
                     PropertyAttribute_None)
             }
-        }
+    }
 }
 
 /// an object can be enter in or exit out
 pub trait Rooted {
-    #[inline]
     fn allocate() -> Self;
-    #[inline]
     fn enter(&mut self);
-    #[inline]
     fn exit(&mut self);
 }
 
@@ -159,6 +156,7 @@ impl<T> MaybeLocal<T> {
     }
 
     /// if this maybelocal value is nothing
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.val_.is_null()
     }

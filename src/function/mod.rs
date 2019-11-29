@@ -49,7 +49,7 @@ extern "C" {
     fn V8_FunctionCallbackInfo_NewTarget(args: *const FunctionCallbackInfo) -> Local<Value>;
     fn V8_FunctionCallbackInfo_IsConstructorCall(args: *const FunctionCallbackInfo) -> bool;
     fn V8_FunctionCallbackInfo_Data(args: *const FunctionCallbackInfo) -> Local<Value>;
-    fn V8_FunctionCallbackInfo_GetReturnValue(args: *const FunctionCallbackInfo, out: &mut ReturnValue);
+    fn V8_FunctionCallbackInfo_GetReturnValue(args: *const FunctionCallbackInfo, out: *mut ReturnValue);
 }
 
 // static kHolderIndex: i8 = 0;
@@ -77,9 +77,9 @@ impl FunctionCallbackInfo {
     #[inline]
     pub fn get_return_value(&self) -> ReturnValue {
         unsafe {
-            let mut value = std::mem::uninitialized();
-            V8_FunctionCallbackInfo_GetReturnValue(self, &mut value);
-            value
+            let mut value = std::mem::MaybeUninit::<ReturnValue>::uninit();
+            V8_FunctionCallbackInfo_GetReturnValue(self, value.as_mut_ptr());
+            value.assume_init()
         }
     }
 
@@ -139,16 +139,38 @@ impl FunctionCallbackInfo {
     }
 }
 
-impl Local<Function> {
+/// trampoline function for
+extern fn callback_data_wrapper(data: *mut c_void) {
+    unsafe {
+        let closure: &mut Box<dyn FnMut()> = mem::transmute(data);
+        closure()
+    }
+}
+
+extern fn function_template(info: *const FunctionCallbackInfo) {
+    unsafe {
+        let args = &*info;
+        let external = V8External::from(args.data());
+        let external_ptr = external.value();
+        let ref mut rv = args.get_return_value();
+
+        let closure: &mut Box<dyn FnMut(*const FunctionCallbackInfo, &mut ReturnValue)>
+            = mem::transmute(external_ptr);
+        closure(args, rv);
+    }
+}
+
+impl V8Function {
     /// Create a function in the current execution context
     /// for a given FunctionCallback.
     #[inline]
-    pub fn RawNew(context: V8Context,
-                  callback: raw::FunctionCallback,
-                  data: V8Value,
-                  length: i32,
-                  behavior: ConstructorBehavior,
-                  side_effect_type: SideEffectType
+    pub fn RawNew(
+        context: V8Context,
+        callback: raw::FunctionCallback,
+        data: V8Value,
+        length: i32,
+        behavior: ConstructorBehavior,
+        side_effect_type: SideEffectType
     ) -> MaybeLocal<Function> {
         unsafe {
             Function::New(context, callback, data, length, behavior, side_effect_type)
@@ -156,8 +178,33 @@ impl Local<Function> {
     }
 
     #[inline]
-    pub fn New() -> MaybeLocal<Function> {
-        unimplemented!()
+    pub fn New(
+        context: V8Context,
+    ) -> Option<Self> {
+        let function = unsafe {
+            Function::New(context, None, V8Value::Empty(), 0, ConstructorBehavior_kAllow, SideEffectType_kHasSideEffect)
+        };
+        function.to_local_checked().ok()
+    }
+
+    #[inline]
+    pub fn Fn<F>(context: V8Context, closure: F) -> Option<Self>
+        where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
+    {
+        let closure: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+            = Box::new(Box::new(closure));
+        let data = V8External::New(Box::into_raw(closure) as *mut c_void);
+
+        unsafe {
+            Function::New(
+                context,
+                Some(function_template),
+                data.into(),
+                0,
+                ConstructorBehavior_kAllow,
+                SideEffectType_kHasSideEffect,
+            ).to_local_checked().ok()
+        }
     }
 }
 

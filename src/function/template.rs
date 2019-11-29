@@ -37,13 +37,13 @@ impl FunctionT {
 
     /// Create a function template.
     #[inline]
-    pub fn Call<F>(callback: F) -> Self
+    pub fn Fn<F>(closure: F) -> Self
         where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
     {
         let isolate = Self::GetIsolate();
-        let callback: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
-            = Box::new(Box::new(callback));
-        let data = V8External::New(Box::into_raw(callback) as *mut c_void);
+        let closure: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+            = Box::new(Box::new(closure));
+        let data = V8External::New(Box::into_raw(closure) as *mut c_void);
         unsafe {
             FunctionTemplate::New(
                 isolate,
@@ -57,8 +57,8 @@ impl FunctionT {
         }
     }
 
-    /// Set the call-handler callback for a FunctionTemplate.
-    /// This callback is called whenever the function created from this
+    /// Set the call-handler closure for a FunctionTemplate.
+    /// This closure is called whenever the function created from this
     /// FunctionTemplate is called.
     #[inline]
     pub fn set_call_handler(&mut self, handler: FunctionCallback, data: Option<V8Value>) -> &mut Self {
@@ -71,14 +71,14 @@ impl FunctionT {
         self
     }
 
-    /// Set the callback for a FunctionTemplate by closure.
+    /// Set the closure for a FunctionTemplate by closure.
     #[inline]
-    pub fn set_call_closure<F>(&mut self, callback: F)
+    pub fn set_call_closure<F>(&mut self, closure: F)
         where F: FnMut(&FunctionCallbackInfo, &mut ReturnValue)
     {
-        let callback: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
-            = Box::new(Box::new(callback));
-        let data = V8External::New(Box::into_raw(callback) as *mut c_void);
+        let closure: Box<Box<dyn FnMut(&FunctionCallbackInfo, &mut ReturnValue)>>
+            = Box::new(Box::new(closure));
+        let data = V8External::New(Box::into_raw(closure) as *mut c_void);
         self.set_call_handler(Some(function_template), Some(data.into()));
     }
 

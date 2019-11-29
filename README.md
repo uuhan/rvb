@@ -63,7 +63,7 @@ isolate.exec(move |context| {
 
 ```rust
 let text = "Hello from Rust!"
-let mut function = FunctionT::Call(|args, rv| {
+let mut function = FunctionT::Fn(|args, rv| {
     println!("{}", text);
     rv.set::<V8Value>(args.at(0));
 })
