@@ -20,17 +20,17 @@ default = ["7_8_0"]
 7_8_0 = []
 
 [build-dependencies]
-pkg-config = "0.3.14"
-bindgen = "0.48.1"
-cc = "1.0.30"
+pkg-config = "^0.3.14"
+bindgen = "^0.52.0"
+cc = "~1"
 
 [dependencies]
-libc = "0.2.50"
-cfg-if = "0.1.10"
+libc = "~0.2"
+cfg-if = "*"
 
 [dev-dependencies]
-criterion = "0.2.11"
-cfg-if = "0.1.10"
+criterion = "^0.2.11"
+cfg-if = "*"
 
 [[bench]]
 name = "benchmark"
